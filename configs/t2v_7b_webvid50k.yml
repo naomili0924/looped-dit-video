@@ -37,7 +37,7 @@ t_logit_std: 0.8
 label_drop_rate: 0.1
 
 batch_size: 64                  # paper: 1024
-micro_batch_size: 8
+micro_batch_size: 16              # fastest per clip on an H200 (8: 1.0 s, 16: 0.71 s, 32: 0.94 s)
 num_steps: 20000
 warmup_steps: 1000              # paper: 5000 of 250K+ steps; a step is ~1 min here
 learning_rate: 1.0e-4           # paper: 4e-4 at 260M

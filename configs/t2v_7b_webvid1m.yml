@@ -37,7 +37,7 @@ t_logit_std: 0.8
 label_drop_rate: 0.1
 
 batch_size: 256                 # paper: 1024; raise with more GPUs
-micro_batch_size: 8
+micro_batch_size: 16              # fastest per clip on an H200 (8: 1.0 s, 16: 0.71 s, 32: 0.94 s)
 num_steps: 200000
 warmup_steps: 5000
 learning_rate: 1.0e-4           # paper: 4e-4 at 260M

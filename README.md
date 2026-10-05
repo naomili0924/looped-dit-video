@@ -72,7 +72,7 @@ Ablations use `--set`, e.g. `--set model.use_attn_gate=false model.use_xsa=true`
 
 ## Measured on one H200 (4.81B model, 17x256x256 clips)
 
-A step at batch 64 (8 micro-batches of 8, gradient checkpointing, 4 loops with deep supervision) takes about 60 s and peaks at 63 GB of GPU memory: roughly 90K clips per day. The 20K-step 50K-clip config is therefore about two weeks on a single GPU; use `torchrun` on more GPUs, or fewer steps, to shorten it.
+A step at batch 64 (4 micro-batches of 16, gradient checkpointing, 4 loops with deep supervision) takes about 34 s and peaks at 71 GB of GPU memory: roughly 160K clips per day. The 20K-step 50K-clip config is therefore about 8 days on a single GPU; use `torchrun` on more GPUs, or fewer steps, to shorten it. Preparing the 50K clips (download, decode, VAE encode) takes about 75 minutes with 72 CPU workers.
 
 ## Tests
 
