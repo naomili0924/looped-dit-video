@@ -178,3 +178,16 @@ def test_loader_reads_from_every_worker(tmp_path):
         assert batch["latents"].shape == (4, 16, 2, 4, 4)
         seen |= {c.split()[1].split("-")[0] for c in batch["caption"]}
     assert seen == {"0", "1"}
+
+
+def test_ema_warmup_forgets_init():
+    from ldv.utils import CPUEma
+
+    m = torch.nn.Linear(4, 4, bias=False)
+    torch.nn.init.constant_(m.weight, 1.0)  # "initialization"
+    ema = CPUEma(m, decay=0.9999, every=10)
+    with torch.no_grad():
+        m.weight.zero_()  # "trained" weights
+    for step in range(1, 2501):
+        ema.update(m, step)
+    assert ema.params["weight"].abs().max() < 1e-3  # plain 0.9999 would leave 0.78 of the init

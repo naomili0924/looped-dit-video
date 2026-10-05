@@ -57,7 +57,9 @@ class CPUEma:
     def update(self, model: torch.nn.Module, step: int) -> None:
         if step % self.every:
             return
-        d = self.decay**self.every
+        # Warm-up: the decay follows (1 + step) / (10 + step) until it reaches `decay`, so the
+        # random initialization is averaged out early instead of lingering for ~1 / (1 - decay) steps.
+        d = min(self.decay, (1 + step) / (10 + step)) ** self.every
         for n, p in model.named_parameters():
             e = self.params[n]
             e.mul_(d).add_(p.detach().float().cpu(), alpha=1 - d)
