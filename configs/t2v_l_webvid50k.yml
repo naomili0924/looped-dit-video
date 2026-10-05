@@ -49,12 +49,12 @@ ema_decay: 0.9999               # paper: 0.99995
 ema_every: 10
 
 log_every: 10
-sample_every: 1000
+sample_every: 781
 sample_steps: 50
-probe_every: 1000
+probe_every: 781
 probe_clips: 32
 probe_max_loops: 8
-ckpt_every: 250
+ckpt_every: 781                 # one epoch: 50,008 clips / batch 64
 keep_last: 2
 hub_repo: ""                    # e.g. <user>/looped-dit-t2v; needs HF_TOKEN in the environment
-hub_every: 1000                 # small EMA files, push often
+hub_every: 781                  # push the EMA weights to the HF Hub every epoch
