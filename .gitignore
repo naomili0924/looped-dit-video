@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+outputs/
+data/
+samples/
+*.pt
+*.tar
+*.mp4
+wandb/

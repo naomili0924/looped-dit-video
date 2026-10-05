@@ -1,0 +1,31 @@
+# Tiny debug config: same code paths, ~20M parameters.
+model:
+  hidden_size: 256
+  num_heads: 4
+  axes_dim: [16, 16, 16, 16]
+  context_in_dim: 512          # FLAN-T5-Small
+  depth: 1
+  depth_single_blocks: 6
+  loop_split: [3, 2, 2]
+  num_loops: 4
+  use_attn_gate: true
+  grad_checkpointing: false
+text_encoder: google/flan-t5-small
+prompt_length: 64
+train_shards: ["${DATA_ROOT}/webvid_debug/shards"]
+batch_size: 16
+micro_batch_size: 16
+num_steps: 2000
+warmup_steps: 100
+learning_rate: 4.0e-4
+optimizer: adamw
+ema_decay: 0.999
+ema_every: 1
+num_workers: 1
+shuffle_buffer: 64
+log_every: 20
+sample_every: 0
+probe_every: 500
+probe_clips: 16
+probe_max_loops: 8
+ckpt_every: 1000

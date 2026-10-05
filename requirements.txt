@@ -1,0 +1,17 @@
+torch>=2.4
+torchvision
+einops
+pyyaml
+numpy
+pandas
+transformers>=4.40
+sentencepiece
+diffusers>=0.33   # AutoencoderKLWan
+huggingface_hub
+webdataset
+av
+imageio
+imageio-ffmpeg
+bitsandbytes
+matplotlib
+pytest

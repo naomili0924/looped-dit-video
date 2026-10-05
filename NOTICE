@@ -1,0 +1,11 @@
+This project contains code adapted from:
+
+* Looped-DiT (https://github.com/OpenSenseNova/Looped-DiT), MIT License.
+  Loop stages, deep supervision, flow-matching loss and sampler, attention gate, XSA,
+  config / training-loop structure.
+
+* FLUX 3 Action (https://github.com/black-forest-labs/flux-action), Apache License 2.0,
+  Copyright 2026 Black Forest Labs. The transformer building blocks (RoPE, EmbedND,
+  Modulation, ModeBlock, SingleStreamBlock, LastLayer) and position-id layout, modified:
+  action/state/video_cond streams and inference-only code paths removed, gated attention
+  and loop stages added. No FLUX weights are used or distributed.

@@ -1,0 +1,58 @@
+# Looped T2V DiT on the FLUX 3 Action 7B layout (action/state/video_cond streams removed),
+# trained from scratch on a 50K-clip WebVid subset: 17 frames @ 8 fps, 256x256
+# -> Wan2.1 latents [16, 5, 32, 32] -> 5 x 16 x 16 = 1280 video tokens.
+
+model:
+  latent_channels: 16
+  patch_size: [1, 2, 2]
+  context_in_dim: 1024          # FLAN-T5-Large
+  hidden_size: 3072             # FLUX 3 Action
+  num_heads: 24
+  mlp_ratio: 3.0
+  depth: 5                      # per-stream (mode) blocks
+  depth_single_blocks: 28       # joint single-stream blocks
+  axes_dim: [32, 32, 32, 32]    # RoPE over (t, h, w, l)
+  loop_split: [12, 9, 12]       # pre (5 mode + 7 single) / looped / post; Looped-DiT's 6:5:6 ratio
+  num_loops: 4
+  share_loop_weights: true      # false: untied passes (compute-matched "deeper" baseline)
+  use_attn_gate: true           # head-wise sigmoid gated attention in the looped blocks
+  use_xsa: false                # exclusive self-attention (the paper's default) for ablation
+  abs_pos_embed: false          # true: add 3D sincos position to video tokens (MiniT2I-style)
+  grad_checkpointing: true
+
+text_encoder: google/flan-t5-large
+prompt_length: 128
+vae: Wan-AI/Wan2.1-T2V-1.3B-Diffusers
+
+train_shards: ["${DATA_ROOT}/webvid50k/shards"]
+shuffle_buffer: 2000
+num_workers: 4
+
+deep_supervision: true
+deep_supervision_weighting: final_plus_mean
+
+noise_scale: 1.0                # paper: 2.0 for pixels; latents are unit-normalized
+t_logit_mean: -0.8
+t_logit_std: 0.8
+label_drop_rate: 0.1
+
+batch_size: 64                  # paper: 1024
+micro_batch_size: 8
+num_steps: 20000
+warmup_steps: 5000
+learning_rate: 1.0e-4           # paper: 4e-4 at 260M
+adam_beta2: 0.95
+weight_decay: 0.0
+max_grad_norm: 0.1
+optimizer: adamw8bit
+ema_decay: 0.9999               # paper: 0.99995
+ema_every: 10
+
+log_every: 10
+sample_every: 2000
+sample_steps: 50
+probe_every: 2000
+probe_clips: 32
+probe_max_loops: 8
+ckpt_every: 1000
+keep_last: 1
