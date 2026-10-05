@@ -226,14 +226,16 @@ def main() -> None:
             with open(out_dir / "train_log.jsonl", "a") as f:
                 f.write(json.dumps(log) + "\n")
             metric_sums, n_micro, last_time, last_step = {}, 0, now, step
-        if is_main() and (step % cfg.ckpt_every == 0 or step == cfg.num_steps):
+        saved = is_main() and (step % cfg.ckpt_every == 0 or step == cfg.num_steps)
+        if saved:
             save_checkpoint(ckpt_dir, step, model, ema, optimizer, cfg)
-            if cfg.hub_repo and (step % cfg.hub_every == 0 or step == cfg.num_steps):
-                push_to_hub(cfg, out_dir, step)
         if is_main() and cfg.sample_every and step % cfg.sample_every == 0:
             write_samples(cfg, model, ema, text_encoder, latent_shape, out_dir, step, device)
         if is_main() and probe_batch is not None and step % cfg.probe_every == 0:
             probe(cfg, model, ema, text_encoder, probe_batch, out_dir, step, device)
+        # Push last, so the probe results of this step go up with its checkpoint.
+        if saved and cfg.hub_repo and (step % cfg.hub_every == 0 or step == cfg.num_steps):
+            push_to_hub(cfg, out_dir, step)
     if dist.is_initialized():
         dist.barrier()
         dist.destroy_process_group()
