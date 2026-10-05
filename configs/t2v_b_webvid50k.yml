@@ -1,0 +1,60 @@
+# Looped T2V DiT, size B: 276M parameters, the paper's size and its exact 17-block 6/5/6 split.
+# Same blocks as the FLUX 3 Action layout (configs/t2v_7b_webvid50k.yml), scaled down;
+# 50K-clip WebVid subset: 17 frames @ 8 fps, 256x256 -> 1280 video tokens.
+
+model:
+  latent_channels: 16
+  patch_size: [1, 2, 2]
+  context_in_dim: 1024          # FLAN-T5-Large
+  hidden_size: 1024
+  num_heads: 16
+  mlp_ratio: 3.0
+  depth: 2                      # per-stream (mode) blocks
+  depth_single_blocks: 15       # joint single-stream blocks
+  axes_dim: [16, 16, 16, 16]    # RoPE over (t, h, w, l); head dim 64
+  loop_split: [6, 5, 6]         # pre (2 mode + 4 single) / looped / post
+  num_loops: 4
+  share_loop_weights: true      # false: untied passes (compute-matched "deeper" baseline)
+  use_attn_gate: true           # head-wise sigmoid gated attention in the looped blocks
+  use_xsa: false                # exclusive self-attention (the paper's default) for ablation
+  abs_pos_embed: false          # true: add 3D sincos position to video tokens (MiniT2I-style)
+  grad_checkpointing: true      # without it a micro-batch of 16 already needs > 56 GB
+
+text_encoder: google/flan-t5-large
+prompt_length: 128
+vae: Wan-AI/Wan2.1-T2V-1.3B-Diffusers
+
+train_shards: ["${DATA_ROOT}/webvid50k/shards"]
+shuffle_buffer: 2000
+num_workers: 4
+
+deep_supervision: true
+deep_supervision_weighting: final_plus_mean
+
+noise_scale: 1.0                # paper: 2.0 for pixels; latents are unit-normalized
+t_logit_mean: -0.8
+t_logit_std: 0.8
+label_drop_rate: 0.1
+
+batch_size: 64                  # paper: 1024
+micro_batch_size: 64
+num_steps: 20000
+warmup_steps: 1000              # paper: 5000 of 250K+ steps; a step is ~1 min here
+learning_rate: 1.0e-4           # paper: 4e-4 at 260M
+adam_beta2: 0.95
+weight_decay: 0.0
+max_grad_norm: 0.1
+optimizer: adamw
+ema_decay: 0.9999               # paper: 0.99995
+ema_every: 10
+
+log_every: 10
+sample_every: 1000
+sample_steps: 50
+probe_every: 1000
+probe_clips: 32
+probe_max_loops: 8
+ckpt_every: 250
+keep_last: 2
+hub_repo: ""                    # e.g. <user>/looped-dit-t2v; needs HF_TOKEN in the environment
+hub_every: 1000                 # small EMA files, push often

@@ -129,7 +129,8 @@ def test_run_probe_end_to_end():
 
 
 def test_configs_load():
-    for name in ("t2v_7b_webvid50k", "t2v_7b_webvid1m", "tiny"):
+    for name in ("t2v_7b_webvid50k", "t2v_7b_webvid1m", "t2v_s_webvid50k", "t2v_b_webvid50k",
+                 "t2v_l_webvid50k", "tiny"):
         cfg = TrainConfig.from_yaml(f"configs/{name}.yml")
         assert cfg.model.loop_split[0] >= cfg.model.depth
     cfg = TrainConfig.from_yaml("configs/tiny.yml", {"model.num_loops": 2})

@@ -29,6 +29,25 @@ x0_hat(r) = C(h_r)  post-loop: 12 joint single blocks + final layer             
 
 > **Note on the probe and FLUX:** FLUX is RoPE-only, so absolute position never enters the hidden states. It is injected only through attention logits. A freshly initialised model therefore has R²≈0 at every depth, unlike the paper's MiniT2I, which adds a sincos position embedding. Set `model.abs_pos_embed: true` to probe the paper's question ("does looping erode local positional information?") under the paper's conditions.
 
+## Model sizes
+
+Every size uses the same code, blocks and training recipe; only the config file differs, so moving between a small model and the full FLUX layout is a change of `--config`.
+
+| Config | Width / heads | Blocks (pre / looped / post) | Parameters | Step time, batch 64, one H200 |
+|---|---|---|---|---|
+| `configs/t2v_s_webvid50k.yml` | 768 / 12 | 17 (6 / 5 / 6) | 156M | not measured |
+| `configs/t2v_b_webvid50k.yml` | 1024 / 16 | 17 (6 / 5 / 6), the paper's split and size | 276M | ~3.6 s, 21 GB |
+| `configs/t2v_l_webvid50k.yml` | 1536 / 24 | 23 (8 / 7 / 8) | 836M | not measured |
+| `configs/t2v_7b_webvid50k.yml` | 3072 / 24 | 33 (12 / 9 / 12), FLUX 3 Action layout | 4.81B | ~34 s, 71 GB |
+
+```bash
+python -m ldv.train --config configs/t2v_b_webvid50k.yml  --output-dir $DATA_ROOT/outputs/webvid50k_b    # small
+python -m ldv.train --config configs/t2v_7b_webvid50k.yml --output-dir $DATA_ROOT/outputs/webvid50k      # full FLUX layout
+torchrun --nproc_per_node=8 -m ldv.train --config configs/t2v_7b_webvid50k.yml --output-dir ...           # more GPUs
+```
+
+The data shards are shared by all sizes. Checkpoints are not interchangeable between sizes.
+
 ## Layout
 
 ```
@@ -41,7 +60,7 @@ ldv/train.py        training loop (single GPU or DDP), CPU EMA, sampling, period
 ldv/sample.py       generate videos at any loop depth
 scripts/prepare_webvid.py   download -> decode -> VAE encode -> latent shards (no raw mp4 kept)
 scripts/probe.py            standalone probe of a checkpoint -> R² vs loop depth (+ plot)
-configs/            t2v_7b_webvid50k.yml, t2v_7b_webvid1m.yml, tiny.yml
+configs/            t2v_{s,b,l,7b}_webvid50k.yml, t2v_7b_webvid1m.yml, tiny.yml
 ```
 
 ## Quickstart
@@ -70,9 +89,9 @@ To back checkpoints up off the box, set `HF_TOKEN` and pass `--set hub_repo=<use
 
 Ablations use `--set`, e.g. `--set model.use_attn_gate=false model.use_xsa=true` (the paper's XSA), `model.num_loops=1 deep_supervision=false` (no looping), `model.share_loop_weights=false` (compute-matched untied baseline) or `model.abs_pos_embed=true`.
 
-## Measured on one H200 (4.81B model, 17x256x256 clips)
+## Measured on one H200 (17x256x256 clips)
 
-A step at batch 64 (4 micro-batches of 16, gradient checkpointing, 4 loops with deep supervision) takes about 34 s and peaks at 71 GB of GPU memory: roughly 160K clips per day. The 20K-step 50K-clip config is therefore about 8 days on a single GPU; use `torchrun` on more GPUs, or fewer steps, to shorten it. Preparing the 50K clips (download, decode, VAE encode) takes about 75 minutes with 72 CPU workers.
+For the 4.81B model, a step at batch 64 (4 micro-batches of 16, gradient checkpointing, 4 loops with deep supervision) takes about 34 s and peaks at 71 GB of GPU memory: roughly 160K clips per day. The 20K-step 50K-clip config is therefore about 8 days on a single GPU; use `torchrun` on more GPUs, fewer steps, or a smaller model size to shorten it. The 276M model takes about 3.6 s per step (micro-batch 64), about 20 hours for 20K steps. Preparing the 50K clips (download, decode, VAE encode) takes about 75 minutes with 72 CPU workers.
 
 ## Tests
 
