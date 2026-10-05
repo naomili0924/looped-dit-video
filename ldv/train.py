@@ -88,6 +88,10 @@ def push_to_hub(cfg: TrainConfig, out_dir: Path, step: int) -> None:
         api.upload_file(path_or_fileobj=str(out_dir / "ema_latest.pt"), path_in_repo=f"ema_{step:07d}.pt",
                         repo_id=cfg.hub_repo)
         api.upload_file(path_or_fileobj=str(out_dir / "config.yaml"), path_in_repo="config.yaml", repo_id=cfg.hub_repo)
+        for name in ("train_log.jsonl", "probe.jsonl"):
+            if (out_dir / name).exists():
+                api.upload_file(path_or_fileobj=str(out_dir / name), path_in_repo=name, repo_id=cfg.hub_repo)
+        print(f"[hub] pushed step {step} to {cfg.hub_repo}", flush=True)
     except Exception as e:  # never kill training for an upload
         print(f"[hub] upload failed: {e}", flush=True)
 
@@ -224,7 +228,7 @@ def main() -> None:
             metric_sums, n_micro, last_time, last_step = {}, 0, now, step
         if is_main() and (step % cfg.ckpt_every == 0 or step == cfg.num_steps):
             save_checkpoint(ckpt_dir, step, model, ema, optimizer, cfg)
-            if cfg.hub_repo:
+            if cfg.hub_repo and (step % cfg.hub_every == 0 or step == cfg.num_steps):
                 push_to_hub(cfg, out_dir, step)
         if is_main() and cfg.sample_every and step % cfg.sample_every == 0:
             write_samples(cfg, model, ema, text_encoder, latent_shape, out_dir, step, device)

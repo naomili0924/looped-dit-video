@@ -25,7 +25,7 @@ x0_hat(r) = C(h_r)  post-loop: 12 joint single blocks + final layer             
 | Timestep conditioning | none | FLUX adaLN (kept, part of the base model) |
 | Text encoder | FLAN-T5-Large, 256 tokens | FLAN-T5-Large, **128** tokens (WebVid captions are short) |
 | Ridge probe | probe 2D patch coordinates per loop (analysis only) | probe **3D (t,h,w)** coordinates per loop: R² per axis, space, joint (analysis only, never in the loss) |
-| Optimizer | AdamW (0.9, 0.95), wd 0, clip 0.1, warmup 5K, lr 4e-4, batch 1024, EMA 0.99995 | same, except 8-bit AdamW (memory), **lr 1e-4** (4.8B vs 260M), **batch 64** for the 50K run, **EMA 0.9999** for short runs (CPU-resident) |
+| Optimizer | AdamW (0.9, 0.95), wd 0, clip 0.1, warmup 5K, lr 4e-4, batch 1024, EMA 0.99995 | same, except 8-bit AdamW (memory), **lr 1e-4** (4.8B vs 260M), **batch 64** and **warmup 1K** for the 50K run, **EMA 0.9999** for short runs (CPU-resident) |
 
 > **Note on the probe and FLUX:** FLUX is RoPE-only, so absolute position never enters the hidden states. It is injected only through attention logits. A freshly initialised model therefore has R²≈0 at every depth, unlike the paper's MiniT2I, which adds a sincos position embedding. Set `model.abs_pos_embed: true` to probe the paper's question ("does looping erode local positional information?") under the paper's conditions.
 
@@ -66,7 +66,13 @@ python scripts/prepare_webvid.py --out $DATA_ROOT/webvid1m --num-clips 1000000 -
 torchrun --nproc_per_node=8 -m ldv.train --config configs/t2v_7b_webvid1m.yml --output-dir ...
 ```
 
+To back checkpoints up off the box, set `HF_TOKEN` and pass `--set hub_repo=<user>/<repo>`: the EMA weights, config and logs are pushed to a private Hugging Face model repo every `hub_every` steps.
+
 Ablations use `--set`, e.g. `--set model.use_attn_gate=false model.use_xsa=true` (the paper's XSA), `model.num_loops=1 deep_supervision=false` (no looping), `model.share_loop_weights=false` (compute-matched untied baseline) or `model.abs_pos_embed=true`.
+
+## Measured on one H200 (4.81B model, 17x256x256 clips)
+
+A step at batch 64 (8 micro-batches of 8, gradient checkpointing, 4 loops with deep supervision) takes about 60 s and peaks at 63 GB of GPU memory: roughly 90K clips per day. The 20K-step 50K-clip config is therefore about two weeks on a single GPU; use `torchrun` on more GPUs, or fewer steps, to shorten it.
 
 ## Tests
 

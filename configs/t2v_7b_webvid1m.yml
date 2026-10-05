@@ -56,3 +56,5 @@ probe_clips: 32
 probe_max_loops: 8
 ckpt_every: 1000
 keep_last: 1
+hub_repo: ""                    # e.g. <user>/looped-dit-t2v; needs HF_TOKEN in the environment
+hub_every: 5000

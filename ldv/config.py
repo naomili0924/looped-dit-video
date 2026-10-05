@@ -103,7 +103,8 @@ class TrainConfig:
     probe_max_loops: int = 8
     ckpt_every: int = 1_000
     keep_last: int = 1
-    hub_repo: str = ""  # optional HF Hub model repo to push EMA weights to at each checkpoint
+    hub_repo: str = ""  # optional HF Hub model repo (created private) to push EMA weights to
+    hub_every: int = 5_000  # push when a checkpoint lands on a multiple of this (each push is the full EMA)
 
     @classmethod
     def from_dict(cls, values: dict[str, Any]) -> TrainConfig:

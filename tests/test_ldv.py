@@ -153,3 +153,28 @@ def test_abs_pos_embed_makes_position_decodable_at_init():
     x, _, text, mask = inputs(b=8, t=3, h=8, w=8)
     rows = run_probe(m, x, text, mask, num_loops=1, t_values=(0.5,), tokens_per_clip=48)
     assert rows[0]["r2_joint"] > 0.9  # h_0 carries the absolute position
+
+
+def test_loader_reads_from_every_worker(tmp_path):
+    """Regression: with several dataloader workers, each must yield samples (one shard each)."""
+    import io
+    import tarfile
+
+    from ldv.data import make_loader
+
+    for shard in range(2):
+        with tarfile.open(tmp_path / f"s{shard}.tar", "w") as tar:
+            for i in range(6):
+                buf = io.BytesIO()
+                torch.save(torch.full((16, 2, 4, 4), float(shard)), buf)
+                for ext, data in (("latent.pth", buf.getvalue()), ("txt", f"clip {shard}-{i}".encode())):
+                    info = tarfile.TarInfo(f"{shard}{i:03d}.{ext}")
+                    info.size = len(data)
+                    tar.addfile(info, io.BytesIO(data))
+    loader = iter(make_loader(str(tmp_path), batch_size=4, num_workers=2, shuffle_buffer=0))
+    seen = set()
+    for _ in range(4):  # round-robin over the two workers
+        batch = next(loader)
+        assert batch["latents"].shape == (4, 16, 2, 4, 4)
+        seen |= {c.split()[1].split("-")[0] for c in batch["caption"]}
+    assert seen == {"0", "1"}

@@ -68,6 +68,8 @@ def decode_clip(data: bytes, num_frames: int, fps: float, size: int, rng: random
 def fetch_and_decode(job: tuple) -> tuple | None:
     """Worker entry point: (videoid, url, caption, num_frames, fps, size, seed) -> (videoid, caption, clip) or None."""
     videoid, url, caption, num_frames, fps, size, seed = job
+    if torch.get_num_threads() != 1:  # many workers in parallel: one thread each, or they oversubscribe the CPUs
+        torch.set_num_threads(1)
     try:
         clip = decode_clip(fetch(url), num_frames, fps, size, random.Random(seed))
         return videoid, caption, clip
@@ -113,14 +115,24 @@ class LatentShardStream(IterableDataset):
     def _samples(self, shards: list[str], rng: random.Random):
         import webdataset as wds
 
+        def keep(urls):  # shards are already split over (rank, worker) in _my_shards
+            return urls
+
         while True:
+            seen = 0
             for url in rng.sample(shards, len(shards)):
                 try:
-                    for s in wds.WebDataset(url, shardshuffle=False, empty_check=False):
+                    # Without the identity splitters WebDataset splits this single url over the
+                    # dataloader workers again, and every worker but the first reads nothing.
+                    for s in wds.WebDataset(url, shardshuffle=False, empty_check=False,
+                                            nodesplitter=keep, workersplitter=keep):
                         lat = torch.load(io.BytesIO(s["latent.pth"]), map_location="cpu", weights_only=True)
+                        seen += 1
                         yield {"latents": lat, "caption": s["txt"].decode("utf-8")}
                 except Exception as e:  # a truncated shard should not kill training
                     print(f"[data] skipping {url}: {e}", flush=True)
+            if not seen:  # never spin silently on shards that yield nothing
+                raise RuntimeError(f"no samples could be read from {shards}")
 
     def __iter__(self):
         shards, index = self._my_shards()

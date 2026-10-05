@@ -77,6 +77,15 @@ def main() -> None:
     out = Path(args.out)
     shard_dir = out / "shards"
     shard_dir.mkdir(parents=True, exist_ok=True)
+    import fcntl
+
+    lock = open(out / ".lock", "w")  # held for the life of the process
+    try:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        sys.exit(f"another prepare_webvid.py is already writing {out}")
+    for stale in shard_dir.glob("*.tar.tmp"):  # left by an interrupted run
+        stale.unlink()
     manifest_path = out / "manifest.json"
     manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else {"shards": {}, "clips": 0}
     device = torch.device("cuda")

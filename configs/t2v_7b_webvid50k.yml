@@ -39,7 +39,7 @@ label_drop_rate: 0.1
 batch_size: 64                  # paper: 1024
 micro_batch_size: 8
 num_steps: 20000
-warmup_steps: 5000
+warmup_steps: 1000              # paper: 5000 of 250K+ steps; a step is ~1 min here
 learning_rate: 1.0e-4           # paper: 4e-4 at 260M
 adam_beta2: 0.95
 weight_decay: 0.0
@@ -54,5 +54,7 @@ sample_steps: 50
 probe_every: 2000
 probe_clips: 32
 probe_max_loops: 8
-ckpt_every: 1000
+ckpt_every: 250                 # ~4 h apart on one H200
 keep_last: 1
+hub_repo: ""                    # e.g. <user>/looped-dit-t2v; needs HF_TOKEN in the environment
+hub_every: 2500                 # each push is ~9 GB of EMA weights
