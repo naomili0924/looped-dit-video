@@ -118,6 +118,59 @@ def plan_episode(ep: int, length: int, info: dict, task_label: str, per_episode:
     return clips
 
 
+class ResumableHTTPFile:
+    """Sequential reader over an HTTP resource that reconnects with a Range request when the connection
+    drops (the Hub closes long bundle streams now and then), so tar/gzip see one unbroken stream."""
+
+    def __init__(self, url: str, timeout: float = 120.0, max_reconnects: int = 50):
+        self.url, self.timeout, self.max_reconnects = url, timeout, max_reconnects
+        self.offset, self.reconnects, self.resp, self.length = 0, 0, None, None
+        self._open()
+
+    def _open(self) -> None:
+        headers = {"User-Agent": "looped-dit-video/0.1"}
+        if self.offset:
+            headers["Range"] = f"bytes={self.offset}-"
+        self.resp = urllib.request.urlopen(urllib.request.Request(self.url, headers=headers), timeout=self.timeout)
+        if self.length is None:
+            self.length = int(self.resp.headers["Content-Length"])
+        elif self.resp.status != 206:
+            raise OSError(f"server ignored Range at offset {self.offset} (status {self.resp.status})")
+
+    def _reconnect(self) -> None:
+        self.reconnects += 1
+        if self.reconnects > self.max_reconnects:
+            raise OSError("too many reconnects")
+        try:
+            self.resp.close()
+        except Exception:
+            pass
+        time.sleep(min(60, 2 ** min(self.reconnects, 6)))
+        self._open()
+
+    def read(self, size: int = -1) -> bytes:
+        if size < 0:
+            size = self.length - self.offset
+        out = bytearray()
+        while len(out) < size and self.offset < self.length:
+            try:
+                chunk = self.resp.read(min(size - len(out), 1 << 20))
+            except Exception:
+                chunk = None
+            if not chunk:  # an error, or EOF before the resource's end: reconnect at the current offset
+                self._reconnect()
+                continue
+            out += chunk
+            self.offset += len(chunk)
+        return bytes(out)
+
+    def close(self) -> None:
+        try:
+            self.resp.close()
+        except Exception:
+            pass
+
+
 def stream_bundle(job: tuple) -> None:
     """Worker: stream one bundle, decode its planned head-camera clips, push them to the queue."""
     bundle, per_episode, seed, queue = job
@@ -128,8 +181,8 @@ def stream_bundle(job: tuple) -> None:
     rng = random.Random(seed)
     info, lengths, tasks, planned, n_clips = None, {}, {}, {}, 0
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": "looped-dit-video/0.1"})
-        with urllib.request.urlopen(req, timeout=300) as resp:
+        resp = ResumableHTTPFile(url)
+        try:
             with tarfile.open(fileobj=resp, mode="r|gz") as tar:
                 for m in tar:
                     name = m.name
@@ -180,6 +233,8 @@ def stream_bundle(job: tuple) -> None:
                                         "scene": tasks[ep], "fps": FPS / STRIDE, "num_frames": FRAMES, "hw": OUT_HW}
                                 queue.put(("clip", cid, make_caption(c["instr"], c["sub"], scene, rng), meta, np.stack(frames[ci])))
                                 n_clips += 1
+        finally:
+            resp.close()
         queue.put(("done", bundle["path"], n_clips, ""))
     except Exception as e:
         queue.put(("done", bundle["path"], n_clips, f"{type(e).__name__}: {str(e)[:200]}"))
@@ -289,6 +344,8 @@ def main() -> None:
 
     running: dict[str, mp.Process] = {}
     pending = list(todo)
+    by_path = {b["path"]: b for b in todo}
+    attempts: dict[str, int] = defaultdict(int)
     finished = 0
     while pending or running:
         while pending and len(running) < args.streams:
@@ -306,7 +363,11 @@ def main() -> None:
             running.pop(path).join()
             finished += 1
             if err:
-                print(f"[fail] {path}: {err}", flush=True)
+                attempts[path] += 1
+                retry = attempts[path] < 3 and n == 0  # a dropped stream; a bundle that yielded clips is not redone
+                print(f"[fail] {path}: {err}" + (" (will retry)" if retry else ""), flush=True)
+                if retry:
+                    pending.append(by_path[path])
             else:
                 with open(done_path, "a") as f:
                     f.write(path + "\n")
