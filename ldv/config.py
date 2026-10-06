@@ -51,10 +51,21 @@ def _coerce(obj, values: dict[str, Any]):
 class TrainConfig:
     model: ModelConfig = field(default_factory=ModelConfig)
 
-    # Frozen encoders
+    # Frozen encoders. "flux3:<path>" selects the FLUX 3 Action encoders (Qwen3-VL context, KinoVAE).
     text_encoder: str = "google/flan-t5-large"
     prompt_length: int = 128
     vae: str = "Wan-AI/Wan2.1-T2V-1.3B-Diffusers"
+
+    # Pretrained FLUX 3 Action trunk + LoRA (empty pretrained = train from scratch, no LoRA).
+    pretrained: str = ""  # path to flux-3-action-base.safetensors
+    lora_rank: int = 0  # 0 = no LoRA (full training)
+    lora_alpha: float = 0.0  # 0 = rank
+    lora_dropout: float = 0.0
+    train_full_modules: list[str] = field(default_factory=list)  # modules trained fully alongside LoRA
+    objective: str = "x0"  # x0 (Looped-DiT: x0 prediction, t=1 data) | flux (velocity, t=1 noise)
+    t_width: float = 1.0  # flux objective: logistic width of the timestep distribution
+    t_shift: float = 42.0  # flux objective: rational time shift
+    sample_shift: float = 5.0  # flux sampler: time shift
 
     # Data: latent shards from scripts/prepare_webvid.py
     train_shards: list[str] = field(default_factory=lambda: ["${DATA_ROOT}/webvid50k/shards"])
@@ -134,6 +145,10 @@ class TrainConfig:
             raise ValueError("deep_supervision needs model.num_loops >= 2")
         if self.optimizer not in ("adamw8bit", "adamw"):
             raise ValueError(f"unknown optimizer {self.optimizer!r}")
+        if self.objective not in ("x0", "flux"):
+            raise ValueError(f"objective must be x0 or flux, got {self.objective!r}")
+        if self.lora_rank and not self.pretrained:
+            raise ValueError("lora_rank needs a pretrained checkpoint")
 
     def to_dict(self) -> dict[str, Any]:
         d = asdict(self)

@@ -49,9 +49,10 @@ class CPUEma:
     """fp32 EMA of the model kept in host memory, updated every `every` steps
     (decay compounded accordingly), so a 5-7B model's EMA costs no GPU memory."""
 
-    def __init__(self, model: torch.nn.Module, decay: float, every: int = 1):
-        self.decay, self.every = decay, max(1, every)
-        self.params = {n: p.detach().float().cpu().pin_memory() for n, p in model.named_parameters()}
+    def __init__(self, model: torch.nn.Module, decay: float, every: int = 1, only_trainable: bool = False):
+        self.decay, self.every, self.only_trainable = decay, max(1, every), only_trainable
+        self.params = {n: p.detach().float().cpu().pin_memory() for n, p in model.named_parameters()
+                       if p.requires_grad or not only_trainable}
 
     @torch.no_grad()
     def update(self, model: torch.nn.Module, step: int) -> None:
@@ -61,8 +62,24 @@ class CPUEma:
         # random initialization is averaged out early instead of lingering for ~1 / (1 - decay) steps.
         d = min(self.decay, (1 + step) / (10 + step)) ** self.every
         for n, p in model.named_parameters():
-            e = self.params[n]
-            e.mul_(d).add_(p.detach().float().cpu(), alpha=1 - d)
+            if n in self.params:
+                self.params[n].mul_(d).add_(p.detach().float().cpu(), alpha=1 - d)
+
+    @torch.no_grad()
+    def swap_in(self, model: torch.nn.Module) -> dict:
+        """Load the EMA values into the model's tracked params; returns a stash for swap_out."""
+        stash = {}
+        for n, p in model.named_parameters():
+            if n in self.params:
+                stash[n] = p.detach().clone()
+                p.copy_(self.params[n].to(p.device, p.dtype))
+        return stash
+
+    @torch.no_grad()
+    def swap_out(self, model: torch.nn.Module, stash: dict) -> None:
+        for n, p in model.named_parameters():
+            if n in stash:
+                p.copy_(stash[n])
 
     def state_dict(self, dtype=torch.bfloat16) -> dict:
         return {n: p.to(dtype) for n, p in self.params.items()}

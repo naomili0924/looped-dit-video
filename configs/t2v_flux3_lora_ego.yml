@@ -1,0 +1,74 @@
+# Looped-DiT on top of the pretrained FLUX 3 Action 7B trunk: LoRA fine-tune for humanoid egocentric
+# text-to-video (HIW-500 + AgiBot World clips, 17 frames @ 7.5 fps, 384x512 -> KinoVAE latents
+# [96, 5, 12, 16] = 960 video tokens). The loop is exactly the WebVid setup: [12, 9, 12], N = 4,
+# shared core, deep supervision, gated attention. Weights: black-forest-labs/flux-3-action-base
+# (FLUX Kommunity License: non-commercial unless a "Qualifying User").
+
+model:
+  latent_channels: 96
+  patch_size: [1, 1, 1]
+  context_in_dim: 20480         # Qwen3-VL-4B, 8 layers x 2560
+  hidden_size: 3072
+  num_heads: 24
+  mlp_ratio: 3.0
+  depth: 5
+  depth_single_blocks: 28
+  axes_dim: [32, 32, 32, 32]
+  loop_split: [12, 9, 12]
+  num_loops: 4
+  share_loop_weights: true
+  use_attn_gate: true
+  use_xsa: false
+  text_timestep_zero: true      # FLUX: text tokens modulated at t = 0
+  time_id_stride: 53            # 4 frames / 7.5 fps = 0.533 s per latent frame, in 10 ms units
+  attn_gate_init: 4.0           # gates start ~98% open so the pretrained function is preserved at init
+  grad_checkpointing: true
+
+pretrained: /dev/shm/ldv/flux3/base/flux-3-action-base.safetensors
+lora_rank: 64
+lora_alpha: 64
+train_full_modules: []
+objective: flux
+t_width: 1.0
+t_shift: 42.0
+sample_shift: 5.0
+
+text_encoder: flux3:/dev/shm/ldv/flux3/base/text_encoder
+vae: flux3:/dev/shm/ldv/flux3/base/video_vae.safetensors
+
+train_shards: ["${DATA_ROOT}/hiw500/shards", "${DATA_ROOT}/agibot/shards"]
+shuffle_buffer: 4000
+num_workers: 4
+
+deep_supervision: true
+deep_supervision_weighting: final_plus_mean
+label_drop_rate: 0.1
+
+batch_size: 64
+micro_batch_size: 16
+num_steps: 25000                # ~3 passes over 500K clips
+warmup_steps: 500
+learning_rate: 1.0e-4
+adam_beta2: 0.95
+weight_decay: 0.0
+max_grad_norm: 0.1
+optimizer: adamw
+ema_decay: 0.9999
+ema_every: 10
+
+sample_every: 1000
+sample_steps: 50
+sample_cfg: 4.0
+sample_prompts:
+  - "Egocentric view from a humanoid robot: pick up the pillow from the bed."
+  - "First-person video from a humanoid robot's head camera while it is working to clean up the room: move to the trash can."
+  - "A humanoid robot places a book on the shelf, seen from its own head camera."
+  - "POV of a humanoid robot as it opens the refrigerator door in a kitchen."
+log_every: 10
+probe_every: 1000
+probe_clips: 32
+probe_max_loops: 8
+ckpt_every: 1000
+keep_last: 2
+hub_repo: ""
+hub_every: 1000

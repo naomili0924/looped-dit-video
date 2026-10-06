@@ -79,7 +79,7 @@ class RidgeProbe:
 
 @torch.no_grad()
 def collect_states(model, latents, text, text_mask, t: float, num_loops: int, tokens_per_clip: int,
-                   noise_scale: float = 1.0, seed: int = 0):
+                   noise_scale: float = 1.0, seed: int = 0, convention: str = "x0"):
     """Noise clips to flow time t and return per-depth features.
 
     Returns (states, coords, groups): states[r] is [N, D] video-token features after r loops
@@ -88,7 +88,8 @@ def collect_states(model, latents, text, text_mask, t: float, num_loops: int, to
     b = latents.shape[0]
     tt = torch.full((b,), t, device=latents.device)
     noise = torch.randn(latents.shape, device=latents.device, generator=g) * noise_scale
-    x_t = latents * t + noise * (1 - t)
+    # x0 convention: t = 1 is data; flux convention: t = 1 is noise (same mix at t = 0.5)
+    x_t = latents * t + noise * (1 - t) if convention == "x0" else noise * t + latents * (1 - t)
     dtype = next(model.parameters()).dtype
     amp = dtype if dtype in (torch.float16, torch.bfloat16) else torch.bfloat16
     with torch.autocast("cuda", dtype=amp, enabled=latents.is_cuda):
@@ -107,7 +108,7 @@ def collect_states(model, latents, text, text_mask, t: float, num_loops: int, to
 @torch.no_grad()
 def run_probe(model, latents, text, text_mask, *, num_loops: int, t_values=(0.25, 0.5, 0.75),
               test_frac: float = 0.25, tokens_per_clip: int = 256, noise_scale: float = 1.0,
-              micro_batch: int = 4, lambdas=DEFAULT_LAMBDAS) -> list[dict]:
+              micro_batch: int = 4, lambdas=DEFAULT_LAMBDAS, convention: str = "x0") -> list[dict]:
     """Fit the probe on some clips and evaluate on held-out clips, for each loop depth and t.
     Returns rows {"t", "loop", r2_t, r2_h, r2_w, r2_space, r2_joint, lambda_*}."""
     was_training = model.training
@@ -120,7 +121,7 @@ def run_probe(model, latents, text, text_mask, *, num_loops: int, t_values=(0.25
         for s in range(0, b, micro_batch):
             sl = slice(s, s + micro_batch)
             f, c, g = collect_states(model, latents[sl], text[sl], text_mask[sl], t, num_loops,
-                                     tokens_per_clip, noise_scale, seed=s)
+                                     tokens_per_clip, noise_scale, seed=s, convention=convention)
             per_depth = [[x] for x in f] if per_depth is None else [p + [x] for p, x in zip(per_depth, f)]
             coords.append(c)
             groups.append(g + s)

@@ -23,7 +23,8 @@ from torch.nn.parallel import DistributedDataParallel as DDP
 from .config import TrainConfig
 from .data import list_shards, make_loader
 from .diffusion import deep_supervision_weights, euler_sample, training_loss
-from .encoders import TextEncoder
+from .encoders import FluxTextEncoder, TextEncoder
+from .flux3 import add_lora, flux_euler_sample, flux_training_loss, load_flux3_weights, set_trainable
 from .model import LoopedFluxT2V
 from .utils import CPUEma, atomic_save, init_distributed, is_main, learning_rate, rank, seed_everything, world_size
 
@@ -36,6 +37,51 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--set", nargs="*", default=[], metavar="KEY=VALUE", help="override config values (model.x=...)")
     p.add_argument("--max-steps", type=int, help="stop after this many steps in this invocation (smoke tests)")
     return p.parse_args()
+
+
+def build_model(cfg: TrainConfig, device) -> LoopedFluxT2V:
+    """From scratch: fp32 weights, all trainable. With cfg.pretrained: the FLUX 3 Action trunk in bf16,
+    frozen, plus fp32 LoRA adapters / attention gates (and cfg.train_full_modules) as the trainable set."""
+    with torch.device(device):  # build on the GPU: CPU init of ~5B params is slow
+        model = LoopedFluxT2V(cfg.model)
+        if not cfg.pretrained:
+            return model
+        info = load_flux3_weights(model, cfg.pretrained)
+        model.to(torch.bfloat16)
+        if cfg.lora_rank:
+            add_lora(model, cfg.lora_rank, cfg.lora_alpha or None, dropout=cfg.lora_dropout)
+        counts = set_trainable(model, train_gates=cfg.model.use_attn_gate, full_modules=tuple(cfg.train_full_modules))
+        for prm in model.parameters():  # trainable params in fp32 (master weights); frozen trunk stays bf16
+            if prm.requires_grad:
+                prm.data = prm.data.float()
+    if is_main():
+        print(f"loaded {info['loaded']} pretrained tensors; trainable {counts['trainable'] / 1e6:.1f}M of "
+              f"{counts['total'] / 1e9:.2f}B ({counts['trainable_pct']:.2f}%)", flush=True)
+    return model
+
+
+def make_text_encoder(cfg: TrainConfig, device):
+    if cfg.text_encoder.startswith("flux3:"):
+        return FluxTextEncoder(cfg.text_encoder[6:], device)
+    return TextEncoder(cfg.text_encoder, cfg.prompt_length, device)
+
+
+def make_vae(cfg: TrainConfig, device):
+    if cfg.vae.startswith("flux3:"):
+        from .encoders import FluxVAE
+
+        return FluxVAE(device, cfg.vae[6:])
+    from .encoders import WanVAE
+
+    return WanVAE(device, repo=cfg.vae)
+
+
+def compute_loss(cfg: TrainConfig, fwd, latents, text, text_mask, text_encoder, exit_weights):
+    if cfg.objective == "flux":
+        return flux_training_loss(fwd, latents, text, text_encoder.null.to(text.device)[None], exit_weights,
+                                  t_width=cfg.t_width, t_shift=cfg.t_shift, label_drop_rate=cfg.label_drop_rate)
+    return training_loss(fwd, latents, text, text_mask, exit_weights, noise_scale=cfg.noise_scale,
+                         t_logit_mean=cfg.t_logit_mean, t_logit_std=cfg.t_logit_std, label_drop_rate=cfg.label_drop_rate)
 
 
 def make_optimizer(cfg: TrainConfig, model: torch.nn.Module):
@@ -57,7 +103,8 @@ def save_checkpoint(directory: Path, step: int, model, ema: CPUEma, optimizer, c
     path = directory / f"checkpoint_{step:07d}.pt"
     for old in checkpoints(directory)[: max(0, len(checkpoints(directory)) - cfg.keep_last + 1)]:
         old.unlink()  # free tmpfs space before writing the new one
-    atomic_save({"step": step, "model": model.state_dict(), "ema": ema.state_dict(),
+    weights = {n: p.detach() for n, p in model.named_parameters() if p.requires_grad} if cfg.pretrained else model.state_dict()
+    atomic_save({"step": step, "model": weights, "ema": ema.state_dict(),
                  "optimizer": optimizer.state_dict(), "config": cfg.to_dict()}, path)
     atomic_save({"step": step, "ema": ema.state_dict(), "config": cfg.to_dict()}, directory.parent / "ema_latest.pt")
     return path
@@ -70,7 +117,12 @@ def load_checkpoint(path: Path, model, ema: CPUEma, optimizer, cfg: TrainConfig)
                 if ckpt["config"]["model"].get(k) != v and k != "grad_checkpointing"}
         if diff:
             raise ValueError(f"{path} has a different architecture: {diff}")
-    model.load_state_dict({k: v.float() for k, v in ckpt.get("model", ckpt["ema"]).items()})
+    sd = {k: v.float() for k, v in ckpt.get("model", ckpt["ema"]).items()}
+    if cfg.pretrained:  # checkpoint holds the trainable subset only
+        res = model.load_state_dict(sd, strict=False)
+        assert not res.unexpected_keys, res.unexpected_keys[:5]
+    else:
+        model.load_state_dict(sd)
     ema.load_state_dict(ckpt["ema"])
     if "optimizer" in ckpt:
         optimizer.load_state_dict(ckpt["optimizer"])
@@ -96,29 +148,49 @@ def push_to_hub(cfg: TrainConfig, out_dir: Path, step: int) -> None:
         print(f"[hub] upload failed: {e}", flush=True)
 
 
-@torch.no_grad()
-def ema_model(model: LoopedFluxT2V, ema: CPUEma, device) -> LoopedFluxT2V:
+@contextlib.contextmanager
+def ema_model(model: LoopedFluxT2V, ema: CPUEma, device):
+    """Yields a model with the EMA weights: a bf16 copy for from-scratch runs, or the live model with
+    its trainable (LoRA) params swapped for their EMA when the trunk is pretrained."""
+    if ema.only_trainable:
+        stash = ema.swap_in(model)
+        was_training = model.training
+        model.eval()
+        try:
+            yield model
+        finally:
+            ema.swap_out(model, stash)
+            model.train(was_training)
+        return
     with torch.device(device):
         m = LoopedFluxT2V(model.cfg).to(dtype=torch.bfloat16).eval().requires_grad_(False)
     m.load_state_dict(ema.state_dict(torch.bfloat16))
-    return m
+    try:
+        yield m
+    finally:
+        del m
+        torch.cuda.empty_cache()
 
 
 @torch.no_grad()
 def write_samples(cfg: TrainConfig, model, ema, text_encoder, latent_shape, out_dir: Path, step: int, device) -> None:
-    from .encoders import WanVAE
     from .video import save_video_grid
 
-    m = ema_model(model, ema, device)
     text, mask = text_encoder(cfg.sample_prompts)
     g = torch.Generator(device=device).manual_seed(0)
-    vae = WanVAE(device, repo=cfg.vae)
-    for loops in sorted({1, cfg.model.num_loops}):
-        lat = euler_sample(m, text.to(torch.bfloat16), mask, latent_shape, steps=cfg.sample_steps,
-                           cfg_scale=cfg.sample_cfg, noise_scale=cfg.noise_scale, num_loops=loops, generator=g)
-        videos = vae.decode(lat)
-        save_video_grid(videos, out_dir / "samples" / f"{step:07d}_loops{loops}.mp4")
-    del m, vae
+    vae = make_vae(cfg, device)
+    with ema_model(model, ema, device) as m:
+        for loops in sorted({1, cfg.model.num_loops}):
+            if cfg.objective == "flux":
+                lat = flux_euler_sample(m, text.to(torch.bfloat16), text_encoder.null.to(device)[None], latent_shape,
+                                        steps=cfg.sample_steps, cfg_scale=cfg.sample_cfg, shift=cfg.sample_shift,
+                                        num_loops=loops, generator=g)
+            else:
+                lat = euler_sample(m, text.to(torch.bfloat16), mask, latent_shape, steps=cfg.sample_steps,
+                                   cfg_scale=cfg.sample_cfg, noise_scale=cfg.noise_scale, num_loops=loops, generator=g)
+            videos = vae.decode(lat)
+            save_video_grid(videos, out_dir / "samples" / f"{step:07d}_loops{loops}.mp4")
+    del vae
     torch.cuda.empty_cache()
 
 
@@ -126,17 +198,16 @@ def write_samples(cfg: TrainConfig, model, ema, text_encoder, latent_shape, out_
 def probe(cfg: TrainConfig, model, ema, text_encoder, probe_batch, out_dir: Path, step: int, device) -> None:
     from .probe import run_probe
 
-    m = ema_model(model, ema, device)
     latents = probe_batch["latents"].to(device, torch.float32)
     text, mask = text_encoder(probe_batch["caption"])
-    rows = run_probe(m, latents, text.to(torch.bfloat16), mask, num_loops=cfg.probe_max_loops,
-                     noise_scale=cfg.noise_scale)
+    with ema_model(model, ema, device) as m:
+        rows = run_probe(m, latents, text.to(torch.bfloat16), mask, num_loops=cfg.probe_max_loops,
+                         noise_scale=cfg.noise_scale, convention=cfg.objective)
     with open(out_dir / "probe.jsonl", "a") as f:
         for row in rows:
             f.write(json.dumps({"step": step, **row}) + "\n")
     summary = {f"t{r['t']}_L{r['loop']}": round(r["r2_joint"], 3) for r in rows if r["t"] == 0.5}
     print(json.dumps({"step": step, "probe_r2_joint@t0.5": summary}), flush=True)
-    del m
     torch.cuda.empty_cache()
 
 
@@ -155,9 +226,8 @@ def main() -> None:
     torch.backends.cudnn.allow_tf32 = True
 
     torch.manual_seed(cfg.seed)
-    with torch.device(device):  # build on the GPU: CPU init of ~5B params is slow
-        model = LoopedFluxT2V(cfg.model)  # fp32 weights; bf16 autocast compute
-    ema = CPUEma(model, cfg.ema_decay, cfg.ema_every)
+    model = build_model(cfg, device)
+    ema = CPUEma(model, cfg.ema_decay, cfg.ema_every, only_trainable=bool(cfg.pretrained))
     optimizer = make_optimizer(cfg, model)
     step = 0
     existing = checkpoints(ckpt_dir)
@@ -168,7 +238,7 @@ def main() -> None:
     net = DDP(model, device_ids=[device.index], gradient_as_bucket_view=True) if world_size() > 1 else model
     fwd = torch.compile(net) if cfg.compile else net
 
-    text_encoder = TextEncoder(cfg.text_encoder, cfg.prompt_length, device)
+    text_encoder = make_text_encoder(cfg, device)
     loader = make_loader(cfg.train_shards, cfg.micro_batch_size, cfg.num_workers, cfg.shuffle_buffer, cfg.seed + step)
     batches = iter(loader)
     probe_batch = None
@@ -177,7 +247,7 @@ def main() -> None:
         probe_batch = next(iter(make_loader(src, cfg.probe_clips, 0, 0, seed=1234)))
     exit_weights = deep_supervision_weights(cfg.model.num_loops, cfg.deep_supervision_weighting) if cfg.deep_supervision else None
     if is_main():
-        print(f"{model.num_params() / 1e9:.3f}B parameters; {world_size()} GPUs x micro-batch {cfg.micro_batch_size} "
+        print(f"{model.num_params() / 1e9:.3f}B parameters ({cfg.objective} objective); {world_size()} GPUs x micro-batch {cfg.micro_batch_size} "
               f"x {accum} accum = batch {cfg.batch_size}; exit weights {exit_weights}", flush=True)
         out_dir.mkdir(parents=True, exist_ok=True)
         (out_dir / "config.yaml").write_text(yaml.safe_dump(cfg.to_dict(), sort_keys=False))
@@ -195,11 +265,7 @@ def main() -> None:
             no_sync = world_size() > 1 and micro < accum - 1
             with net.no_sync() if no_sync else contextlib.nullcontext():
                 with torch.autocast("cuda", dtype=torch.bfloat16):
-                    loss, metrics = training_loss(
-                        fwd, latents, text.to(torch.bfloat16), text_mask, exit_weights,
-                        noise_scale=cfg.noise_scale, t_logit_mean=cfg.t_logit_mean,
-                        t_logit_std=cfg.t_logit_std, label_drop_rate=cfg.label_drop_rate,
-                    )
+                    loss, metrics = compute_loss(cfg, fwd, latents, text.to(torch.bfloat16), text_mask, text_encoder, exit_weights)
                 (loss / accum).backward()
             for k, v in metrics.items():
                 metric_sums[k] = metric_sums.get(k, 0) + v
@@ -209,7 +275,7 @@ def main() -> None:
         for group in optimizer.param_groups:
             group["lr"] = lr
         grad_norm = torch.nn.utils.clip_grad_norm_(
-            [p for p in model.parameters() if p.grad is not None],
+            [p for p in model.parameters() if p.requires_grad and p.grad is not None],
             cfg.max_grad_norm if cfg.max_grad_norm > 0 else math.inf)
         optimizer.step()
         optimizer.zero_grad(set_to_none=True)

@@ -62,3 +62,57 @@ class TextEncoder:
     def __call__(self, prompts: list[str]) -> tuple[torch.Tensor, torch.Tensor]:
         ids, mask = self.tokenize(prompts)
         return self.encode(ids, mask), mask
+
+
+class FluxVAE:
+    """FLUX 3 Action video VAE (32x spatial, 4x temporal, 96 channels; needs NATTEN). Same API as WanVAE;
+    latents come out normalized by the VAE's own running statistics."""
+
+    def __init__(self, device: torch.device, path: str, compile_model: bool = True):
+        from flux_action.models.video_vae import load_video_vae
+
+        self.vae = load_video_vae(path, device, compile_model=compile_model)
+        self.device = device
+
+    @torch.no_grad()
+    def encode(self, video: torch.Tensor) -> torch.Tensor:
+        torch.compiler.cudagraph_mark_step_begin()
+        return self.vae.encode(video.to(self.device, torch.bfloat16)).clone().float()
+
+    @torch.no_grad()
+    def decode(self, latents: torch.Tensor) -> torch.Tensor:
+        torch.compiler.cudagraph_mark_step_begin()
+        return self.vae.decode(latents.to(self.device, torch.bfloat16)).clone().float().clamp(-1, 1)
+
+
+class FluxTextEncoder:
+    """Qwen3-VL-4B context as used by FLUX 3 Action: (L, 20480) per caption, L a multiple of 80.
+    Contexts are cached per caption (the egocentric captions are a small set), truncated/padded to
+    `length` tokens so a batch stacks. The empty caption is the classifier-free-guidance null."""
+
+    def __init__(self, path: str, device: torch.device, length: int = 80, cache_dir: str | None = None):
+        from flux_action.models.text_encoder import load_text_encoder
+
+        self.model = load_text_encoder(path, device)
+        self.device, self.length = device, length
+        self.cache: dict[str, torch.Tensor] = {}
+        self.cache_dir = cache_dir
+        self.null = self.encode_one("")
+
+    @torch.no_grad()
+    def encode_one(self, caption: str) -> torch.Tensor:
+        from flux_action.models.text_encoder import text_context
+
+        if caption not in self.cache:
+            ctx = text_context(self.model, caption, self.device)[0]  # (L, 20480) bf16
+            if ctx.shape[0] >= self.length:
+                ctx = ctx[: self.length]
+            else:
+                ctx = torch.cat([ctx, self.null[ctx.shape[0]:].to(ctx.device)])
+            self.cache[caption] = ctx.to("cpu", torch.bfloat16).pin_memory()
+        return self.cache[caption]
+
+    @torch.no_grad()
+    def __call__(self, captions: list[str]) -> tuple[torch.Tensor, torch.Tensor]:
+        ctx = torch.stack([self.encode_one(c) for c in captions]).to(self.device, non_blocking=True)
+        return ctx, torch.ones(ctx.shape[:2], dtype=torch.long, device=self.device)
