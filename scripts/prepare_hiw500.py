@@ -47,7 +47,7 @@ OUT_HW = (384, 512)
 TEMPLATES = [
     "Egocentric view from a humanoid robot: {sub}.",
     "First-person video from a humanoid robot's head camera while it is working to {task}: {sub}.",
-    "A humanoid robot {sub}, seen from its own head camera.",
+    "A humanoid robot {sub_verb}, seen from its own head camera.",
     "Humanoid robot egocentric footage, task: {task}. Current step: {sub}.",
     "{sub_cap}. Head-camera view of a humanoid robot in a home.",
     "POV of a humanoid robot as it {sub_verb}.",
@@ -284,7 +284,7 @@ def encode(args) -> None:
                 writer = ShardWriter(shard_dir / f"hiw500-{shard_idx:05d}.tar")
             c = clips[cid]
             buf = io.BytesIO()
-            torch.save(lat.contiguous(), buf)
+            torch.save(lat.clone(), buf)  # clone: a view would serialize the whole batch's storage
             meta = {"id": cid, "source": "hiw500", "episode": c["ep"], "start_frame": c["start"], "subtask": c["sub"],
                     "task": c["task"], "fps": FPS / STRIDE, "num_frames": FRAMES, "hw": OUT_HW}
             writer.add(cid, {"latent.pth": buf.getvalue(), "txt": c["caption"].encode(), "json": json.dumps(meta).encode()})

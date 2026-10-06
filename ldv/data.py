@@ -102,43 +102,52 @@ class LatentShardStream(IterableDataset):
     """Infinite shuffled stream of (latents, caption) from WebDataset shards, split over
     (rank, dataloader worker)."""
 
-    def __init__(self, shards: list[str], shuffle_buffer: int = 2000, seed: int = 0):
-        self.shards, self.shuffle_buffer, self.seed = shards, shuffle_buffer, seed
+    def __init__(self, shards: list[str], shuffle_buffer: int = 2000, seed: int = 0, spec=None):
+        self.shards, self.shuffle_buffer, self.seed, self.spec = shards, shuffle_buffer, seed, spec
 
     def _my_shards(self) -> tuple[list[str], int]:
         info = get_worker_info()
         nw, wid = (info.num_workers, info.id) if info else (1, 0)
         index, count = rank() * nw + wid, world_size() * nw
-        mine = self.shards[index::count] or [self.shards[index % len(self.shards)]]
+        shards = self.shards
+        if self.spec is not None:  # re-list so shards written while training runs are picked up
+            try:
+                shards = list_shards(self.spec)
+            except FileNotFoundError:
+                pass
+        mine = shards[index::count] or [shards[index % len(shards)]]
         return mine, index
 
-    def _samples(self, shards: list[str], rng: random.Random):
+    def _samples_refreshing(self, index: int, rng: random.Random):
+        """One pass over this worker's shards at a time, re-listing them between passes."""
+        while True:
+            shards, _ = self._my_shards()
+            n = 0
+            for url in rng.sample(shards, len(shards)):
+                for sample in self._read(url):
+                    n += 1
+                    yield sample
+            if not n:
+                raise RuntimeError(f"no samples could be read from {shards}")
+
+    def _read(self, url: str):
         import webdataset as wds
 
-        def keep(urls):  # shards are already split over (rank, worker) in _my_shards
+        def keep(urls):
             return urls
 
-        while True:
-            seen = 0
-            for url in rng.sample(shards, len(shards)):
-                try:
-                    # Without the identity splitters WebDataset splits this single url over the
-                    # dataloader workers again, and every worker but the first reads nothing.
-                    for s in wds.WebDataset(url, shardshuffle=False, empty_check=False,
-                                            nodesplitter=keep, workersplitter=keep):
-                        lat = torch.load(io.BytesIO(s["latent.pth"]), map_location="cpu", weights_only=True)
-                        seen += 1
-                        yield {"latents": lat, "caption": s["txt"].decode("utf-8")}
-                except Exception as e:  # a truncated shard should not kill training
-                    print(f"[data] skipping {url}: {e}", flush=True)
-            if not seen:  # never spin silently on shards that yield nothing
-                raise RuntimeError(f"no samples could be read from {shards}")
+        try:
+            for s in wds.WebDataset(url, shardshuffle=False, empty_check=False, nodesplitter=keep, workersplitter=keep):
+                lat = torch.load(io.BytesIO(s["latent.pth"]), map_location="cpu", weights_only=True)
+                yield {"latents": lat, "caption": s["txt"].decode("utf-8")}
+        except Exception as e:  # a truncated shard should not kill training
+            print(f"[data] skipping {url}: {e}", flush=True)
 
     def __iter__(self):
         shards, index = self._my_shards()
         rng = random.Random(self.seed + index)
         buf: list[dict] = []
-        for sample in self._samples(shards, rng):
+        for sample in self._samples_refreshing(index, rng):
             if self.shuffle_buffer <= 0:
                 yield sample
                 continue
@@ -159,7 +168,7 @@ def collate(samples: list[dict]) -> dict:
 
 def make_loader(shards: str | list[str], batch_size: int, num_workers: int = 4,
                 shuffle_buffer: int = 2000, seed: int = 0) -> DataLoader:
-    ds = LatentShardStream(list_shards(shards), shuffle_buffer, seed)
+    ds = LatentShardStream(list_shards(shards), shuffle_buffer, seed, spec=shards)
     return DataLoader(ds, batch_size=batch_size, num_workers=num_workers, collate_fn=collate,
                       pin_memory=True, persistent_workers=num_workers > 0,
                       prefetch_factor=4 if num_workers > 0 else None)
