@@ -57,6 +57,10 @@ class ModelConfig:
     # Absolute 3D sincos position embedding added to video tokens, as MiniT2I/Looped-DiT add a 2D one.
     # FLUX itself is RoPE-only (position never enters the hidden states directly), so this is off by default.
     abs_pos_embed: bool = False
+    # FLUX 3 Action conventions (used when loading its pretrained weights):
+    text_timestep_zero: bool = False  # text tokens are modulated with t = 0, video tokens with t
+    time_id_stride: int = 1  # RoPE time id per latent frame (FLUX: 10 ms units, 4 frames / fps -> 50 at 8 fps)
+    attn_gate_init: float = 0.0  # attention-gate bias at init; 0 = half open (paper), >0 = mostly open
     grad_checkpointing: bool = False
 
     def __post_init__(self):
@@ -241,15 +245,17 @@ class SingleStreamBlock(_AttnMLPBlock):
     self-modulating attention: a modality-specific head-wise sigmoid gate on the attention
     output, G = sigmoid(W_g u + b_g) with u the block's normalized input, and/or XSA."""
 
-    def __init__(self, hidden_size, num_heads, mlp_ratio, qkv_bias, use_attn_gate=False, use_xsa=False):
+    def __init__(self, hidden_size, num_heads, mlp_ratio, qkv_bias, use_attn_gate=False, use_xsa=False,
+                 attn_gate_init=0.0):
         super().__init__(hidden_size, num_heads, mlp_ratio, qkv_bias)
         self.use_attn_gate, self.use_xsa = use_attn_gate, use_xsa
         if use_attn_gate:
-            # Zero bias: gates start half open on average (as in Looped-DiT).
+            # Zero bias: gates start half open on average (as in Looped-DiT). A pretrained model
+            # starts them mostly open (attn_gate_init > 0) so its function is preserved at init.
             self.img_gate = nn.Linear(hidden_size, num_heads)
             self.txt_gate = nn.Linear(hidden_size, num_heads)
-            nn.init.zeros_(self.img_gate.bias)
-            nn.init.zeros_(self.txt_gate.bias)
+            nn.init.constant_(self.img_gate.bias, attn_gate_init)
+            nn.init.constant_(self.txt_gate.bias, attn_gate_init)
 
     def forward(self, img: Tensor, txt: Tensor, pe: Tensor, mod_img, mod_txt) -> tuple[Tensor, Tensor]:
         lt = txt.shape[1]
@@ -275,10 +281,10 @@ class SingleStreamBlock(_AttnMLPBlock):
 # ---------------------------------------------------------------------------
 
 
-def video_ids(t: int, h: int, w: int, batch: int, device) -> Tensor:
+def video_ids(t: int, h: int, w: int, batch: int, device, time_stride: int = 1) -> Tensor:
     """(t, h, w, l=0) ids per video token, FLUX's prc_vid layout."""
     ids = torch.cartesian_prod(
-        torch.arange(t, device=device), torch.arange(h, device=device),
+        torch.arange(t, device=device) * time_stride, torch.arange(h, device=device),
         torch.arange(w, device=device), torch.zeros(1, dtype=torch.long, device=device),
     )
     return ids[None].expand(batch, -1, -1)
@@ -341,6 +347,7 @@ class LoopedFluxT2V(nn.Module):
                 h, cfg.num_heads, cfg.mlp_ratio, cfg.qkv_bias,
                 use_attn_gate=cfg.use_attn_gate and n_pre_single <= i < n_pre_single + looped,
                 use_xsa=cfg.use_xsa and n_pre_single <= i < n_pre_single + looped,
+                attn_gate_init=cfg.attn_gate_init,
             )
             for i in range(n_single)
         )
@@ -354,6 +361,10 @@ class LoopedFluxT2V(nn.Module):
                 nn.init.xavier_uniform_(m.weight)
                 if m.bias is not None:
                     nn.init.zeros_(m.bias)
+        for block in self.single_blocks:
+            if block.use_attn_gate:
+                nn.init.constant_(block.img_gate.bias, self.cfg.attn_gate_init)
+                nn.init.constant_(block.txt_gate.bias, self.cfg.attn_gate_init)
         for mod in (*self.early_mod.values(), *self.single_mod.values()):
             nn.init.zeros_(mod.lin.weight)  # adaLN-zero: blocks start as identity
         nn.init.zeros_(self.final_layer.adaLN_modulation[1].weight)
@@ -404,20 +415,21 @@ class LoopedFluxT2V(nn.Module):
         tokens, grid = self.patchify(x)
         text = torch.where(text_mask.bool()[:, :, None], text, self.mask_token.to(text.dtype))
         vec = self.time_in(timestep_embedding(t, 256).to(tokens.dtype))
+        vec_txt = self.time_in(timestep_embedding(torch.zeros_like(t), 256).to(tokens.dtype)) if self.cfg.text_timestep_zero else vec
         img = self.emb_in(tokens)
         if self.cfg.abs_pos_embed:
             img = img + sincos_3d(img.shape[-1], grid, x.device).to(img.dtype)[None]
         txt = self.txt_in(text)
-        pe_img = self.pe_embedder(video_ids(*grid, b, x.device))
+        pe_img = self.pe_embedder(video_ids(*grid, b, x.device, self.cfg.time_id_stride))
         pe_txt = self.pe_embedder(text_ids(text.shape[1], b, x.device))
-        early_img, early_txt = self.early_mod["video"](vec), self.early_mod["txt"](vec)
+        early_img, early_txt = self.early_mod["video"](vec), self.early_mod["txt"](vec_txt)
         for vb, tb in zip(self.video_mode_blocks, self.txt_mode_blocks):
             img = self._run(vb, img, pe_img, early_img)
             txt = self._run(tb, txt, pe_txt, early_txt)
         ctx = {
             "grid": grid, "vec": vec,
             "pe": torch.cat((pe_txt, pe_img), dim=2),
-            "mod_img": self.single_mod["video"](vec), "mod_txt": self.single_mod["txt"](vec),
+            "mod_img": self.single_mod["video"](vec), "mod_txt": self.single_mod["txt"](vec_txt),
         }
         img, txt = self._single(self.single_blocks[: self.n_pre_single], img, txt, ctx)
         return img, txt, ctx
