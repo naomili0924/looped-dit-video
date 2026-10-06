@@ -248,10 +248,15 @@ def encode(args) -> None:
         stale.unlink()
     plan_ = json.loads((out / "plan.json").read_text())
     clips = {c["id"]: c for c in plan_["clips"]}
-    done_path = out / "done.txt"
-    done = set(done_path.read_text().split()) if done_path.exists() else set()
     manifest_path = out / "manifest.json"
     manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else {"shards": {}, "clips": 0}
+    # Progress is what the finished shards contain (a crash loses the open shard; its clips are redone).
+    done = set()
+    for key in manifest["shards"]:
+        with tarfile.open(shard_dir / f"{key}.tar") as tar:
+            done.update(n.rsplit(".", 2)[0] for n in tar.getnames() if n.endswith(".latent.pth"))
+    done_path = out / "done.txt"
+    done_path.write_text("\n".join(sorted(done)) + ("\n" if done else ""))
     todo = defaultdict(list)
     for c in plan_["clips"]:
         if c["id"] not in done:
