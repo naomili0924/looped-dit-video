@@ -1,0 +1,21 @@
+{
+ "split": "test",
+ "k": 1,
+ "n_recon": 100,
+ "n_gen": 300,
+ "gen_seconds": 2368,
+ "psnr": 19.82776012420654,
+ "ssim": 0.8046667236089706,
+ "lpips": 0.16640751797705888,
+ "psnr_std": 2.935824895080444,
+ "ssim_std": 0.07081467617260251,
+ "lpips_std": 0.07541695425287638,
+ "fvd": 166.94849060937253,
+ "n_fvd": 300,
+ "judge": {
+  "n": 100,
+  "yes_rate_true_caption": 0.53,
+  "yes_rate_swapped_caption": 0.07,
+  "adherence": 0.46
+ }
+}

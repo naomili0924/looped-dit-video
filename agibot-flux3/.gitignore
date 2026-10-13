@@ -1,0 +1,11 @@
+# vendored checkouts (our changes to flux-action are in patches/flux-action.patch)
+flux-action/
+looped-dit-video/
+# run artefacts
+logs/
+results/_smoke/
+__pycache__/
+*.pyc
+.venv/
+# secrets
+.env

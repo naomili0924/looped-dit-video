@@ -93,6 +93,20 @@ Ablations use `--set`, e.g. `--set model.use_attn_gate=false model.use_xsa=true`
 
 For the 4.81B model, a step at batch 64 (4 micro-batches of 16, gradient checkpointing, 4 loops with deep supervision) takes about 34 s and peaks at 71 GB of GPU memory: roughly 160K clips per day. The 20K-step 50K-clip config is therefore about 8 days on a single GPU; use `torchrun` on more GPUs, fewer steps, or a smaller model size to shorten it. The 276M model takes about 3.6 s per step (micro-batch 64), about 20 hours for 20K steps. Preparing the 50K clips (download, decode, VAE encode) takes about 75 minutes with 72 CPU workers.
 
+## AgiBot World Beta: FLUX 3 Action fine-tune + Looped-DiT retrofit (`agibot-flux3/`)
+
+A follow-up experiment on the released **FLUX 3 Action 7B** backbone: full fine-tune of the video + text streams
+on AgiBot World Beta humanoid head-camera clips (k past frames + caption → 33 future frames, 15 fps, 384×512),
+evaluation against the base model zero-shot, and the Looped-DiT retrofit (12 / 9 / 12 split, N = 4) of the
+fine-tuned model. See [`agibot-flux3/README.md`](agibot-flux3/README.md) (overview, Phase-3 validation curve,
+caveats) and [`agibot-flux3/results/RESULTS.md`](agibot-flux3/results/RESULTS.md) (PSNR / SSIM / LPIPS / FVD /
+VLM-judge tables, model × context length, per split). Test split so far, k = 1 (100 windows; FVD on 300):
+
+| model | PSNR ↑ | SSIM ↑ | LPIPS ↓ | FVD ↓ | judge adherence ↑ |
+|---|---:|---:|---:|---:|---:|
+| base FLUX 3 Action, zero-shot | 17.03 | 0.664 | 0.288 | 407.6 | 0.38 |
+| fine-tuned, 6000 steps (EMA) | 19.83 | 0.805 | 0.166 | 166.9 | 0.46 |
+
 ## Tests
 
 ```bash

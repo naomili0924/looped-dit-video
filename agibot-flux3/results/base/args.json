@@ -1,0 +1,34 @@
+{
+ "name": "base",
+ "config": "/workspace/loop-dit/configs/video_ft_384.json",
+ "ema": null,
+ "loops": null,
+ "splits": [
+  "test",
+  "test_unseen"
+ ],
+ "k": [
+  0,
+  1,
+  5,
+  9,
+  17
+ ],
+ "n_recon": 100,
+ "n_fvd": 300,
+ "fvd_k": [
+  1,
+  17
+ ],
+ "n_judge": 100,
+ "judge_k": 1,
+ "steps": 30,
+ "cfg": 4.0,
+ "shift": 5.0,
+ "batch": 4,
+ "seed": 0,
+ "out": "../results/base",
+ "device": "cuda:1",
+ "no_judge": false,
+ "judge_model": "/workspace/loop-dit/flux-action/outputs/weights/text_encoder"
+}

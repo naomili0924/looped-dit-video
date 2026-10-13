@@ -1,0 +1,1614 @@
+diff --git a/src/flux_action/config.py b/src/flux_action/config.py
+index 3464f8c..6e1af2b 100644
+--- a/src/flux_action/config.py
++++ b/src/flux_action/config.py
+@@ -45,6 +45,18 @@ DROID_INFERENCE_SETTINGS: dict[str, object] = {
+ class PolicyConfig:
+     action_dim: int = 8
+     action_modality: str = "action"
++    # Video-only training (processing/video_only.py): no action streams and no action loss; a window is
++    # ``batch["context_frames"]`` observed frames (0 = text only) plus ``future_frames`` predicted frames, both
++    # on the causal VAE's 1 + 4n grid and VAE-encoded independently. Context goes to ``video_cond``.
++    video_only: bool = False
++    future_frames: int = 33
++    # Looped-DiT retrofit (models/looped.py): LoopParams fields, e.g. {"loop_split": [12, 9, 12], "num_loops": 4,
++    # "attn_gate": true, "attn_gate_init": 4.0}; None = the plain backbone.
++    loop: dict | None = None
++    # Deep supervision over the loop exits in training: None | "uniform" | "final_plus_mean" | "exponential".
++    deep_supervision: str | None = "final_plus_mean"
++    # Weights overlaid on the trunk after construction (a fine-tuned EMA from scripts/hub_backup.py).
++    overlay_weights: str | None = None
+     # How the cameras are composited onto the canvas: "droid" (three 360x640 cameras [wrist, left exterior,
+     # right exterior]: wrist full-res on top, exteriors half-res below, reflect-padded), "single" (one resized
+     # camera), "side_by_side" (two cameras, scene then wrist, each half the width) or "grid" (any number of
+@@ -250,6 +262,9 @@ class PolicyConfig:
+ 
+     def validate_training(self):
+         """Training uses the reference model and its augmentation settings."""
++        if self.video_only:
++            assert self.inference_profile == "default", "video_only uses the default profile"
++            assert (self.future_frames - 1) % 4 == 0, "future_frames must be 1 + 4n"
+         assert self.quantization is None, "training requires unquantized weights"
+         assert 0 <= self.caption_dropout <= 1, "invalid caption dropout"
+         assert self.vae_batch_windows >= 1, "invalid VAE batch size"
+diff --git a/src/flux_action/models/looped.py b/src/flux_action/models/looped.py
+new file mode 100644
+index 0000000..fe0989c
+--- /dev/null
++++ b/src/flux_action/models/looped.py
+@@ -0,0 +1,218 @@
++"""Looped-DiT retrofit of ``JointSingleSeq`` (Chng et al., 2026, arXiv 2609.40305; reference implementation
++``looped-dit-video/ldv/model.py``).
++
++The blocks (mode blocks first, then the joint single blocks) are split into three stages::
++
++    pre-loop  A  the first ``pre`` blocks      run once   (all mode blocks + the first single blocks)
++    looped    B  the next ``core`` single blocks run N times with shared weights
++    post-loop C  the last ``post`` single blocks run once, then the final layers
++
++    h_0 = A(x),  h_r = B(h_{r-1}),  prediction(r) = C(h_r),  r = 1..N
++
++Every loop state can be decoded through C: deep supervision in training (one velocity loss per exit, weighted),
++a variable loop depth at inference (``num_loops``). The looped blocks carry self-modulating attention: a
++modality-specific head-wise sigmoid gate on the attention output (Qiu et al., 2025), G = sigmoid(W_g u + b_g)
++with u the block's modulated input; initialised with zero weights and bias ``attn_gate_init`` (+4 keeps a
++pretrained block's function: G = 0.982 everywhere). Exclusive self-attention (XSA) is available as an ablation.
++
++Everything else (packing, modulations, RoPE, heads, FSDP/AC/compile per block) is the backbone's: the core
++blocks are ordinary ``single_blocks[pre - depth : pre - depth + core]`` run repeatedly, so a checkpoint of the
++plain fine-tune loads directly (the gates are the only new parameters).
++"""
++
++from __future__ import annotations
++
++from collections.abc import Sequence
++from dataclasses import dataclass
++from typing import Any
++
++import torch
++import torch.nn.functional as F
++from torch import Tensor, nn
++
++from .transformer import JointSingleSeq, JointSingleSeqParams
++
++WEIGHT_SUM = 2.0  # deep-supervision weights are rescaled to this total (as in the reference)
++
++
++@dataclass
++class LoopParams:
++    loop_split: tuple[int, int, int] = (12, 9, 12)  # (pre, core, post) over [mode blocks, single blocks]
++    num_loops: int = 4
++    attn_gate: bool = True
++    attn_gate_init: float = 4.0
++    xsa: bool = False
++
++    def __post_init__(self):
++        self.loop_split = tuple(int(n) for n in self.loop_split)
++        if len(self.loop_split) != 3 or min(self.loop_split) < 1:
++            raise ValueError(f"loop_split must be three positive block counts, got {self.loop_split}")
++        if self.num_loops < 1:
++            raise ValueError("num_loops must be >= 1")
++
++
++def deep_supervision_weights(num_loops: int, weighting: str) -> list[float]:
++    """Loss weights (w_1, ..., w_N) of the exits after each loop, w_N the final one; rescaled to WEIGHT_SUM.
++
++    At N = 4 before rescaling: uniform 1,1,1,1 | final_plus_mean 1/3,1/3,1/3,1 | exponential 1/8,1/4,1/2,1."""
++    if num_loops < 2:
++        raise ValueError("deep supervision needs at least two loops")
++    if weighting == "uniform":
++        raw = [1.0] * num_loops
++    elif weighting == "final_plus_mean":
++        raw = [1.0 / (num_loops - 1)] * (num_loops - 1) + [1.0]
++    elif weighting == "exponential":
++        raw = [0.5 ** (num_loops - r) for r in range(1, num_loops + 1)]
++    else:
++        raise ValueError(f"unknown deep supervision weighting: {weighting!r}")
++    scale = WEIGHT_SUM / sum(raw)
++    return [w * scale for w in raw]
++
++
++def exclusive_self_attention(out: Tensor, v: Tensor) -> Tensor:
++    """XSA: remove from each token's attention output its component along the token's own value. (B, L, H, D)."""
++    v_hat = F.normalize(v.float(), dim=-1)
++    out_f = out.float()
++    return (out_f - (out_f * v_hat).sum(dim=-1, keepdim=True) * v_hat).to(out.dtype)
++
++
++class HeadGate(nn.Module):
++    """Self-modulating attention for one joint block: head-wise sigmoid gates (one projection for text tokens,
++    one for content tokens) on the attention output, and/or XSA. Plugged into ``SingleStreamBlock.attn_gate``."""
++
++    def __init__(self, hidden_size: int, num_heads: int, init_bias: float = 4.0, gated: bool = True,
++                 xsa: bool = False):
++        super().__init__()
++        self.num_heads, self.gated, self.xsa = num_heads, gated, xsa
++        if gated:
++            self.txt = nn.Linear(hidden_size, num_heads)
++            self.img = nn.Linear(hidden_size, num_heads)
++            for lin in (self.txt, self.img):
++                nn.init.zeros_(lin.weight)
++                nn.init.constant_(lin.bias, init_bias)
++
++    def forward(self, attn: Tensor, v: Tensor, x_mod: Tensor, token_is_txt: Tensor) -> Tensor:
++        """attn (B, L, H*D) attention output; v (B, H, L, D); x_mod (B, L, hidden) the block's modulated input;
++        token_is_txt (L,) bool."""
++        b, l, hd = attn.shape
++        a = attn.view(b, l, self.num_heads, hd // self.num_heads)
++        if self.xsa:
++            a = exclusive_self_attention(a, v.transpose(1, 2))
++        if self.gated:
++            g = torch.where(token_is_txt.view(1, l, 1), self.txt(x_mod), self.img(x_mod))  # (B, L, H)
++            a = a * torch.sigmoid(g.float()).unsqueeze(-1).to(a.dtype)
++        return a.reshape(b, l, hd)
++
++
++class LoopedJointSingleSeq(JointSingleSeq):
++    """``JointSingleSeq`` whose single blocks run as pre-loop / looped core / post-loop stages."""
++
++    def __init__(self, params: JointSingleSeqParams, loop: LoopParams):
++        super().__init__(params)
++        pre, core, post = loop.loop_split
++        if pre + core + post != params.depth + params.depth_single_blocks:
++            raise ValueError(f"loop_split {loop.loop_split} must cover all {params.depth} mode + "
++                             f"{params.depth_single_blocks} single blocks")
++        if pre < params.depth:
++            raise ValueError("the looped stage must consist of single (joint) blocks: pre >= depth")
++        if params.depth_late_blocks:
++            raise ValueError("late blocks are not supported with looping")
++        self.loop = loop
++        self.n_pre_single, self.core, self.post = pre - params.depth, core, post
++        if loop.attn_gate or loop.xsa:
++            for i in range(self.n_pre_single, self.n_pre_single + core):
++                self.single_blocks[i].attn_gate = HeadGate(params.hidden_size, params.num_heads,
++                                                           loop.attn_gate_init, loop.attn_gate, loop.xsa)
++
++    @property
++    def core_blocks(self) -> Sequence[nn.Module]:
++        return self.single_blocks[self.n_pre_single : self.n_pre_single + self.core]
++
++    def forward(  # type: ignore[override]
++        self,
++        ctx: Tensor,
++        ctx_ids: Tensor,
++        vector: Tensor,
++        timesteps_ctx: Tensor,
++        pag_single_layers: list[int] | None = None,
++        pag_strength: float = 1.0,
++        seqlens: dict[str, Sequence[int]] | None = None,
++        num_loops: int | None = None,
++        exit_loops: Sequence[int] = (),
++        **kwargs: Tensor,
++    ) -> dict[str, Any]:
++        """As ``JointSingleSeq.forward``; ``num_loops`` overrides the loop depth and ``exit_loops`` lists
++        intermediate depths r < num_loops to decode too, returned under ``out["exits"][r]`` (deep supervision)."""
++        n = self.loop.num_loops if num_loops is None else int(num_loops)
++        if n < 1:
++            raise ValueError(f"num_loops must be >= 1, got {n}")
++        exits = sorted({int(r) for r in exit_loops})
++        if any(not 1 <= r < n for r in exits):
++            raise ValueError(f"exit_loops must lie in [1, {n}), got {exits}")
++        state, st = self._prepare(ctx, ctx_ids, vector, timesteps_ctx, seqlens, kwargs)
++        pre = self.single_blocks[: self.n_pre_single]
++        state = self._run_blocks(pre, state, st, pag_single_layers, pag_strength)
++        saved = {}
++        for r in range(1, n + 1):
++            state = self._run_blocks(self.core_blocks, state, st, pag_single_layers, pag_strength,
++                                     offset=self.n_pre_single)
++            if r in exits:
++                saved[r] = state
++        out: dict[str, Any] = self._decode(state, st, pag_single_layers, pag_strength)
++        if exits:
++            out["exits"] = {r: self._decode(s, st, pag_single_layers, pag_strength) for r, s in saved.items()}
++        return out
++
++    def _decode(self, state, st, pag_single_layers, pag_strength) -> dict[str, Tensor]:
++        """Post-loop blocks and the heads: a loop state -> per-stream predictions."""
++        post = self.single_blocks[self.n_pre_single + self.core :]
++        state = self._run_blocks(post, state, st, pag_single_layers, pag_strength, offset=self.n_pre_single + self.core)
++        return self._head(state, st)
++
++
++NEW_PARAM_SUBSTRINGS = (".attn_gate.",)
++
++
++def build_looped_video_dit(
++    params: JointSingleSeqParams,
++    ckpt_path: str | None,
++    loop: LoopParams,
++    *,
++    device: str | torch.device = "cpu",
++    dtype: torch.dtype = torch.bfloat16,
++) -> LoopedJointSingleSeq:
++    """``build_video_dit`` for the looped model: the trunk's video/video_cond/text streams load strictly, the
++    attention gates keep their initialisation."""
++    from safetensors import safe_open
++
++    from .wiring import OPTIONAL_KEY_SUBSTRINGS, default_dtype, stream_of_key
++
++    with torch.device(device), default_dtype(dtype):
++        model = LoopedJointSingleSeq(params, loop)
++    if ckpt_path is not None:
++        keep = set(params.in_channels)
++        with safe_open(ckpt_path, framework="pt", device="cpu") as checkpoint:
++            sd = {k: checkpoint.get_tensor(k) for k in checkpoint.keys() if stream_of_key(k) in keep | {None, "txt"}}
++        res = model.load_state_dict({k: v.to(dtype) for k, v in sd.items()}, strict=False)
++        missing = [k for k in res.missing_keys
++                   if not any(s in k for s in OPTIONAL_KEY_SUBSTRINGS + NEW_PARAM_SUBSTRINGS)]
++        if missing or res.unexpected_keys:
++            raise ValueError(f"trunk mismatch: missing {missing[:6]}, unexpected {res.unexpected_keys[:6]}")
++    model.eval()
++    return model
++
++
++def load_overlay(dit: nn.Module, path: str, allow_missing: Sequence[str] = ("final_layer.video_cond", *NEW_PARAM_SUBSTRINGS)) -> dict:
++    """Overlay fine-tuned weights (e.g. ``hub_backup.py``'s consolidated EMA, keys as in the DiT state dict,
++    optionally ``dit.``-prefixed) on a built DiT. Nothing unexpected may be present; only ``allow_missing``
++    substrings may be absent (the frozen conditioning head is not in an EMA, the gates are new)."""
++    from safetensors.torch import load_file
++
++    own = dit.state_dict()
++    sd = {k.removeprefix("dit."): v for k, v in load_file(path, device="cpu").items()}
++    res = dit.load_state_dict({k: v.to(own[k].dtype) for k, v in sd.items() if k in own}, strict=False)
++    unexpected = [k for k in sd if k not in own]
++    missing = [k for k in res.missing_keys if not any(s in k for s in allow_missing)]
++    if unexpected or missing:
++        raise ValueError(f"overlay mismatch: unexpected {unexpected[:6]}, missing {missing[:6]}")
++    return {"loaded": len(sd) - len(unexpected), "missing": res.missing_keys}
+diff --git a/src/flux_action/models/text_encoder.py b/src/flux_action/models/text_encoder.py
+index da868e1..c4e3fc0 100644
+--- a/src/flux_action/models/text_encoder.py
++++ b/src/flux_action/models/text_encoder.py
+@@ -186,6 +186,36 @@ class MockTextEncoder(nn.Module):
+         return [self.forward_bucketed(text, **kwargs) for text in texts]
+ 
+ 
++class LookupTextEncoder(nn.Module):
++    """Pre-encoded contexts of a fixed caption set (``scripts/encode_captions.py``): ``{caption: (L, ctx_dim) bf16}``
++    on the host. Same ``forward_bucketed`` / ``forward_bucketed_batch`` contract as :class:`Qwen3VLEmbedder`;
++    an unknown caption is an error (the set is closed). Holds no parameters, so nothing sits on the GPU."""
++
++    is_mock = False
++
++    def __init__(self, path: str):
++        super().__init__()
++        self.path = path
++        self.table: dict[str, Tensor] = torch.load(path, map_location="cpu", weights_only=True)
++        if "" not in self.table:
++            raise ValueError(f"{path} lacks the empty caption (the classifier-free-guidance null)")
++
++    def forward_bucketed(self, text: str, *, fixed_length: int | None = None) -> Tensor:
++        return self.forward_bucketed_batch([text], fixed_length=fixed_length)[0]
++
++    def forward_bucketed_batch(self, texts: list[str], *, fixed_length: int | None = None) -> list[Tensor]:
++        out = []
++        for text in texts:
++            ctx = self.table.get(text)
++            if ctx is None:
++                raise KeyError(f"caption not in the pre-encoded table {self.path}: {text!r}")
++            if fixed_length is not None:
++                ctx = ctx[:fixed_length] if ctx.shape[0] >= fixed_length else torch.cat(
++                    [ctx, self.table[""][ctx.shape[0] : fixed_length]])
++            out.append(ctx[None])
++        return out
++
++
+ def load_text_encoder(
+     spec: str | None,
+     device: str | torch.device = "cpu",
+@@ -193,7 +223,10 @@ def load_text_encoder(
+     compile_model: bool = False,
+     context_in_dim: int = CTX_DIM,
+ ) -> nn.Module:
+-    """``spec`` = Hub id or local path of Qwen3-VL-4B (needs ``transformers``); ``None`` -> mock."""
++    """``spec`` = Hub id or local path of Qwen3-VL-4B (needs ``transformers``); ``lookup:<file>`` = a table of
++    pre-encoded captions (:class:`LookupTextEncoder`); ``None`` -> mock."""
++    if spec and str(spec).startswith("lookup:"):
++        return LookupTextEncoder(str(spec)[len("lookup:"):])
+     if spec:
+         from ..hub import looks_like_local_path
+ 
+diff --git a/src/flux_action/models/transformer.py b/src/flux_action/models/transformer.py
+index 9ec2796..f20a97d 100644
+--- a/src/flux_action/models/transformer.py
++++ b/src/flux_action/models/transformer.py
+@@ -17,6 +17,7 @@ import importlib
+ import math
+ from collections import defaultdict
+ from collections.abc import Sequence
++from typing import Any
+ from dataclasses import dataclass, field
+ 
+ import torch
+@@ -493,6 +494,7 @@ class SingleStreamBlock(nn.Module):
+         self.mlp_act = SiLUActivation() if use_gated_mlp else nn.GELU(approximate="tanh")
+         self.attention = Attention()
+         self.attn_mode = "torch"
++        self.attn_gate: nn.Module | None = None  # set by models/looped.py on the looped blocks
+ 
+     def forward(
+         self,
+@@ -503,6 +505,7 @@ class SingleStreamBlock(nn.Module):
+         mod_ctx: tuple[Tensor, ...] | None,
+         pag_strength: float = 0.0,
+         seqlens: Sequence[int] | None = None,
++        token_is_txt: Tensor | None = None,
+     ) -> tuple[Tensor | None, Tensor]:
+         """``ctx is None``: ``x`` already holds the whole sequence (context and content of every window,
+         window-major, see ``JointSingleSeq.forward``) with its per-token modulation ``mod_x``; the block
+@@ -537,6 +540,8 @@ class SingleStreamBlock(nn.Module):
+         q, k = apply_rope(q, k, pe)
+         attn = self.attention(q, k, v, self.attn_mode, seqlens)
+         attn = apply_pag(attn, v, pag_strength)
++        if self.attn_gate is not None:  # Looped-DiT self-modulating attention (models/looped.py)
++            attn = self.attn_gate(attn, v, combined, token_is_txt)
+ 
+         output = self.attn_out(_bf16_if_required(self.attn_out, attn)) + self.mlp_out(
+             _bf16_if_required(self.mlp_out, self.mlp_act(mlp))
+@@ -717,26 +722,22 @@ class JointSingleSeq(nn.Module):
+             vec = self.time_in(timestep_embedding(ts, 256, out_dtype=weight_dtype))
+         return vec.to(out_dtype)
+ 
+-    def forward(
++    # ------------------------------------------------------------------ staged forward
++    # ``forward`` = ``_prepare`` (embeddings, modulations, mode blocks, joint layout) -> ``_run_blocks`` over the
++    # single blocks -> ``_head`` (late blocks, final layers). The looped variant (models/looped.py) reuses the
++    # stages: pre-loop blocks once, the core blocks N times, and the head on every exit it supervises.
++
++    def _prepare(
+         self,
+         ctx: Tensor,
+         ctx_ids: Tensor,
+         vector: Tensor,
+         timesteps_ctx: Tensor,
+-        pag_single_layers: list[int] | None = None,
+-        pag_strength: float = 1.0,
+-        seqlens: dict[str, Sequence[int]] | None = None,
+-        **kwargs: Tensor,
+-    ) -> dict[str, Tensor]:
+-        """Denoise every stream given in ``kwargs`` (``x_<stream>``, ``x_<stream>_ids``, ``x_<stream>_timesteps``).
+-
+-        ``seqlens`` packs several windows into one call of batch size 1: ``seqlens["ctx"]`` and
+-        ``seqlens["x_<stream>"]`` list the token counts of each window in order, and every stream and the
+-        context hold the windows' tokens concatenated in that order. Attention then stays within each
+-        window (mode blocks per stream, the joint blocks over context plus content of a window), so the
+-        result equals separate per-window forwards while the whole micro-batch runs in one pass: one set of
+-        FSDP gathers, large matmuls, and captions of different lengths without padding.
+-        """
++        seqlens: dict[str, Sequence[int]] | None,
++        kwargs: dict[str, Tensor],
++    ) -> tuple[Any, dict[str, Any]]:
++        """Everything before the joint single blocks. Returns ``(state, st)``: ``state`` is the joint sequence
++        (``seq`` when packed, else ``(txt, img)``) and ``st`` the static context the later stages need."""
+         assert vector.ndim == 2, "invalid vector shape"
+         batch_size = ctx.shape[0]
+ 
+@@ -826,8 +827,9 @@ class JointSingleSeq(nn.Module):
+             single_content_mods[key] = list(mod)
+         single_txt_mod, _ = self.single_stream_modulations["txt"](vec_ctx)
+ 
++        late_content_mods: dict[str, tuple] = {}
++        late_txt_mod = None
+         if self.depth_late_blocks > 0:
+-            late_content_mods: dict[str, tuple] = {}
+             for key in self.late_stream_modulations:
+                 if key == "txt":
+                     continue
+@@ -853,32 +855,75 @@ class JointSingleSeq(nn.Module):
+         pe_content = torch.cat([pe_by_mod[k] for k in active], dim=2)
+         pe = torch.cat((pe_ctx, pe_content), dim=2)
+ 
++        # Gradient parity across data-parallel ranks (training only). An inactive modality runs its mode
++        # blocks on a dummy whose output is discarded, so its parameters (emb_in, modulations, mode blocks) get
++        # no gradient from that window. FSDP2 then reduce-scatters those groups from its final autograd
++        # callback, after every other group, while a rank whose batch has the modality active reduces them in
++        # backward order; NCCL pairs collectives by issue order without checking sizes, so the ranks silently
++        # add the wrong gradients together (and hang when a rank has nothing to reduce at all). Tying the dummy
++        # path and the stream's modulations into the output with weight zero gives every trainable parameter a
++        # gradient in every window, so all ranks issue the same collectives in the same order.
++        grad_tie = None
++        if self.training and getattr(self, "grad_parity", True) and inactive:
++            pieces = [content_by_mod[m].float().sum() for m in inactive]
++            pieces += [t.float().sum() for m in inactive for t in single_content_mods.get(m, ())]
++            pieces += [t.float().sum() for m in inactive for t in late_content_mods.get(m, ())]
++            grad_tie = sum(pieces) * 0.0
++        st: dict[str, Any] = {
++            "packed": packed, "active": active, "inactive": inactive, "all_mods": all_mods, "grad_tie": grad_tie,
++            "names_by_mod": names_by_mod, "lens_by_mod": lens_by_mod, "mod_lens": mod_lens, "ctx_lens": ctx_lens,
++            "vec_by_mod": vec_by_mod, "content_by_mod": content_by_mod, "pe_by_mod": pe_by_mod, "pe_ctx": pe_ctx,
++            "late_content_mods": late_content_mods, "late_txt_mod": late_txt_mod,
++            "txt_len": txt.shape[1], "img_len": img.shape[1],
++        }
+         if not packed:
+-            for i, block in enumerate(self.single_blocks):
+-                layer_pag = pag_strength if (pag_single_layers and i in pag_single_layers) else 0.0
+-                txt, img = block(
+-                    img,
+-                    txt,
+-                    pe,
+-                    content_mod,
+-                    single_txt_mod,
+-                    pag_strength=layer_pag,
+-                )
+-        else:
+-            # The joint sequence is laid out context-then-content; gather it window-major once so each
+-            # window is one contiguous segment for attention, run the blocks on that single sequence with
+-            # its per-token modulation, and scatter back for the per-stream heads.
+-            order, inverse, window_lens = window_major_order(
+-                [ctx_lens, *(mod_lens[k] for k in active)], img.device
+-            )
+-            seq = torch.cat((txt, img), dim=1)[:, order]
+-            mod = tuple(torch.cat((single_txt_mod[i], content_mod[i]), dim=1)[:, order] for i in range(3))
+-            pe = pe[:, :, order]
+-            for i, block in enumerate(self.single_blocks):
+-                layer_pag = pag_strength if (pag_single_layers and i in pag_single_layers) else 0.0
+-                _, seq = block(seq, None, pe, mod, None, pag_strength=layer_pag, seqlens=window_lens)
+-            txt, img = torch.split(seq[:, inverse], [txt.shape[1], img.shape[1]], dim=1)
++            st.update(pe=pe, content_mod=content_mod, single_txt_mod=single_txt_mod)
++            st["token_is_txt"] = torch.arange(txt.shape[1] + img.shape[1], device=device) < txt.shape[1]
++            return (txt, img), st
++        # The joint sequence is laid out context-then-content; gather it window-major once so each
++        # window is one contiguous segment for attention, run the blocks on that single sequence with
++        # its per-token modulation, and scatter back for the per-stream heads.
++        order, inverse, window_lens = window_major_order(
++            [ctx_lens, *(mod_lens[k] for k in active)], img.device
++        )
++        seq = torch.cat((txt, img), dim=1)[:, order]
++        mod = tuple(torch.cat((single_txt_mod[i], content_mod[i]), dim=1)[:, order] for i in range(3))
++        st.update(pe=pe[:, :, order], mod=mod, inverse=inverse, window_lens=window_lens)
++        st["token_is_txt"] = order < txt.shape[1]
++        return seq, st
+ 
++    def _run_blocks(
++        self,
++        blocks: Sequence[nn.Module],
++        state: Any,
++        st: dict[str, Any],
++        pag_single_layers: list[int] | None = None,
++        pag_strength: float = 1.0,
++        offset: int = 0,
++    ) -> Any:
++        """Run joint single blocks on ``state`` (see ``_prepare``); ``offset`` is the absolute index of
++        ``blocks[0]`` for ``pag_single_layers``. Blocks carrying an attention gate also receive the token types."""
++        for j, block in enumerate(blocks):
++            i = offset + j
++            layer_pag = pag_strength if (pag_single_layers and i in pag_single_layers) else 0.0
++            extra = {"token_is_txt": st["token_is_txt"]} if getattr(block, "attn_gate", None) is not None else {}
++            if not st["packed"]:
++                txt, img = state
++                txt, img = block(img, txt, st["pe"], st["content_mod"], st["single_txt_mod"],
++                                 pag_strength=layer_pag, **extra)
++                state = (txt, img)
++            else:
++                _, state = block(state, None, st["pe"], st["mod"], None, pag_strength=layer_pag,
++                                 seqlens=st["window_lens"], **extra)
++        return state
++
++    def _head(self, state: Any, st: dict[str, Any]) -> dict[str, Tensor]:
++        """Late blocks and the per-stream final layers on a joint state."""
++        if st["packed"]:
++            txt, img = torch.split(state[:, st["inverse"]], [st["txt_len"], st["img_len"]], dim=1)
++        else:
++            txt, img = state
++        active, inactive, lens_by_mod = st["active"], st["inactive"], st["lens_by_mod"]
+         img_by_mod: dict[str, Tensor] = {}
+         pos = 0
+         for k in active:
+@@ -886,21 +931,48 @@ class JointSingleSeq(nn.Module):
+             img_by_mod[k] = img[:, pos : pos + length]
+             pos += length
+         for k in inactive:
+-            img_by_mod[k] = content_by_mod[k]
++            img_by_mod[k] = st["content_by_mod"][k]
+ 
+         if self.depth_late_blocks > 0:
+             for d in range(self.depth_late_blocks):
+-                for m in all_mods:
++                for m in st["all_mods"]:
+                     img_by_mod[m] = self.late_content_mode_blocks[m][d](
+-                        img_by_mod[m], pe_by_mod[m], late_content_mods[m], seqlens=mod_lens.get(m)
++                        img_by_mod[m], st["pe_by_mod"][m], st["late_content_mods"][m], seqlens=st["mod_lens"].get(m)
+                     )
+-                txt = self.late_txt_mode_blocks[d](txt, pe_ctx, late_txt_mod, seqlens=ctx_lens)
++                txt = self.late_txt_mode_blocks[d](txt, st["pe_ctx"], st["late_txt_mod"], seqlens=st["ctx_lens"])
+ 
+-        final = {k: self.final_layer[k](img_by_mod[k], vec_by_mod[k]) for k in all_mods}
++        final = {k: self.final_layer[k](img_by_mod[k], st["vec_by_mod"][k]) for k in st["all_mods"]}
+         out: dict[str, Tensor] = {}
+         for k in active:
+             pos = 0
+-            for name, length in zip(names_by_mod[k], lens_by_mod[k], strict=True):
++            for name, length in zip(st["names_by_mod"][k], lens_by_mod[k], strict=True):
+                 out[name] = final[k][:, pos : pos + length]
+                 pos += length
++        if st.get("grad_tie") is not None:  # see _prepare: every stream's parameters reach the loss
++            first = next(iter(out))
++            out[first] = out[first] + st["grad_tie"].to(out[first].dtype)
+         return out
++
++    def forward(
++        self,
++        ctx: Tensor,
++        ctx_ids: Tensor,
++        vector: Tensor,
++        timesteps_ctx: Tensor,
++        pag_single_layers: list[int] | None = None,
++        pag_strength: float = 1.0,
++        seqlens: dict[str, Sequence[int]] | None = None,
++        **kwargs: Tensor,
++    ) -> dict[str, Tensor]:
++        """Denoise every stream given in ``kwargs`` (``x_<stream>``, ``x_<stream>_ids``, ``x_<stream>_timesteps``).
++
++        ``seqlens`` packs several windows into one call of batch size 1: ``seqlens["ctx"]`` and
++        ``seqlens["x_<stream>"]`` list the token counts of each window in order, and every stream and the
++        context hold the windows' tokens concatenated in that order. Attention then stays within each
++        window (mode blocks per stream, the joint blocks over context plus content of a window), so the
++        result equals separate per-window forwards while the whole micro-batch runs in one pass: one set of
++        FSDP gathers, large matmuls, and captions of different lengths without padding.
++        """
++        state, st = self._prepare(ctx, ctx_ids, vector, timesteps_ctx, seqlens, kwargs)
++        state = self._run_blocks(self.single_blocks, state, st, pag_single_layers, pag_strength)
++        return self._head(state, st)
+diff --git a/src/flux_action/models/wiring.py b/src/flux_action/models/wiring.py
+index c698c40..28b6c1c 100644
+--- a/src/flux_action/models/wiring.py
++++ b/src/flux_action/models/wiring.py
+@@ -246,3 +246,32 @@ def build_action_dit(
+         load_action_checkpoint(model, ckpt_path, modality, strict_heads=strict_heads, head_seed=head_seed)
+     model.eval()
+     return model
++
++
++def build_video_dit(
++    params: JointSingleSeqParams,
++    ckpt_path: str | None = None,
++    *,
++    device: str | torch.device = "cpu",
++    dtype: torch.dtype = torch.bfloat16,
++) -> JointSingleSeq:
++    """A DiT with content streams only (``video`` / ``video_cond``, no action modality), loaded from the
++    action-pretrained trunk: the action branch and every other unused stream are skipped; nothing may be missing."""
++    from safetensors import safe_open
++
++    with torch.device(device), default_dtype(dtype):
++        model = JointSingleSeq(params)
++    if ckpt_path is not None:
++        keep = set(params.in_channels)
++        with safe_open(ckpt_path, framework="pt", device="cpu") as checkpoint:
++            sd = {
++                key: checkpoint.get_tensor(key)
++                for key in checkpoint.keys()
++                if stream_of_key(key) in keep | {None, "txt"}
++            }
++        res = model.load_state_dict({k: v.to(dtype) for k, v in sd.items()}, strict=False)
++        missing = [k for k in res.missing_keys if not any(s in k for s in OPTIONAL_KEY_SUBSTRINGS)]
++        if missing or res.unexpected_keys:
++            raise ValueError(f"trunk mismatch: missing {missing[:6]}, unexpected {res.unexpected_keys[:6]}")
++    model.eval()
++    return model
+diff --git a/src/flux_action/policy.py b/src/flux_action/policy.py
+index a7fbe7b..01e98d7 100644
+--- a/src/flux_action/policy.py
++++ b/src/flux_action/policy.py
+@@ -20,6 +20,7 @@ training, EMA and training-state resume are not implemented here.
+ from __future__ import annotations
+ 
+ import json
++import os
+ from collections import deque
+ from collections.abc import Iterator
+ from dataclasses import dataclass, replace
+@@ -41,10 +42,11 @@ from .models.transformer import JointSingleSeq, JointSingleSeqParams
+ from .models.wiring import (
+     action_dit_params,
+     build_action_dit,
++    build_video_dit,
+     fresh_module_names,
+     restrict_content_streams,
+ )
+-from .processing import history, normalization, packing
++from .processing import history, normalization, packing, video_only
+ 
+ ACTION = "action"
+ ACTION_PREV = "action_prev"  # the command before a training window (joint_delta parameterization)
+@@ -155,6 +157,9 @@ class PreparedWindows:
+     actions: Tensor  # (n, chunk, D), gripper-flipped targets (absolute or deltas), normalized
+     action_mask: Tensor | None = None  # (n, D) 1/0 per action dim; None = all dims trained (see flow_loss)
+     event: Any = None
++    # video_only: context latents (n, 96, context latent frames, h, w) or None for text-only, and their frame count
++    cond_latents: Tensor | None = None
++    context_frames: int = 0
+ 
+     def tensors(self):
+         yield self.latents
+@@ -163,6 +168,8 @@ class PreparedWindows:
+         yield self.actions
+         if self.action_mask is not None:
+             yield self.action_mask
++        if self.cond_latents is not None:
++            yield self.cond_latents
+ 
+ 
+ class FluxActionPolicy(nn.Module):
+@@ -187,21 +194,46 @@ class FluxActionPolicy(nn.Module):
+         )
+         if config.content_streams is None:
+             config.content_streams = REQUIRED_CONTENT_STREAMS
+-        self.dit_params = action_dit_params(
+-            restrict_content_streams(JointSingleSeqParams(**config.dit_config), config.content_streams),
+-            self.modality,
+-            config.action_dim,
+-            attn_mode=config.attn_mode,
+-            conditioning_channels=config.conditioning_channels,
+-        )
+-        self.dit = build_action_dit(
+-            self.dit_params,
+-            None if _restore else trunk,
+-            modality=self.modality,
+-            device="meta" if _restore else "cpu",
+-            dtype=self.dtype_,
+-            head_seed=config.head_init_seed,
+-        )
++        content = restrict_content_streams(JointSingleSeqParams(**config.dit_config), config.content_streams)
++        if config.video_only:
++            self.dit_params = replace(content, attn_mode=config.attn_mode)
++            if config.loop:
++                from .models.looped import LoopParams, build_looped_video_dit
++
++                self.dit = build_looped_video_dit(
++                    self.dit_params,
++                    None if _restore else trunk,
++                    LoopParams(**config.loop),
++                    device="meta" if _restore else "cpu",
++                    dtype=self.dtype_,
++                )
++            else:
++                self.dit = build_video_dit(
++                    self.dit_params,
++                    None if _restore else trunk,
++                    device="meta" if _restore else "cpu",
++                    dtype=self.dtype_,
++                )
++            if config.overlay_weights and not _restore:
++                from .models.looped import load_overlay
++
++                load_overlay(self.dit, config.overlay_weights)
++        else:
++            self.dit_params = action_dit_params(
++                content,
++                self.modality,
++                config.action_dim,
++                attn_mode=config.attn_mode,
++                conditioning_channels=config.conditioning_channels,
++            )
++            self.dit = build_action_dit(
++                self.dit_params,
++                None if _restore else trunk,
++                modality=self.modality,
++                device="meta" if _restore else "cpu",
++                dtype=self.dtype_,
++                head_seed=config.head_init_seed,
++            )
+         if video_vae is None:
+             from .models.video_vae import load_video_vae
+ 
+@@ -567,6 +599,8 @@ class FluxActionPolicy(nn.Module):
+         global RNG.
+         """
+         cfg = self.config
++        if cfg.video_only:
++            return self._prepare_video_only(batch)
+         cams = self._cameras(batch)  # (B, n_cams, T, 3, H, W)
+         b, _, t = cams.shape[:3]
+         if t != cfg.window_frames:
+@@ -647,6 +681,8 @@ class FluxActionPolicy(nn.Module):
+         if n == 0:
+             zero = next(p for p in self.parameters() if p.requires_grad).sum() * 0.0
+             return zero, {"video_mse": 0.0, "action_mse": 0.0, "n_valid_windows": 0}
++        if cfg.video_only:
++            return self._forward_video_only(prepared)
+         if cfg.inference_profile == "history":
+             video = history.pack_video(prepared.latents, cfg)
+             action = history.pack_actions(prepared.state, prepared.actions, cfg)
+@@ -696,6 +732,94 @@ class FluxActionPolicy(nn.Module):
+             "n_valid_windows": n,
+         }
+ 
++    @torch.no_grad()
++    def _prepare_video_only(self, batch: dict[str, Any]) -> PreparedWindows:
++        """``prepare`` for ``video_only``: caption dropout, then the context and future clips encoded apart."""
++        cfg = self.config
++        cams = self._cameras(batch)  # (B, n_cams, T, 3, H, W)
++        b, _, t = cams.shape[:3]
++        ks = torch.as_tensor(batch.get("context_frames", t - cfg.future_frames)).reshape(-1)
++        k = int(ks[0])
++        if bool((ks != k).any()) or t != k + cfg.future_frames:
++            raise ValueError(f"video_only needs one context length per batch and k + {cfg.future_frames} frames")
++        video_only.check_frames(k, "context")
++        video_only.check_frames(cfg.future_frames, "future")
++        device = self.device
++        keep = self._valid_windows(batch, b, device)
++        captions = self._captions(batch, b)
++        generators = self._window_generators(batch, b)
++        if self.training and cfg.caption_dropout > 0:
++            captions = [
++                "" if float(torch.rand((), generator=g)) < cfg.caption_dropout else c
++                for c, g in zip(captions, generators, strict=True)
++            ]
++        idx = [i for i, valid in enumerate(keep.tolist()) if valid]
++        empty = torch.zeros(0, device=device)
++        if not idx:
++            return PreparedWindows(idx, empty, [], empty, empty)
++        ctxs = [ctx for ctx, _ in self._contexts([captions[i] for i in idx], device)]
++        augment = self.training and cfg.augment
++        camera_hw = tuple(cams.shape[-2:])
++        cond, future = [], []
++        for start in range(0, len(idx), cfg.vae_batch_windows):
++            videos = torch.stack(
++                [
++                    packing.materialize_video(
++                        cams[i],
++                        packing.sample_augmentation(generators[i], camera_hw=camera_hw) if augment else None,
++                        device,
++                        layout=cfg.camera_layout,
++                        canvas_hw=cfg.canvas_hw,
++                    )
++                    for i in idx[start : start + cfg.vae_batch_windows]
++                ]
++            )  # (nb, 3, k + F, Hc, Wc)
++            with torch.autocast("cuda", dtype=torch.bfloat16, enabled=device.type == "cuda"):
++                if k:
++                    cond.append(video_only.encode_clip(self.video_vae, videos[:, :, :k], cfg.latent_hw))
++                future.append(video_only.encode_clip(self.video_vae, videos[:, :, k:], cfg.latent_hw))
++        return PreparedWindows(
++            idx, torch.cat(future), ctxs, empty, empty,
++            cond_latents=torch.cat(cond) if k else None, context_frames=k,
++        )
++
++    def _forward_video_only(self, prepared: PreparedWindows) -> tuple[Tensor, dict[str, Any]]:
++        """Video flow loss on the future latents; the context latents condition through ``video_cond``."""
++        cfg = self.config
++        n = len(prepared.idx)
++        video = video_only.pack(prepared.cond_latents, prepared.latents, prepared.context_frames, cfg.fps)
++        t = video_only.sample_video_timesteps(n, cfg.video_logit_mean, cfg.video_logit_std)
++        self._last_timesteps = t.tolist()  # diagnostics (trainer non-finite dump)
++        kwargs, target = video_only.forward_kwargs(video, t)
++        packed, seqlens = packing.pack_windows(kwargs, prepared.ctxs, VEC_DIM)
++        dump = os.environ.get("FLUX_DUMP_DIR")
++        if dump:  # debugging: the exact DiT inputs of every micro-batch, one file per call
++            self._dump_index = getattr(self, "_dump_index", 0) + 1
++            rank = int(os.environ.get("RANK", "0"))
++            torch.save({"packed": {k: v.detach().cpu() for k, v in packed.items()}, "seqlens": seqlens,
++                        "target": target.detach().cpu(), "timesteps": t, "k": prepared.context_frames},
++                       f"{dump}/dit-inputs-rank{rank}-call{self._dump_index:04d}.pt")
++        loop = getattr(self.dit, "loop", None)
++        extra: dict[str, Any] = {}
++        if loop is not None and cfg.deep_supervision and loop.num_loops > 1:
++            extra["exit_loops"] = tuple(range(1, loop.num_loops))  # deep supervision: decode every loop exit
++        pred = self.dit(**self._cast_inputs(packed), seqlens=seqlens, **extra)
++        target_flat = packing.flatten_windows({"x": target})["x"]
++        losses = video_only.flow_loss(pred["x_video"], target_flat)
++        info = {"video_mse": losses["video_mse"], "action_mse": losses["action_mse"], "n_valid_windows": n}
++        loss = losses["loss"]
++        if extra:
++            from .models.looped import deep_supervision_weights
++
++            weights = deep_supervision_weights(loop.num_loops, cfg.deep_supervision)
++            loss = weights[-1] * loss
++            for r, out_r in pred["exits"].items():
++                loss_r = video_only.flow_loss(out_r["x_video"], target_flat)["loss"]
++                loss = loss + weights[r - 1] * loss_r
++                info[f"loss_exit{r}"] = loss_r.detach()
++            info["loss_final"] = losses["loss"].detach()
++        return loss, info
++
+     @staticmethod
+     def _drop_cameras(cams: Tensor, dropped: list[int]) -> Tensor:
+         """``(n_cams, T, 3, H, W)`` with the cameras ``dropped`` replaced by the flat mid-gray tile."""
+diff --git a/src/flux_action/processing/video_only.py b/src/flux_action/processing/video_only.py
+new file mode 100644
+index 0000000..e448fa1
+--- /dev/null
++++ b/src/flux_action/processing/video_only.py
+@@ -0,0 +1,107 @@
++# Copyright 2026 Black Forest Labs. All rights reserved.
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++"""Video-only windows (``PolicyConfig.video_only``): k observed frames + text -> F future frames, no action streams.
++
++A window holds ``k + F`` frames at ``fps``: ``k`` context frames, then ``future_frames`` frames to predict. ``k``
++is shared by the windows of a micro-batch (``batch["context_frames"]``) and may be 0 (text only). The context
++clip and the future clip are VAE-encoded independently (see :func:`encode_clip`), so trimming the context never changes the future latents; both lengths must lie on the causal VAE's
++``1 + 4n`` grid. Context latents go to ``x_video_cond`` (clean, timestep 0, no loss); future latents are
++``x_video``, the only stream with a loss.
++
++Time ids on the 10 ms clock, context start = 0: a causal latent sits at the time of its last frame, so context
++latent ``j`` is at ``4 j / fps`` and future latent ``i`` at ``(k + 4 i) / fps``; the gap between the last context
++frame and future latent ``i`` is ``(4 i + 1) / fps`` for every ``k``.
++"""
++
++from __future__ import annotations
++
++import torch
++from torch import Tensor
++
++from ..models.positional import batched_prc_vid, times_to_ids
++from . import packing
++
++
++def check_frames(n_frames: int, what: str) -> None:
++    if n_frames and (n_frames - 1) % packing.TEMPORAL_DOWNSAMPLE:
++        raise ValueError(f"{what}: {n_frames} frames is not on the VAE's 1 + 4n grid")
++
++
++@torch.no_grad()
++def encode_clip(vae, videos: Tensor, latent_hw: tuple[int, int]) -> Tensor:
++    """``(B, 3, T, Hc, Wc)`` in [-1, 1] -> ``(B, 96, 1 + (T - 1) // 4, *latent_hw)``, each clip encoded alone.
++
++    Single frames and clips of >= 5 latents use the direct ``encode_task`` path; clips of 2-4 latents, which it
++    rejects (its 5-frame temporal attention window must fit), use the chunked path (pads to the 45-frame chunk by
++    repeating the last frame, then trims). Both agree to < 1e-4 relative at 17 and 33 frames, 0.6% at one frame.
++    The encoder is causal in time, so the end padding does not change the kept latents (verified on AgiBot clips:
++    k-frame prefixes match the first latents of a longer encode to < 1e-4 relative).
++    """
++    t = videos.shape[2]
++    n_latents = 1 + (t - 1) // packing.TEMPORAL_DOWNSAMPLE
++    if t == 1 or n_latents >= 5:  # the direct path fits: no padding to 45 frames (same latents, < 1e-4 / 0.6%)
++        lat = vae.encode_task(videos.to(torch.bfloat16)).clone()
++    else:
++        lat = vae.encode(videos.to(torch.bfloat16)).clone()
++    return lat[..., : latent_hw[0], : latent_hw[1]]
++
++
++def latent_times(n_latents: int, first_frame: int, fps: float, batch: int) -> Tensor:
++    """Seconds of causal latents ``0..n-1`` of a clip starting at frame ``first_frame``: latent ``j`` -> frame
++    ``first_frame + 4 j`` (the last frame it summarizes)."""
++    frames = first_frame + torch.arange(n_latents).float() * packing.TEMPORAL_DOWNSAMPLE
++    return (frames / fps)[None].expand(batch, -1)
++
++
++def pack(cond: Tensor | None, future: Tensor, k: int, fps: float) -> dict[str, Tensor]:
++    """Context latents ``(B, 96, nc, h, w)`` or None, future latents ``(B, 96, nf, h, w)`` -> stream tensors + ids."""
++    b = future.shape[0]
++    out = {}
++    if cond is not None and cond.shape[2]:
++        tok, ids = batched_prc_vid(cond.to(torch.bfloat16), times_to_ids(latent_times(cond.shape[2], 0, fps, b)))
++        out.update(x_video_cond=tok, x_video_cond_ids=ids)
++    tok, ids = batched_prc_vid(future.to(torch.bfloat16), times_to_ids(latent_times(future.shape[2], k, fps, b)))
++    out.update(x_video=tok, x_video_ids=ids)
++    return out
++
++
++def sample_video_timesteps(n: int, mean: float, std: float, generator: torch.Generator | None = None) -> Tensor:
++    """``t = sigmoid(N(mean, std))`` (t = 1 is noise): the trunk's video timestep distribution
++    (``PolicyConfig.video_logit_mean/std``, used for video tokens by the SO-101 history recipe)."""
++    return torch.sigmoid(torch.randn(n, generator=generator) * std + mean)
++
++
++def forward_kwargs(video: dict[str, Tensor], t: Tensor) -> tuple[dict[str, Tensor], Tensor]:
++    """Noise ``x_video`` to ``t`` (one per window); the context stays clean at timestep 0. -> (kwargs, target)."""
++    xv, target = packing.add_noise(video["x_video"], t)
++    dev = xv.device
++    tt = t.to(device=dev, dtype=xv.dtype).float()  # the rounded value the noising used
++    kw = {
++        "x_video": xv,
++        "x_video_ids": video["x_video_ids"].to(dev),
++        "x_video_timesteps": tt[:, None] * torch.ones(xv.shape[:2], device=dev),
++    }
++    if "x_video_cond" in video:
++        kw.update(
++            x_video_cond=video["x_video_cond"],
++            x_video_cond_ids=video["x_video_cond_ids"].to(dev),
++            x_video_cond_timesteps=torch.zeros(video["x_video_cond"].shape[:2], device=dev),
++        )
++    return kw, target
++
++
++def flow_loss(pred: Tensor, target: Tensor) -> dict[str, Tensor]:
++    """Velocity MSE over the future tokens only (every window has the same token count)."""
++    mse = ((pred.float() - target.float()) ** 2).mean()
++    return {"loss": mse, "video_mse": mse.detach(), "action_mse": torch.zeros((), device=mse.device)}
+diff --git a/src/flux_action/training/checkpoint.py b/src/flux_action/training/checkpoint.py
+index 6958774..67cde02 100644
+--- a/src/flux_action/training/checkpoint.py
++++ b/src/flux_action/training/checkpoint.py
+@@ -153,6 +153,20 @@ def _dcp_load(state_dict: dict[str, Any], path: Path, *, partial: bool = False)
+         dcp.load(state_dict, checkpoint_id=str(path), planner=planner)
+ 
+ 
++def _save_rank(obj: Any, directory: Path, rank: int) -> None:
++    """Per-rank state (training.lowmem): ``<directory>/rank-NNNN.pt``."""
++    directory.mkdir(parents=True, exist_ok=True)
++    torch.save(obj, directory / f"rank-{rank:04d}.pt")
++
++
++def _load_rank(directory: Path, rank: int, world_size: int, state: TrainState) -> Any:
++    if state.world_size != world_size:
++        raise ValueError(
++            f"{directory} holds per-rank state of {state.world_size} ranks; this launch has {world_size}"
++        )
++    return torch.load(directory / f"rank-{rank:04d}.pt", map_location="cpu", weights_only=False)
++
++
+ def checkpoint_dir(root: str | Path, step: int) -> Path:
+     return Path(root) / f"step-{step}"
+ 
+@@ -219,9 +233,15 @@ def save_checkpoint(
+         for name, ema in emas.items()
+     }
+     _dcp_save({"model": get_model_state_dict(model)}, path / "model")
+-    _dcp_save({"optimizer": get_optimizer_state_dict(model, optimizer)}, path / "optimizer")
++    if getattr(optimizer, "per_rank_state", False):  # training.lowmem: one file per rank
++        _save_rank(optimizer.state_dict(), path / "optimizer", rank)
++    else:
++        _dcp_save({"optimizer": get_optimizer_state_dict(model, optimizer)}, path / "optimizer")
+     for name, ema in emas.items():
+-        _dcp_save({"tensors": ema.state_dict()["tensors"]}, path / name)
++        if getattr(ema, "per_rank_state", False):
++            _save_rank(ema.state_dict(), path / name, rank)
++        else:
++            _dcp_save({"tensors": ema.state_dict()["tensors"]}, path / name)
+     (path / "rng").mkdir(exist_ok=True)
+     torch.save(rng_state(), path / "rng" / f"rank-{rank:04d}.pt")
+     if rank == 0:
+@@ -249,14 +269,21 @@ def load_checkpoint(
+     model_sd = {"model": get_model_state_dict(model)}
+     _dcp_load(model_sd, path / "model")
+     set_model_state_dict(model, model_sd["model"])
++    rank, world_size = rank_world()
+     if optimizer is not None:
+-        optim_sd = {"optimizer": get_optimizer_state_dict(model, optimizer)}
+-        _dcp_load(optim_sd, path / "optimizer")
+-        set_optimizer_state_dict(model, optimizer, optim_sd["optimizer"])
++        if getattr(optimizer, "per_rank_state", False):
++            optimizer.load_state_dict(_load_rank(path / "optimizer", rank, world_size, state))
++        else:
++            optim_sd = {"optimizer": get_optimizer_state_dict(model, optimizer)}
++            _dcp_load(optim_sd, path / "optimizer")
++            set_optimizer_state_dict(model, optimizer, optim_sd["optimizer"])
+     for name, ema in (emas or {}).items():
+         meta = state.emas.get(name)
+         if meta is None:
+             raise ValueError(f"checkpoint has no EMA profile {name!r}; found {sorted(state.emas)}")
++        if getattr(ema, "per_rank_state", False):
++            ema.load_state_dict(_load_rank(path / name, rank, world_size, state))
++            continue
+         if float(meta["sigma_rel"]) != ema.sigma_rel:
+             raise ValueError(f"{name}: checkpoint sigma_rel {meta['sigma_rel']} differs from {ema.sigma_rel}")
+         _dcp_load({"tensors": dict(zip(ema.names, ema.shadow, strict=True))}, path / name)
+diff --git a/src/flux_action/training/distributed.py b/src/flux_action/training/distributed.py
+index 5cdfc77..2f9a8f1 100644
+--- a/src/flux_action/training/distributed.py
++++ b/src/flux_action/training/distributed.py
+@@ -142,9 +142,14 @@ def dit_blocks(dit: nn.Module) -> Iterable[tuple[nn.ModuleList, int]]:
+ 
+ 
+ def apply_activation_checkpointing(dit: nn.Module) -> int:
+-    """Non-reentrant checkpointing of every block (the reference's ``AC_MODE=full``)."""
++    """Non-reentrant checkpointing of every block (the reference's ``AC_MODE=full``).
++
++    ``FLUX_TXT_NO_AC=1`` leaves the text mode blocks unwrapped (debugging the text stream)."""
+     n = 0
++    skip_txt = os.environ.get("FLUX_TXT_NO_AC") == "1"
+     for blocks, i in list(dit_blocks(dit)):
++        if skip_txt and blocks is getattr(dit, "txt_mode_blocks", None):
++            continue
+         blocks[i] = checkpoint_wrapper(
+             blocks[i], checkpoint_impl=CheckpointImpl.NO_REENTRANT, preserve_rng_state=False
+         )
+@@ -152,6 +157,20 @@ def apply_activation_checkpointing(dit: nn.Module) -> int:
+     return n
+ 
+ 
++def apply_compile(dit: nn.Module, mode: str | None = None, dynamic: bool = False) -> int:
++    """``torch.compile`` every transformer block in place (torchtitan's recipe: after activation checkpointing,
++    before FSDP). One k per batch and fixed caption buckets give a handful of static packed shapes, so
++    ``dynamic=False`` compiles one graph per shape; the cache limit is raised to hold them all."""
++    import torch._dynamo
++
++    torch._dynamo.config.cache_size_limit = max(torch._dynamo.config.cache_size_limit, 64)
++    n = 0
++    for blocks, i in list(dit_blocks(dit)):
++        blocks[i] = torch.compile(blocks[i], mode=mode, dynamic=dynamic)
++        n += 1
++    return n
++
++
+ def shard_dit(
+     dit: nn.Module,
+     mesh: DeviceMesh,
+@@ -160,6 +179,8 @@ def shard_dit(
+     reduce_dtype: torch.dtype = torch.float32,
+     reshard_after_forward: bool = True,
+     activation_checkpointing: bool = True,
++    compile_blocks: bool = False,
++    compile_mode: str | None = None,
+ ) -> nn.Module:
+     """Wrap the DiT in place the way the reference trainer does: blocks, ``time_in``, then the root.
+ 
+@@ -172,6 +193,8 @@ def shard_dit(
+     """
+     if activation_checkpointing:
+         apply_activation_checkpointing(dit)
++    if compile_blocks:
++        apply_compile(dit, compile_mode)
+     block_policy = MixedPrecisionPolicy(
+         param_dtype=param_dtype, reduce_dtype=reduce_dtype, cast_forward_inputs=True
+     )
+@@ -188,6 +211,9 @@ def shard_dit(
+     return dit
+ 
+ 
++COMPILE_WRAPPED = "_orig_mod."
++
++
+ def clean_name(name: str) -> str:
+-    """Parameter name without activation-checkpoint wrapper segments."""
+-    return name.replace(CHECKPOINT_WRAPPED, "")
++    """Parameter name without activation-checkpoint / torch.compile wrapper segments (DCP strips both too)."""
++    return name.replace(CHECKPOINT_WRAPPED, "").replace(COMPILE_WRAPPED, "")
+diff --git a/src/flux_action/training/lowmem.py b/src/flux_action/training/lowmem.py
+new file mode 100644
+index 0000000..98acfb5
+--- /dev/null
++++ b/src/flux_action/training/lowmem.py
+@@ -0,0 +1,168 @@
++# Copyright 2026 Black Forest Labs. All rights reserved.
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++"""Low-memory training state for full finetunes on few GPUs: 8-bit AdamW over FSDP2 shards and a CPU EMA.
++
++Both keep per-rank state (``per_rank_state = True``): the checkpoint stores one file per rank instead of a
++DCP shard set, so a resume needs the same world size (the trainer's global-batch check already pins it).
++"""
++
++from __future__ import annotations
++
++from collections.abc import Iterable
++from typing import Any
++
++import torch
++from torch import Tensor, nn
++
++from .distributed import clean_name
++
++
++def _local(t: Tensor) -> Tensor:
++    from torch.distributed.tensor import DTensor
++
++    return t.to_local() if isinstance(t, DTensor) else t
++
++
++def _reshard(module: nn.Module) -> None:
++    """Free any unsharded FSDP2 parameter copies so ``named_parameters`` yields the sharded DTensors."""
++    try:
++        from torch.distributed.fsdp import FSDPModule
++    except ImportError:  # no FSDP2 in this torch
++        return
++    for m in module.modules():
++        if isinstance(m, FSDPModule):
++            m.reshard()
++
++
++class LocalShardAdamW8bit(torch.optim.Optimizer):
++    """bitsandbytes ``AdamW8bit`` stepping each rank's local shard of FSDP2 (DTensor) parameters in place.
++
++    ``param_groups`` hold the model's parameters (LR schedulers and grad clipping act on them as usual); an
++    inner bitsandbytes optimizer holds Parameters that alias the local shards. Gradients are global-norm
++    clipped by the trainer before ``step``; the local shard update equals the unsharded update elementwise.
++    """
++
++    per_rank_state = True
++
++    def __init__(self, params: Iterable[dict[str, Any]], *, lr: float, betas, eps: float, weight_decay: float):
++        import bitsandbytes as bnb
++
++        super().__init__(list(params), dict(lr=lr, betas=tuple(betas), eps=eps, weight_decay=weight_decay))
++        inner_groups = []
++        self._aliases: list[list[tuple[nn.Parameter, nn.Parameter]]] = []
++        for group in self.param_groups:
++            pairs = []
++            for p in group["params"]:
++                alias = nn.Parameter(_local(p.data), requires_grad=True)  # shares the shard's storage
++                pairs.append((p, alias))
++            self._aliases.append(pairs)
++            inner_groups.append({"params": [a for _, a in pairs], "lr": group["lr"]})
++        self.inner = bnb.optim.AdamW8bit(inner_groups, lr=lr, betas=tuple(betas), eps=eps, weight_decay=weight_decay)
++
++    @torch.no_grad()
++    def step(self, closure=None):
++        assert closure is None, "closures are not supported"
++        for group, inner, pairs in zip(self.param_groups, self.inner.param_groups, self._aliases, strict=True):
++            inner["lr"] = group["lr"]
++            for p, alias in pairs:
++                alias.grad = None if p.grad is None else _local(p.grad)
++        self.inner.step()
++        for pairs in self._aliases:
++            for _, alias in pairs:
++                alias.grad = None
++
++    def zero_grad(self, set_to_none: bool = True):
++        super().zero_grad(set_to_none=set_to_none)
++
++    def state_dict(self) -> dict[str, Any]:
++        return {"inner": self.inner.state_dict(), "lrs": [g["lr"] for g in self.param_groups]}
++
++    def load_state_dict(self, state: dict[str, Any]) -> None:
++        self.inner.load_state_dict(state["inner"])
++        for g, lr in zip(self.param_groups, state["lrs"], strict=True):
++            g["lr"] = lr
++
++
++class CPUEMA:
++    """Classic EMA ``ema = d * ema + (1 - d) * param`` of the trainable parameters, fp32 in pinned host memory
++    (each rank its local shards), updated every ``every`` optimizer updates with the decay compounded.
++
++    Warm-up: ``d = min(decay, (1 + step) / (10 + step))`` so a short run does not keep the initialization for
++    ~1 / (1 - decay) updates; the first update copies the model. Same interface as ``PowerEMA`` where the trainer
++    and checkpoint use it (``names``, ``last_step``, ``update_from_module``, ``state_dict``).
++    """
++
++    per_rank_state = True
++    sigma_rel = None
++
++    def __init__(self, named: Iterable[tuple[str, Tensor]], decay: float, every: int = 1):
++        self.decay, self.every, self.last_step = float(decay), max(1, int(every)), -1
++        self.names, self.shadow, self.global_shapes = [], [], []
++        for name, p in named:
++            local = _local(p.detach())
++            self.names.append(name)
++            self.shadow.append(torch.empty(local.shape, dtype=torch.float32, device="cpu").pin_memory())
++            self.global_shapes.append(tuple(p.shape))
++
++    @classmethod
++    def from_module(cls, module: nn.Module, decay: float, every: int = 1) -> CPUEMA:
++        return cls(((clean_name(n), p) for n, p in module.named_parameters() if p.requires_grad), decay, every)
++
++    def _params(self, module: nn.Module) -> list[Tensor]:
++        _reshard(module)  # FSDP2 may hold unsharded copies (e.g. right after a checkpoint write): use the shards
++        by_name = {clean_name(n): p for n, p in module.named_parameters()}
++        return [_local(by_name[n].detach()) for n in self.names]
++
++    @torch.no_grad()
++    def update_from_module(self, module: nn.Module, step: int) -> float | None:
++        """``step`` = optimizer updates done so far (1 after the first). Returns the decay applied, or None."""
++        first = self.last_step < 0
++        if not first and step % self.every:
++            return None
++        params = [p.float().to("cpu", non_blocking=True) for p in self._params(module)]
++        torch.cuda.synchronize()
++        if first:
++            for s, p in zip(self.shadow, params, strict=True):
++                s.copy_(p)
++            d = 0.0
++        else:
++            d = min(self.decay, (1 + step) / (10 + step)) ** self.every
++            torch._foreach_lerp_(self.shadow, params, 1.0 - d)
++        self.last_step = step
++        return d
++
++    @torch.no_grad()
++    def swap_into(self, module: nn.Module) -> list[Tensor]:
++        """Load the EMA into the model's shards; returns the stash for :meth:`restore`."""
++        params = self._params(module)
++        stash = [p.to("cpu", copy=True) for p in params]
++        for p, s in zip(params, self.shadow, strict=True):
++            p.copy_(s.to(p.device, p.dtype, non_blocking=True))
++        return stash
++
++    @torch.no_grad()
++    def restore(self, module: nn.Module, stash: list[Tensor]) -> None:
++        for p, s in zip(self._params(module), stash, strict=True):
++            p.copy_(s.to(p.device, non_blocking=True))
++
++    def state_dict(self) -> dict[str, Any]:
++        return {"names": self.names, "tensors": self.shadow, "last_step": self.last_step, "decay": self.decay,
++                "every": self.every, "global_shapes": self.global_shapes}
++
++    def load_state_dict(self, state: dict[str, Any]) -> None:
++        if list(state["names"]) != self.names:
++            raise ValueError("EMA parameter names differ from the checkpoint")
++        for s, t in zip(self.shadow, state["tensors"], strict=True):
++            s.copy_(t)
++        self.last_step = int(state["last_step"])
+diff --git a/src/flux_action/training/reduce_guard.py b/src/flux_action/training/reduce_guard.py
+new file mode 100644
+index 0000000..ae11b76
+--- /dev/null
++++ b/src/flux_action/training/reduce_guard.py
+@@ -0,0 +1,72 @@
++"""Cross-rank check of FSDP2's gradient reduce-scatter sequence.
++
++NCCL matches collectives by issue order and does not check sizes: two ranks that reduce-scatter the same
++parameter groups in a different order (or different groups) silently add the wrong gradients together as
++long as the byte totals line up, and hang when they do not (seen in the Phase-3 run: a text-only micro-batch
++gives the context stream no gradient, so FSDP2 reduce-scatters those blocks from its final autograd callback,
++after every other group, instead of in backward order). ``JointSingleSeq`` now ties every stream into the
++loss so the sequence no longer depends on the data; this guard verifies that on every update.
++
++The guard wraps ``FSDPParamGroup.post_backward`` (process-wide), records the groups reduced in the synced
++micro-batch, and ``check`` compares the sequence across ranks with one small ``all_gather_object``.
++"""
++
++from __future__ import annotations
++
++from typing import Any
++
++import torch.distributed as dist
++from torch.distributed.fsdp._fully_shard import _fsdp_param_group as _pg
++
++
++class ReduceOrderGuard:
++    _installed: ReduceOrderGuard | None = None
++
++    def __init__(self) -> None:
++        self.records: list[tuple[str, bool]] = []  # (group fqn, had a gradient to reduce)
++        self.enabled = True
++        if ReduceOrderGuard._installed is None:
++            original = _pg.FSDPParamGroup.post_backward
++
++            def traced(group: Any, *args: Any, **kwargs: Any) -> Any:
++                guard = ReduceOrderGuard._installed
++                if guard is not None and guard.enabled and group.reduce_grads:
++                    has = any(
++                        fp.unsharded_accumulated_grad is not None
++                        or (hasattr(fp, "_unsharded_param") and fp._unsharded_param.grad is not None)
++                        for fp in group.fsdp_params
++                    )
++                    guard.records.append((_clean(group._module_fqn or "root"), has))
++                return original(group, *args, **kwargs)
++
++            _pg.FSDPParamGroup.post_backward = traced
++        ReduceOrderGuard._installed = self
++
++    def check(self, step: int) -> list[str]:
++        """Raise ``RuntimeError`` when the ranks reduced different groups or in a different order (or a
++        trainable group had nothing to reduce on some rank). Returns this rank's sequence; clears it."""
++        mine = [fqn for fqn, _ in self.records]
++        missing = [fqn for fqn, has in self.records if not has]
++        self.records = []
++        gathered: list[list[str] | None] = [None] * dist.get_world_size()
++        dist.all_gather_object(gathered, {"seq": mine, "missing": missing})
++        seqs = [g["seq"] for g in gathered]  # type: ignore[index]
++        for rank, g in enumerate(gathered):
++            if g["missing"]:  # type: ignore[index]
++                raise RuntimeError(
++                    f"step {step}: rank {rank} reduce-scattered without a gradient for {g['missing']}"  # type: ignore[index]
++                )
++        for rank, seq in enumerate(seqs[1:], start=1):
++            if seq != seqs[0]:
++                first = next((i for i, (a, b) in enumerate(zip(seqs[0], seq)) if a != b), min(len(seqs[0]), len(seq)))
++                raise RuntimeError(
++                    f"step {step}: FSDP reduce-scatter sequence differs between rank 0 and rank {rank} "
++                    f"({len(seqs[0])} vs {len(seq)} groups; first difference at {first}: "
++                    f"{seqs[0][first:first + 3]} vs {seq[first:first + 3]}). NCCL would silently add the wrong "
++                    "gradients together (or hang); the batches of this update differ in structure across ranks."
++                )
++        return mine
++
++
++def _clean(fqn: str) -> str:
++    return fqn.replace("_checkpoint_wrapped_module.", "").replace("_orig_mod.", "")
+diff --git a/src/flux_action/training/trainer.py b/src/flux_action/training/trainer.py
+index fe829e8..b2d3b02 100644
+--- a/src/flux_action/training/trainer.py
++++ b/src/flux_action/training/trainer.py
+@@ -37,7 +37,9 @@ from __future__ import annotations
+ import hashlib
+ import importlib
+ import json
++import contextlib
+ import math
++import os
+ import time
+ from dataclasses import asdict, dataclass, field
+ from pathlib import Path
+@@ -64,12 +66,14 @@ from .data import DataPosition, WindowDataset, build_dataloader, load_manifest,
+ from .distributed import (
+     all_reduce_means,
+     apply_activation_checkpointing,
++    apply_compile,
+     build_mesh,
+     global_grad_norm,
+     init_distributed,
+     shard_dit,
+ )
+ from .ema import DROID_POWER_EMA_SIGMA_RELS, PowerEMA
++from .reduce_guard import ReduceOrderGuard
+ from .schedule import (
+     DROID_COOLDOWN_START,
+     DROID_COOLDOWN_STEPS,
+@@ -94,6 +98,7 @@ class TrainConfig:
+     # (seed, epoch, rank, world_size, num_workers, windows_per_rank, skip_batches, grad_accumulation) and
+     # returns an iterable dataset of training windows with ``batches_per_rank``. ``index_dir`` is then unused.
+     dataset: str = "index"
++    dataset_kwargs: dict[str, Any] = field(default_factory=dict)  # handed to the plug as config.dataset_kwargs
+     policy: dict[str, Any] = field(
+         default_factory=dict
+     )  # PolicyConfig fields: trunk_weights, encoder ids, ...
+@@ -121,6 +126,9 @@ class TrainConfig:
+     reduce_dtype: str = "float32"
+     activation_checkpointing: bool = True
+     reshard_after_forward: bool = True
++    # torch.compile of every DiT block (after AC, before FSDP); compile_mode: None | "max-autotune-no-cudagraphs"
++    compile_blocks: bool = False
++    compile_mode: str | None = None
+     betas: tuple[float, float] = (0.9, 0.99)
+     eps: float = 1e-8
+     weight_decay: float = 0.05
+@@ -134,6 +142,22 @@ class TrainConfig:
+     # independent starts and captions from the run seed, the epoch, the episode and the visit number.
+     visits_per_epoch: int = 1
+     ema_sigma_rels: tuple[float, ...] = DROID_POWER_EMA_SIGMA_RELS
++    # "adamw" (torch, DCP-sharded state) or "adamw8bit" (bitsandbytes over the local FSDP shards, per-rank state;
++    # training.lowmem). "power" EMAs (ema_sigma_rels, on the device) or one "cpu" EMA (ema_decay, host memory).
++    optimizer: str = "adamw"
++    ema: str = "power"
++    ema_decay: float = 0.999
++    ema_every: int = 1
++    # Periodic evaluation: ``eval_fn = "pkg.module:callable"`` is called as ``fn(trainer)`` on every rank
++    # every ``eval_every`` updates (after the checkpoint of that step, if any).
++    eval_every: int | None = None
++    eval_fn: str | None = None
++    # A non-finite update is never applied. "raise" (default) aborts the run; "skip" drops that update (no
++    # optimizer, scheduler or EMA step; diagnostics are dumped) and aborts only after ``max_nonfinite_streak``
++    # consecutive skips or when skips exceed ``max_nonfinite_fraction`` of the updates so far (after 100).
++    nonfinite: str = "raise"
++    max_nonfinite_streak: int = 5
++    max_nonfinite_fraction: float = 0.01
+     # Content streams of the trunk that receive no loss here and are not shipped: frozen, not trained.
+     frozen_streams: tuple[str, ...] = ("image", "image_cond", "audio", "audio_cond")
+     checkpoint_every: int = 1000
+@@ -145,6 +169,9 @@ class TrainConfig:
+     resume: str = "auto"  # auto | none | path of a step directory
+     # A resumed run must keep windows_per_rank x ranks x grad_accumulation unless explicitly allowed.
+     allow_global_batch_change: bool = False
++    # Verify on every update that all ranks reduce-scatter the same FSDP groups in the same order (see
++    # training/reduce_guard.py); one tiny all_gather_object per update.
++    check_reduce_order: bool = True
+     # A resumed run must carry the checkpoint's run seed unless explicitly allowed (branching a new run).
+     allow_seed_change: bool = False
+     max_epochs: int | None = None
+@@ -174,6 +201,12 @@ class TrainConfig:
+             raise ValueError("max_grad_norm must be a finite positive number or None")
+         if self.visits_per_epoch < 1:
+             raise ValueError("visits_per_epoch must be positive")
++        if self.optimizer not in ("adamw", "adamw8bit") or self.ema not in ("power", "cpu"):
++            raise ValueError("optimizer must be adamw|adamw8bit and ema power|cpu")
++        if self.nonfinite not in ("raise", "skip"):
++            raise ValueError("nonfinite must be raise or skip")
++        if (self.eval_every is None) != (self.eval_fn is None):
++            raise ValueError("eval_every and eval_fn go together")
+ 
+     @classmethod
+     def from_file(cls, path, overrides: tuple[str, ...] | list[str] = ()) -> TrainConfig:
+@@ -211,8 +244,11 @@ class Trainer:
+         self.output_dir = Path(config.output_dir)
+         self.step = 0
+         self.epoch_losses: list[float] = []
+-        self.encode_stream = torch.cuda.Stream(self.device) if self.device.type == "cuda" else None
++        # FLUX_NO_ENCODE_STREAM=1: encode on the main stream (no overlap with the DiT backward), for debugging
++        overlap = self.device.type == "cuda" and os.environ.get("FLUX_NO_ENCODE_STREAM") != "1"
++        self.encode_stream = torch.cuda.Stream(self.device) if overlap else None
+         self._prepared: Any = None  # PreparedWindows of the next micro-batch, encoded ahead of its update
++        self._reduce_guard: ReduceOrderGuard | None = None
+ 
+     # ------------------------------------------------------------------ construction
+     def build(self) -> Trainer:
+@@ -270,10 +306,14 @@ class Trainer:
+                 reduce_dtype=getattr(torch, cfg.reduce_dtype),
+                 reshard_after_forward=cfg.reshard_after_forward,
+                 activation_checkpointing=cfg.activation_checkpointing,
++                compile_blocks=cfg.compile_blocks,
++                compile_mode=cfg.compile_mode,
+             )
+         else:
+             if cfg.activation_checkpointing:
+                 apply_activation_checkpointing(policy.dit)
++            if cfg.compile_blocks:
++                apply_compile(policy.dit, cfg.compile_mode)
+             policy.dit.to(self.device)
+         for component in (getattr(policy.video_vae, "module", policy.video_vae), policy.text_encoder):
+             if isinstance(component, nn.Module):
+@@ -281,13 +321,21 @@ class Trainer:
+         policy.set_compute_dtype(self.compute_dtype if self.compute_dtype != self.param_dtype else None)
+         policy.train()
+         self.policy = policy
+-        self.optimizer = torch.optim.AdamW(
+-            policy.get_optim_params(),
+-            betas=cfg.betas,
+-            eps=cfg.eps,
+-            weight_decay=cfg.weight_decay,
+-            fused=cfg.fused_optimizer and self.device.type == "cuda",
+-        )
++        if cfg.optimizer == "adamw8bit":
++            from .lowmem import LocalShardAdamW8bit
++
++            groups = policy.get_optim_params()
++            self.optimizer = LocalShardAdamW8bit(
++                groups, lr=groups[0]["lr"], betas=cfg.betas, eps=cfg.eps, weight_decay=cfg.weight_decay
++            )
++        else:
++            self.optimizer = torch.optim.AdamW(
++                policy.get_optim_params(),
++                betas=cfg.betas,
++                eps=cfg.eps,
++                weight_decay=cfg.weight_decay,
++                fused=cfg.fused_optimizer and self.device.type == "cuda",
++            )
+         self.scheduler = build_lr_scheduler(
+             self.optimizer,
+             droid_lr_lambdas(
+@@ -296,9 +344,16 @@ class Trainer:
+                 frozen_steps=cfg.frozen_steps,
+                 trunk_warmup_steps=cfg.trunk_warmup_steps,
+                 heads_warmup_steps=cfg.heads_warmup_steps,
+-            ),
++            )[: len(self.optimizer.param_groups)],  # (trunk, heads); a video-only policy has no heads
+         )
+-        self.emas = {ema_folder(s): PowerEMA.from_module(policy, s) for s in cfg.ema_sigma_rels}
++        if cfg.ema == "cpu":
++            from .lowmem import CPUEMA
++
++            name = "ema_cpu_" + f"{cfg.ema_decay:g}".replace(".", "p")
++            self.emas = {name: CPUEMA.from_module(policy, cfg.ema_decay, cfg.ema_every)}
++        else:
++            self.emas = {ema_folder(s): PowerEMA.from_module(policy, s) for s in cfg.ema_sigma_rels}
++        self._eval_fn = _import_dataset_builder(cfg.eval_fn) if cfg.eval_fn else None
+         self.state = TrainState(run_seed=cfg.seed, world_size=self.world_size)
+         self.state.extra["train_config"] = cfg.to_dict()
+         self.state.extra["global_batch"] = cfg.global_batch(self.world_size)
+@@ -598,6 +653,18 @@ class Trainer:
+         if self.step % cfg.checkpoint_every == 0 or self.step == cfg.steps:
+             self._checkpoint()
+             self._written = self.step
++        if self._eval_fn is not None and (self.step % cfg.eval_every == 0 or self.step == cfg.steps):
++            if self.device.type == "cuda":
++                torch.cuda.empty_cache()
++            self.policy.eval()
++            try:
++                result = self._eval_fn(self)
++            finally:
++                self.policy.train()
++            if result:
++                self._log_line({"event": "eval", "step": self.step, **result})
++            if result and result.get("stop"):
++                return True
+         return self.step >= cfg.steps
+ 
+     def _prepare(self, batch: dict[str, Any]) -> Any:
+@@ -616,6 +683,8 @@ class Trainer:
+         started = time.perf_counter()
+         if self.device.type == "cuda":
+             torch.cuda.reset_peak_memory_stats(self.device)
++        if self.sharded and self.config.check_reduce_order and self._reduce_guard is None:
++            self._reduce_guard = ReduceOrderGuard()
+         accum = len(micro)
+         # FP64 matches the previous Python-float accumulation without per-microbatch host waits.
+         metrics = torch.zeros(3, device=self.device, dtype=torch.float64)
+@@ -627,17 +696,26 @@ class Trainer:
+             and self.compute_dtype != self.param_dtype
+             and self.device.type == "cuda",
+         )
++        self._micro_debug = []
++        # FLUX_ANOMALY_STEP=N: autograd anomaly detection (names the op that produced a NaN) for update N only
++        anomaly = os.environ.get("FLUX_ANOMALY_STEP") == str(self.step + 1)
++        def anomaly_ctx():
++            return torch.autograd.detect_anomaly(check_nan=True) if anomaly else contextlib.nullcontext()
+         for i, batch in enumerate(micro):
+             if self.sharded:
+                 self.policy.dit.set_requires_gradient_sync(i == accum - 1)
+             prepared = self._prepared if self._prepared is not None else self._prepare(batch)
+             self._prepared = None
+-            with autocast:
++            if anomaly and self.rank == 0:
++                print(f"[anomaly] step {self.step + 1} micro {i} k={batch.get('context_frames')}", flush=True)
++            with autocast, anomaly_ctx():
+                 loss, info = self.policy(batch, prepared=prepared)
+             following = micro[i + 1] if i + 1 < accum else next_batch
+             if following is not None:  # its encoders overlap this micro-batch's backward pass
+                 self._prepared = self._prepare(following)
+-            (loss / accum).backward()
++            with anomaly_ctx():
++                (loss / accum).backward()
++            self._micro_debug.append({"micro": i, "timesteps": getattr(self.policy, "_last_timesteps", None)})
+             metrics += (
+                 torch.stack(
+                     [
+@@ -651,6 +729,8 @@ class Trainer:
+             windows += int(info["n_valid_windows"])
+         if self.sharded:
+             self.policy.dit.set_requires_gradient_sync(True)
++        if self._reduce_guard is not None:
++            self._reduce_guard.check(self.step + 1)
+         if self.step == 0:
+             self._check_gradients()
+         # Abort on all ranks before anything is mutated: a non-finite update would poison the parameters,
+@@ -659,10 +739,27 @@ class Trainer:
+         replicas = self.world_size // (self.config.shard_size or self.world_size) if self.sharded else 1
+         grad_norm = global_grad_norm(self.policy, self.device, replicas)
+         if not (math.isfinite(loss_mean) and math.isfinite(grad_norm)):
++            self._dump_nonfinite(micro)
++            if self.config.nonfinite == "skip":
++                self._nonfinite_streak = getattr(self, "_nonfinite_streak", 0) + 1
++                self._nonfinite_total = getattr(self, "_nonfinite_total", 0) + 1
++                done = self.step + 1
++                if self._nonfinite_streak > self.config.max_nonfinite_streak or (
++                    done >= 100 and self._nonfinite_total > self.config.max_nonfinite_fraction * done
++                ):
++                    raise RuntimeError(
++                        f"too many non-finite updates ({self._nonfinite_total} of {done}, streak "
++                        f"{self._nonfinite_streak}); resume from the last complete checkpoint"
++                    )
++                self.optimizer.zero_grad(set_to_none=True)
++                return {"loss": loss_mean, "video_mse": video, "action_mse": action, "grad_norm": grad_norm,
++                        "skipped_nonfinite": True, "nonfinite_total": self._nonfinite_total,
++                        "windows": windows * self.world_size, "step_time": time.perf_counter() - started}
+             raise RuntimeError(
+                 f"non-finite update at step {self.step + 1}: loss {loss_mean}, grad_norm {grad_norm}; "
+                 "nothing was applied, resume from the last complete checkpoint"
+             )
++        self._nonfinite_streak = 0
+         clipped = {}
+         if self.config.max_grad_norm is not None:
+             # clip_grad_norm_ semantics on the global norm: every rank scales its shards by the same factor
+@@ -695,6 +792,28 @@ class Trainer:
+             **peak,
+         }
+ 
++    def _dump_nonfinite(self, micro: list[dict[str, Any]]) -> None:
++        """Diagnostics for a non-finite update: per rank, the parameters whose local gradient is non-finite and
++        the identity of every micro-batch window (``nonfinite-step<N>-rank<R>.json`` in the output directory)."""
++        from torch.distributed.tensor import DTensor
++
++        bad = []
++        for name, param in self.policy.named_parameters():
++            if param.grad is None:
++                continue
++            g = param.grad.to_local() if isinstance(param.grad, DTensor) else param.grad
++            if not torch.isfinite(g).all():
++                bad.append({"name": name, "nan": int(torch.isnan(g).sum()), "inf": int(torch.isinf(g).sum())})
++        windows = []
++        for batch in micro:
++            info = {k: (v.tolist() if isinstance(v, torch.Tensor) and v.ndim <= 1 else v)
++                    for k, v in batch.items() if k in ("context_frames", "episode", "anchor", "task", "window_seed")}
++            windows.append(info)
++        self.output_dir.mkdir(parents=True, exist_ok=True)
++        path = self.output_dir / f"nonfinite-step{self.step + 1}-rank{self.rank}.json"
++        path.write_text(json.dumps({"bad_params": bad, "n_bad": len(bad), "micro_batches": windows,
++                                    "micro_debug": getattr(self, "_micro_debug", [])}, indent=1))
++
+     def _check_gradients(self) -> None:
+         """Every trainable parameter must take part in the loss; otherwise freeze it explicitly.
+ 
+@@ -712,6 +831,10 @@ class Trainer:
+     # ------------------------------------------------------------------ side effects
+     def _checkpoint(self) -> None:
+         started = time.perf_counter()
++        if self.device.type == "cuda":
++            # NCCL allocates its object-collective buffers outside PyTorch's cache: hand cached blocks back
++            # first, or a GPU running near its peak fails DCP's gather with "unhandled cuda error"
++            torch.cuda.empty_cache()
+         self.state.data["position"] = self.position.to_dict()
+         path = save_checkpoint(
+             self.output_dir,
