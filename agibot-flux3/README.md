@@ -8,8 +8,8 @@ model. Task: *k* past frames + caption → 33 future frames at 15 fps, 384×512.
 |---|---|---|
 | 1–2 | data index + own train/val/test/test_unseen splits (`data/splits.json`, seed 42) | done |
 | 3 | plain fine-tune, 6000 steps × 32 windows (1.2 epochs), K_SET {1, 5, 9} + 10 % text-only | done 2026-10-13 |
-| 4 | evaluation: fine-tuned vs base zero-shot (PSNR/SSIM/LPIPS, FVD, VLM judge), zero-shot loop-depth probe | running |
-| 5 | Looped-DiT training (split 12 / 9 / 12, N = 4, gated attention, deep supervision), eval at N = 1, 2, 4, 8 | next |
+| 4 | evaluation: fine-tuned vs base zero-shot (PSNR/SSIM/LPIPS, FVD, VLM judge), zero-shot loop-depth probe | done 2026-10-14 |
+| 5 | Looped-DiT training (split 12 / 9 / 12, N = 4, gated attention, deep supervision): 2500-step run (`configs/looped_ft_384_r1.json`) and 5000-step branch from its step 2000 (`_r2.json`), eval at N = 1, 2, 4, 8 | running since 2026-10-14 |
 
 Results: [`results/RESULTS.md`](results/RESULTS.md) (one table per split, model × k). Running lab notebook:
 [`NOTES.md`](NOTES.md). Weights: `Jinyan0924/flux3-agibot-videoft` (private, Hub; EMA `ema_step-6000.safetensors`).
@@ -49,4 +49,4 @@ data/         tar index + splits
 results/      Phase-4 outputs (per split/k JSON, grids) and RESULTS.md
 ```
 
-Vendored checkouts (`flux-action/`, `looped-dit-video/`) are not included; `patches/flux-action.patch` applies to the base commit in `patches/flux-action.base.txt`.
+Vendored checkouts (`flux-action/`, `looped-dit-video/`) are not committed; see `patches/`.

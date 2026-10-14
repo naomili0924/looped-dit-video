@@ -1233,10 +1233,10 @@ index 0000000..98acfb5
 +        self.last_step = int(state["last_step"])
 diff --git a/src/flux_action/training/reduce_guard.py b/src/flux_action/training/reduce_guard.py
 new file mode 100644
-index 0000000..ae11b76
+index 0000000..5985066
 --- /dev/null
 +++ b/src/flux_action/training/reduce_guard.py
-@@ -0,0 +1,72 @@
+@@ -0,0 +1,76 @@
 +"""Cross-rank check of FSDP2's gradient reduce-scatter sequence.
 +
 +NCCL matches collectives by issue order and does not check sizes: two ranks that reduce-scatter the same
@@ -1264,6 +1264,7 @@ index 0000000..ae11b76
 +    def __init__(self) -> None:
 +        self.records: list[tuple[str, bool]] = []  # (group fqn, had a gradient to reduce)
 +        self.enabled = True
++        self._noop_reported = False
 +        if ReduceOrderGuard._installed is None:
 +            original = _pg.FSDPParamGroup.post_backward
 +
@@ -1284,17 +1285,20 @@ index 0000000..ae11b76
 +    def check(self, step: int) -> list[str]:
 +        """Raise ``RuntimeError`` when the ranks reduced different groups or in a different order (or a
 +        trainable group had nothing to reduce on some rank). Returns this rank's sequence; clears it."""
-+        mine = [fqn for fqn, _ in self.records]
-+        missing = [fqn for fqn, has in self.records if not has]
++        # A post_backward without a gradient issues no collective (FSDP2 returns before foreach_reduce), so only the
++        # calls that had something to reduce form the sequence. The no-op calls are normal for a block that is used
++        # several times per forward (the Looped-DiT core and post blocks: one post_backward per use, gradients
++        # arriving in some of them); they matter only if they make the sequences differ across ranks.
++        mine = [fqn for fqn, has in self.records if has]
++        noop = [fqn for fqn, has in self.records if not has]
 +        self.records = []
-+        gathered: list[list[str] | None] = [None] * dist.get_world_size()
-+        dist.all_gather_object(gathered, {"seq": mine, "missing": missing})
++        gathered: list[dict | None] = [None] * dist.get_world_size()
++        dist.all_gather_object(gathered, {"seq": mine, "noop": noop})
 +        seqs = [g["seq"] for g in gathered]  # type: ignore[index]
-+        for rank, g in enumerate(gathered):
-+            if g["missing"]:  # type: ignore[index]
-+                raise RuntimeError(
-+                    f"step {step}: rank {rank} reduce-scattered without a gradient for {g['missing']}"  # type: ignore[index]
-+                )
++        if noop and not self._noop_reported and dist.get_rank() == 0:
++            self._noop_reported = True
++            print(f"[reduce-guard] step {step}: {len(noop)} post_backward calls without a gradient (no collective), "
++                  f"e.g. {sorted(set(noop))[:4]}; {len(mine)} groups reduced", flush=True)
 +        for rank, seq in enumerate(seqs[1:], start=1):
 +            if seq != seqs[0]:
 +                first = next((i for i, (a, b) in enumerate(zip(seqs[0], seq)) if a != b), min(len(seqs[0]), len(seq)))

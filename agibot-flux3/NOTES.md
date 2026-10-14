@@ -495,3 +495,57 @@ Then evaluate at N = 1, 2, 4, 8 with eval_phase4 --config looped_ft_384_r1.json 
   https://claude.ai/artifact/YEtv4D6nkgQ2FSx4BK4rwh.
 - Phase 5 launched 02:48 (`scripts/launch_loop384.sh`, configs/looped_ft_384_r1.json, logs/loop384.log): fresh
   start from the step-6000 EMA overlay; first GPU run of the looped model.
+- 02:52: first Phase-5 launch died at step 1 on the reduce-order guard: "rank 0 reduce-scattered without a gradient"
+  for 42 entries = the 12 post blocks ×2 and the 9 core blocks ×2. Cause: a block used N times per forward gets one
+  FSDP2 post_backward per use, and the calls without a gradient are no-ops (FSDP2 returns before foreach_reduce:
+  `_fsdp_param_group.py:530`), not collectives. The guard's "missing" rule was wrong for multi-use blocks. Fix in
+  reduce_guard.py: the compared sequence is the calls that actually reduced; no-op calls are reported once on
+  rank 0 and raise only if they make the sequences differ across ranks. Relaunched 02:54 (fresh start, same config).
+- 03:03 Phase 5 step 10: loss 0.200 (weighted exits, weights sum 2), video_mse 0.107, grad_norm 0.42 (warmup, LR
+  4.5e-7), step_time 31.4 s (better than the 40–45 s estimate), peak_mem 75.9 GB (nvidia-smi 81.0 / 77.7 GB used).
+  Guard: 66 groups reduced per update in identical order on both ranks, 42 no-op post_backward calls. ETA 2500
+  steps ≈ 22 h → ~01:00 UTC Oct 15.
+
+### 2026-10-14 06:40 UTC — Phase 5 step 380; budget question (user: why 2500 steps, not 5000 = 1 epoch?)
+- Status: step 380/2500, 31.4 s/step steady, loss 0.195 → 0.183 (last 20), video_mse 0.100 → 0.092, grad norm 0.13–0.2,
+  peak 76.5 GB; no non-finite steps, guard clean (66 groups, identical order). Step-500 eval ≈ 07:30, end ≈ 00:55 Oct 15.
+- Why 2500: the budget was matched to Phase 3 in compute, not steps (a looped step = 106 block passes vs 43 →
+  2500 × 106 ≈ 6000 × 43; planned at 40–45 s/step ≈ 30 h vs Phase 3's 27 h). Data-wise it is 0.5 epoch (80K of the
+  160K train windows; Phase 3 saw 1.2 epochs, 5000 steps = 1 epoch). Nothing in the data says 0.5 epoch suffices;
+  the val curve decides, as in Phase 3 (extended 4000 → 6000 at the step-4000 eval).
+- Prepared configs/looped_ft_384_r2.json (steps 5000, cooldown 4500→5000, otherwise identical). Switching is
+  lossless at any checkpoint ≤ 2000 (LR constant 1e-5 until cooldown_start 2000): `scripts/launch_loop384.sh
+  /workspace/loop-dit/configs/looped_ft_384_r2.json` resumes from the latest checkpoint in /dev/shm/runs/loop384.
+  Deadline: the step-2000 checkpoint (≈ 20:30 UTC Oct 14; keep_checkpoints 1 deletes it when step 2500 is written).
+  Extension cost: +2500 × 31.4 s ≈ +22 h (end ≈ 23:00 UTC Oct 15 instead of 01:00).
+
+### 2026-10-14 07:25 UTC — decision (user): compare a 2500-step and a 5000-step looped model
+- Plan: r1 runs on unchanged to 2500 (cooldown 2000→2500) = the 2500 model. The 5000 model branches from the
+  step-2000 checkpoint (last constant-LR one): configs/looped_ft_384_r2.json = r1 with steps 5000, cooldown
+  4500→5000, output_dir /dev/shm/runs/loop384_r2. Both share steps 0–2000 and the data stream (resume replays the
+  stream position), so they differ only in "500 cooldown steps now" vs "2500 more constant steps + 500 cooldown".
+- Branch point: a watcher hard-links /dev/shm/runs/loop384/step-2000 → /dev/shm/runs/loop384_r2/step-2000 (cp -al,
+  no extra space; survives r1's prune at 2500). Launch after r1 ends: scripts/launch_loop384.sh
+  /workspace/loop-dit/configs/looped_ft_384_r2.json (script now derives run dir / log from the config).
+- Disk: a full checkpoint is ~89 GB and /dev/shm fits two beside the 54 GB of weights/captions (54+178+11 = 243 of
+  251). r1's final step-2500 full checkpoint must therefore leave /dev/shm before r2 writes its own step-2500
+  (4.4 h after r2's launch): upload to the Hub (needs quota → public repos, see below) or keep only its EMA.
+- Timeline: r1 ends ≈ 01:00 Oct 15 → Phase-4-style eval of the 2500 EMA (N = 1/2/4/8, ~2–3 h) → r2 2000→5000
+  (3000 steps ≈ 26.5 h with evals) → ends ≈ 06:30 Oct 16 → eval of the 5000 EMA.
+- HF storage (user: private quota nearly full, use public?): FLUX Kommunity License §3 allows distributing
+  Derivatives for non-commercial use with the license copy, the Attribution Notice, a "modified" statement and
+  no implied endorsement; AgiBot World Beta is CC BY-NC-SA 4.0. Weights-only repos (flux3-agibot-videoft 100 GB,
+  flux3-agibot-looped) can be public with a NOTICE + non-commercial model card; agibot-flux3-eval-splits (13.9 GB
+  of AgiBot clips) stays private.
+- 07:25 UTC (user: "make the two weight repos public"): added LICENSE.md (FLUX Kommunity License copy), NOTICE
+  (attribution notice + modified-derivative statement + AgiBot CC BY-NC-SA note) and a model card to
+  Jinyan0924/flux3-agibot-videoft and Jinyan0924/flux3-agibot-looped, then set both public. 100 GB of private
+  quota freed; agibot-flux3-eval-splits stays private. Sidecar hub2 keeps uploading looped EMAs to the public repo.
+- 07:37 UTC Phase 5 step-500 eval (EMA, N = 4 unless noted; val, 32 fixed windows): k0 0.1929 | k1 0.0806 | k5 0.0707 |
+  k9 0.0672 | k17 0.0653; k9 at N = 1/2/8: 0.0670/0.0662/0.0716. Reference: Phase-3 EMA (N = 1) k1 0.0792, k9 0.0659;
+  zero-shot gate-free retrofit at N = 4 k1 0.0937, k9 0.0800, N = 8 k9 0.1285. After 500 steps the N = 4 loss is
+  0.013 lower than zero-shot and 0.0013 above the N = 1 baseline; N = 8 recovered most of its 0.063 gap.
+  Step-500 EMA uploaded to the public looped repo (141 s). Next eval at step 1000 (~12:00 UTC).
+- 07:45 UTC (user): after training, a NEW artifact (private, AgiBot frames) with the evaluation: 2500 vs 5000 looped
+  models vs Phase-3 fine-tune vs base, N = 1/2/4/8 sweep (+ zero-shot probe), both val curves, side-by-side videos.
+  First version after the 2500 model's eval (~04:00 Oct 15), updated after the 5000 model's.
