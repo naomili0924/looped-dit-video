@@ -1,0 +1,27 @@
+{
+ "name": "ft_step6000_loops2",
+ "config": "/workspace/loop-dit/configs/video_ft_384.json",
+ "ema": "/dev/shm/ema/ema_ft384_step-6000.safetensors",
+ "loops": 2,
+ "splits": [
+  "test"
+ ],
+ "k": [
+  1,
+  9
+ ],
+ "n_recon": 50,
+ "n_fvd": 0,
+ "fvd_k": [],
+ "n_judge": 0,
+ "judge_k": 1,
+ "steps": 30,
+ "cfg": 4.0,
+ "shift": 5.0,
+ "batch": 4,
+ "seed": 0,
+ "out": "../results/ft_step6000_loops2",
+ "device": "cuda:0",
+ "no_judge": true,
+ "judge_model": "/workspace/loop-dit/flux-action/outputs/weights/text_encoder"
+}

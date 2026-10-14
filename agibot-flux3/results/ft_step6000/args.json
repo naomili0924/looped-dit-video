@@ -4,8 +4,7 @@
  "ema": "/dev/shm/ema/ema_ft384_step-6000.safetensors",
  "loops": null,
  "splits": [
-  "test",
-  "test_unseen"
+  "val"
  ],
  "k": [
   0,
@@ -14,13 +13,10 @@
   9,
   17
  ],
- "n_recon": 100,
- "n_fvd": 300,
- "fvd_k": [
-  1,
-  17
- ],
- "n_judge": 100,
+ "n_recon": 50,
+ "n_fvd": 0,
+ "fvd_k": [],
+ "n_judge": 0,
  "judge_k": 1,
  "steps": 30,
  "cfg": 4.0,
@@ -29,6 +25,6 @@
  "seed": 0,
  "out": "../results/ft_step6000",
  "device": "cuda:0",
- "no_judge": false,
+ "no_judge": true,
  "judge_model": "/workspace/loop-dit/flux-action/outputs/weights/text_encoder"
 }

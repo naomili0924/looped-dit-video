@@ -11,7 +11,7 @@ model. Task: *k* past frames + caption → 33 future frames at 15 fps, 384×512.
 | 4 | evaluation: fine-tuned vs base zero-shot (PSNR/SSIM/LPIPS, FVD, VLM judge), zero-shot loop-depth probe | running |
 | 5 | Looped-DiT training (split 12 / 9 / 12, N = 4, gated attention, deep supervision), eval at N = 1, 2, 4, 8 | next |
 
-Results: [`results/RESULTS.md`](results/RESULTS.md) (JSON per split/k alongside; the mp4 grids and `data/splits.json` contain AgiBot World Beta frames/captions (CC BY-NC-SA) and are kept in the private mirror https://github.com/naomili0924/loop-dit) (one table per split, model × k). Running lab notebook:
+Results: [`results/RESULTS.md`](results/RESULTS.md) (one table per split, model × k). Running lab notebook:
 [`NOTES.md`](NOTES.md). Weights: `Jinyan0924/flux3-agibot-videoft` (private, Hub; EMA `ema_step-6000.safetensors`).
 Eval splits: `Jinyan0924/agibot-flux3-eval-splits` (private; AgiBot World Beta is CC BY-NC-SA 4.0).
 
@@ -49,4 +49,4 @@ data/         tar index + splits
 results/      Phase-4 outputs (per split/k JSON, grids) and RESULTS.md
 ```
 
-Vendored checkouts (`flux-action/`, `looped-dit-video/`) are not included; `patches/flux-action.patch` applies to the base commit in `patches/flux-action.base.txt`; `ldvflux/` and `scripts/` run from a checkout of this directory placed next to that patched `flux-action/`.
+Vendored checkouts (`flux-action/`, `looped-dit-video/`) are not included; `patches/flux-action.patch` applies to the base commit in `patches/flux-action.base.txt`.

@@ -466,3 +466,32 @@ will be pruned at the next retention pass. Steady-state footprint: one full chec
 - 22:05 UTC: GitHub repo created and pushed: https://github.com/naomili0924/loop-dit (private). First commit =
   configs, ldvflux, scripts, data, NOTES, README (Phase-3 curve + caveat), patches/flux-action.patch, results so
   far (test split). Phase-4 completion → rebuild RESULTS.md, second commit.
+- 22:15 UTC: the user's intended repo is https://github.com/naomili0924/looped-dit-video (public, MIT): pushed our
+  work as `agibot-flux3/` (configs, ldvflux, scripts, patches, NOTES, README, results tables + JSON) and a README
+  section with the headline table. Dataset-derived content (mp4 grids, data/splits.json) stays out of the public
+  repo; the private loop-dit repo holds the full mirror. Keep both in sync at the Phase-4/5 milestones.
+
+### Phase 5 plan (prepared 01:05 UTC Oct 14; user: "then we can continue with phase 5")
+`configs/looped_ft_384_r1.json`: Looped-DiT retrofit of the step-6000 EMA (overlay), split (12, 9, 12), N = 4,
+head-wise gated attention (bias +4), deep supervision final_plus_mean; 2500 steps, trunk warmup 200, LR 1e-5,
+cooldown 2000→2500; K_SET {1,5,9} + 10 % k0; 2 × 4 × 4 windows/step; checkpoint/eval every 500, keep_checkpoints 1.
+Launch: `scripts/launch_loop384.sh` (tmux train, logs/loop384.log). First GPU run of the looped model: watch peak
+memory (Phase 3 peaked 72 GB; the loop adds ~66 block-call checkpoints) — on OOM relaunch with windows_per_rank 2 /
+grad_accumulation 8. Expected ~40–45 s/step → 2500 steps ≈ 30 h. Hub: EMA-only sidecar (no --full) to a new
+private repo (Phase-3 repo holds 100 GB; quota); local retention by the trainer (keep_checkpoints 1).
+Then evaluate at N = 1, 2, 4, 8 with eval_phase4 --config looped_ft_384_r1.json --ema <looped EMA> --loops N.
+
+## 2026-10-14 02:48 UTC — Phase 4 complete; Phase 5 launched
+- Phase 4 finished 02:48 (both chains, no errors; 8 h wall). results/RESULTS.md: fine-tuned step-6000 EMA beats the
+  base zero-shot in all 30 model×k cells of test / test_unseen / val. test k1: PSNR 19.83 vs 17.03, SSIM 0.805 vs
+  0.664, LPIPS 0.166 vs 0.288, FVD 167 vs 408, judge 0.46 vs 0.38; test k17: FVD 129 vs 219. test_unseen k1: FVD
+  174 vs 628, judge 0.40 vs 0.27; k17 FVD 130 vs 234 → no overfitting to seen tasks. k17 (never trained) is the
+  best k for the fine-tune on every split.
+- Zero-shot loop-depth probe (gate-free retrofit (12,9,12), test, 50 windows): N=1 → 2 → 4 → 8 → 10 at k1 LPIPS
+  0.166 → 0.183 → 0.203 → 0.357 → 0.514 (PSNR 19.83 → 19.46 → 19.46 → 18.67 → 17.07); k9 LPIPS 0.123 → 0.132 →
+  0.148 → 0.259 → 0.360. Val velocity loss (16 windows): k1 0.0771 / 0.0798 / 0.0937 / 0.1472 / 0.1920; k9 0.0655
+  / 0.0678 / 0.0800 / 0.1285 / 0.1700. Depths 2–4 degrade mildly, 8–10 strongly. Videos: results/loop_videos/
+  (scripts/make_loop_strips.sh: GT | base | N=1 | 2 | 4 | 8 | 10 per window), artifact
+  https://claude.ai/artifact/YEtv4D6nkgQ2FSx4BK4rwh.
+- Phase 5 launched 02:48 (`scripts/launch_loop384.sh`, configs/looped_ft_384_r1.json, logs/loop384.log): fresh
+  start from the step-6000 EMA overlay; first GPU run of the looped model.
