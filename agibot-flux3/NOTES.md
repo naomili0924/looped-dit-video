@@ -631,3 +631,26 @@ Then evaluate at N = 1, 2, 4, 8 with eval_phase4 --config looped_ft_384_r1.json 
   pruned r1's ema_step-2500.safetensors from the Hub. checkpoints/step-2500 (full, incl. EMA shards) is intact; the
   consolidated r1 EMA is re-uploaded as ema_loop2500_step-2500.safetensors (outside the sidecar's regex; tmux
   hub_r1ema). r2 resumed exactly from step 2000 (seed 42) at 18:05; first steps running.
+
+### 2026-10-15 21:15 UTC — evaluation critique (user) and motion-aware evaluation code
+- User: the Phase-4/5 metrics show "not blurry" but do not test semantics/dynamics. Confirmed with numbers on the 8 saved
+  test windows (k 1, full res): copy-first-future-frame baseline beats every model on all pixel metrics (PSNR 20.46 vs
+  ft 18.86; SSIM 0.866 vs 0.790; LPIPS 0.102 vs 0.159); on moving pixels (8%) models are only ~1.1 dB above static;
+  judge adherence is dominated by scene mismatch of other-task captions. Toy-image study (scripts in scratchpad,
+  artifact https://claude.ai/artifact/X8rLgDaa8EoZEEkyUkyp19, Chinese): PSNR/SSIM reward a smear over a sharp but
+  offset object and cannot tell "moved to a plausible B" from "did not move"; LPIPS punishes blur but still favours
+  the smear slightly. Decision (user): no action head / IDM for now; evaluate pixel metrics AND optical flow on the
+  moving region, on train, test and test_unseen windows, after r2 finishes.
+- Code (pushed, public 9ebe9e7): eval_phase4 --save-clips (near-lossless clips + meta), --no-fvd, train split;
+  ldvflux/motion_eval.py (RAFT flow, camera-motion removal via per-frame median, dir_cos / mag_ratio / region_cos /
+  EPE / spurious + references real/static/reversed/other-window); ldvflux/clip_eval.py (pixel + flow analysis of
+  saved clips, static baseline, per-frame curves, summary + MOTION.md); scripts/run_motion_gen.sh (post-training
+  generation: base, ft, loop2500 N1/N4, loop5000 N1/N4 if present; 50 windows x {train,test,test_unseen} x k{1,9})
+  and scripts/run_motion_metrics.sh (analysis, GPU or CPU).
+- Flow preview, 8 saved test windows, RAFT large full res (results/motion/flow_8win_k{1,9}.json):
+  k1 dir_cos / mag_ratio / region_cos: base 0.18/1.02/0.17 (spurious 0.15 = flicker) | ft 0.29/0.62/0.39 |
+  loop2500 N1 0.30/0.53/0.40 | N2 0.36/0.71/0.43 | N4 0.41/0.82/0.46 | N8 0.35/0.60/0.35; references: real 1/1/1,
+  static 0/0/0, reversed -0.20/0.59/-0.34, other window 0.10/0.18/0.02. k9: all models 0.11-0.19 dir_cos (near the
+  0.11 chance level), looped N2/N4 best (0.19/0.18). Reading (8 windows, preliminary): motion direction agreement is
+  modest for every model; looped N4 best at k1 (0.41 vs ft 0.29) and moves ~80% as much as the real clip (ft 62%);
+  k9 agreement is near chance for all — to be checked on 50 windows per split.
