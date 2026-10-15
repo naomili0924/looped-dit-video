@@ -627,3 +627,7 @@ Then evaluate at N = 1, 2, 4, 8 with eval_phase4 --config looped_ft_384_r1.json 
 - Artifact "Trained Loop Depth" (private, AgiBot frames): https://claude.ai/artifact/DQGteiPLtakyHLP4ia8BEA —
   same 8 test windows/k/seed as the zero-shot gallery; strips GT | base | ft | looped N=1/2/4/8; tables; recipe and
   sampling description. results/RESULTS.md rebuilt with the loop2500 rows.
+- 18:07: the r2 EMA sidecar (latest + best retention over ema_step-N.safetensors) uploaded r2's step-2000 EMA and
+  pruned r1's ema_step-2500.safetensors from the Hub. checkpoints/step-2500 (full, incl. EMA shards) is intact; the
+  consolidated r1 EMA is re-uploaded as ema_loop2500_step-2500.safetensors (outside the sidecar's regex; tmux
+  hub_r1ema). r2 resumed exactly from step 2000 (seed 42) at 18:05; first steps running.

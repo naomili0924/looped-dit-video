@@ -88,6 +88,16 @@ def to_uint8_video(gen: torch.Tensor) -> np.ndarray:
     return ((gen.float().clamp(-1, 1) + 1) * 127.5).round().byte().permute(1, 2, 3, 0).cpu().numpy()
 
 
+def write_clip(path: Path, frames: np.ndarray, fps: float) -> None:
+    """uint8 (T, H, W, 3) -> near-lossless h264 (crf 10, 4:4:4) for offline metrics."""
+    import subprocess
+
+    t, h, w, _ = frames.shape
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{w}x{h}", "-r", str(fps),
+                    "-i", "-", "-c:v", "libx264", "-preset", "fast", "-crf", "10", "-pix_fmt", "yuv444p", str(path)],
+                   input=np.ascontiguousarray(frames).tobytes(), check=True)
+
+
 def _patch_sqrtm() -> None:
     """cd-fvd calls scipy.linalg.sqrtm(..., disp=False) (returns (root, err)); scipy >= 1.16 dropped ``disp``."""
     import inspect
@@ -170,7 +180,13 @@ def main() -> None:
     p.add_argument("--no-judge", action="store_true")
     p.add_argument("--judge-model", default="/workspace/loop-dit/flux-action/outputs/weights/text_encoder",
                    help="Qwen3-VL directory for the prompt-adherence judge")
+    p.add_argument("--no-fvd", action="store_true", help="skip FVD even if --fvd-k is set")
+    p.add_argument("--save-clips", action="store_true",
+                   help="write every generated window and its ground truth as <out>/clips/<split>_k<k>/win<i>_{gen,gt}.mp4 "
+                        "(near-lossless h264) plus meta.json, for the offline motion / pixel analysis (ldvflux.clip_eval)")
     args = p.parse_args()
+    if args.no_fvd:
+        args.fvd_k = []
     dev = torch.device(args.device)
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
@@ -231,6 +247,18 @@ def main() -> None:
                     [to_uint8_video(g) for g, _ in gens[: args.n_judge]], caps,
                     [to_uint8_video(g) for g, _ in gens_sw], swapped, fps=pcfg.fps, device=dev,
                     text_encoder_dir=args.judge_model)
+            if args.save_clips:
+                cdir = out / "clips" / name
+                cdir.mkdir(parents=True, exist_ok=True)
+                for i, (g, gt) in enumerate(gens):
+                    write_clip(cdir / f"win{i:03d}_gen.mp4", to_uint8_video(g), pcfg.fps)
+                    write_clip(cdir / f"win{i:03d}_gt.mp4", gt.permute(0, 2, 3, 1).numpy(), pcfg.fps)
+                (cdir / "meta.json").write_text(json.dumps({
+                    "split": split, "k": k, "seed": args.seed, "steps": args.steps, "cfg": args.cfg, "shift": args.shift,
+                    "loops": args.loops, "ema": args.ema, "fps": pcfg.fps,
+                    "windows": [{"i": i, "episode": w["episode"], "task": w.get("task"), "caption": w["caption"]}
+                                for i, w in enumerate(windows[: len(gens)])]}, indent=1))
+                print(f"[{name}] saved {len(gens)} clips to {cdir}", flush=True)
             # qualitative grid: the first 8 windows, GT | generated
             gt8 = torch.stack([trim(w, k, future) for w in windows[:8]])
             gen8 = torch.stack([g for g, _ in gens[:8]])

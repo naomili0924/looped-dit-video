@@ -155,7 +155,8 @@ def strips_js(tags) -> str:
 (function () {{
   var caps = {caps};
   var tags = {json.dumps(tags)}, labels = {json.dumps([LABEL[t] for t in tags])};
-  var tag = tags[tags.length - 1], k = 1, w = 0, FPS = 15, NF = 34;
+  var tag = tags[tags.length - 1], k = 1, w = 0, FPS = 15, NF = 34, rate = 0.25;
+  try {{ var saved = +localStorage.getItem('strip_rate'); if (saved === 0.25 || saved === 0.5 || saved === 1) {{ rate = saved; }} }} catch (e) {{}}
   var v = document.getElementById('v'), cap = document.getElementById('cap'), meta = document.getElementById('meta');
   var scrub = document.getElementById('scrub'), tl = document.getElementById('tlabel'), play = document.getElementById('play');
   scrub.max = NF - 1;
@@ -172,15 +173,18 @@ def strips_js(tags) -> str:
     mk('mbtns', tags, tag, function (x) {{ return labels[tags.indexOf(x)]; }}, function (x) {{ tag = x; load(); }});
     mk('kbtns', [1, 9], k, function (x) {{ return 'k = ' + x; }}, function (x) {{ k = x; load(); }});
     mk('wbtns', [0, 1, 2, 3, 4, 5, 6, 7], w, function (x) {{ return String(x + 1); }}, function (x) {{ w = x; load(); }});
+    mk('sbtns', [0.25, 0.5, 1], rate, function (x) {{ return x === 1 ? 'real time (15 fps)' : (x === 0.5 ? '½ speed' : '¼ speed'); }}, function (x) {{ rate = x; v.playbackRate = rate; try {{ localStorage.setItem('strip_rate', String(rate)); }} catch (e) {{}} render(); }});
     cap.textContent = caps[w][0]; meta.textContent = caps[w][1] + ' · k = ' + k;
   }}
   function load() {{
     render();
     v.src = 'videos_' + tag + '/k' + k + '_win' + w + '.mp4';
     v.load();
+    v.playbackRate = rate;
     v.play().catch(function () {{}});
     play.textContent = 'pause'; play.setAttribute('aria-pressed', 'true');
   }}
+  v.addEventListener('loadedmetadata', function () {{ v.playbackRate = rate; }});
   v.addEventListener('timeupdate', function () {{
     var fr = Math.min(NF - 1, Math.round(v.currentTime * FPS));
     scrub.value = fr; tl.textContent = 'frame ' + fr + ' / ' + (NF - 1);
@@ -298,6 +302,7 @@ def build(tags: list[str], allow_missing: bool = False) -> str:
     {model_sel}
     <div class="group"><span class="lbl">context frames k</span><div class="btns" id="kbtns"></div></div>
     <div class="group"><span class="lbl">test window</span><div class="btns" id="wbtns"></div></div>
+    <div class="group"><span class="lbl">playback speed</span><div class="btns" id="sbtns"></div></div>
   </div>
   <div class="caption"><span id="cap"></span><span class="mono" id="meta"></span></div>
 
