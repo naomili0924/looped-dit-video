@@ -549,3 +549,81 @@ Then evaluate at N = 1, 2, 4, 8 with eval_phase4 --config looped_ft_384_r1.json 
 - 07:45 UTC (user): after training, a NEW artifact (private, AgiBot frames) with the evaluation: 2500 vs 5000 looped
   models vs Phase-3 fine-tune vs base, N = 1/2/4/8 sweep (+ zero-shot probe), both val curves, side-by-side videos.
   First version after the 2500 model's eval (~04:00 Oct 15), updated after the 5000 model's.
+
+### 2026-10-14 12:27 UTC — Phase 5 step-1000 eval
+- Val (EMA, N = 4): k0 0.1916 | k1 0.0799 | k5 0.0700 | k9 0.0666 | k17 0.0647 (step 500: 0.1929 | 0.0806 | 0.0707 |
+  0.0672 | 0.0653). k9 at N = 1/2/8: 0.0668/0.0660/0.0699 (500: 0.0670/0.0662/0.0716). Phase-3 N = 1 reference: k1
+  0.0792, k9 0.0659. Gap of N = 4 to the reference: k9 +0.0013 → +0.0007 in 500 steps; N = 2 is the best depth so far
+  (k9 0.0660, within 0.0001 of the reference); N = 8 still improving fastest (−0.0017).
+- Train: loss 0.1894 (steps 0–500) → 0.1827 (500–1000), video_mse 0.0961 → 0.0916; 31.4 s/step; peak 75.7 GB; no
+  non-finite steps. Step-1000 EMA on the Hub (94 s); /dev/shm 137 GB used (one full checkpoint). Next eval ~16:50.
+
+### 2026-10-14 17:12 UTC — Phase 5 step-1500 eval
+- Val (EMA, N = 4): k0 0.1902 | k1 0.0795 | k5 0.0696 | k9 0.0662 | k17 0.0642 (1000: 0.1916 | 0.0799 | 0.0700 | 0.0666 |
+  0.0647). k9 at N = 1/2/8: 0.0665/0.0657/0.0691 (1000: 0.0668/0.0660/0.0699). N = 2 (0.0657) is now below the
+  Phase-3 N = 1 reference (0.0659); N = 4 is 0.0003 above it; per-500-step drop at N = 4 k9: 0.0006 → 0.0004.
+- Train: loss 0.1746, video_mse 0.0874 (steps 1000–1500), 32.1 s/step, peak 75.9 GB, no non-finite steps.
+  Hub: step-1500 EMA uploaded (latest + best kept; ema_step-500 pruned by the sidecar). Cooldown starts at 2000.
+- 21:57 UTC: step-2000 checkpoint hard-linked to /dev/shm/runs/loop384_r2/step-2000 (13 files, 83 GB shared, link
+  count 2; no extra space, /dev/shm still 137 GB used). Branch point for the 5000-step run secured; r1 cooldown starts.
+
+### 2026-10-14 22:03 UTC — Phase 5 step-2000 eval (cooldown starts)
+- Val (EMA, N = 4): k0 0.1891 | k1 0.0791 | k5 0.0691 | k9 0.0658 | k17 0.0639 (1500: 0.1902 | 0.0795 | 0.0696 | 0.0662 |
+  0.0642). Phase-3 N = 1 reference: 0.1904 | 0.0792 | 0.0693 | 0.0659 | 0.0639 → the looped model at N = 4 now matches
+  or beats the reference at every k. k9 at N = 1/2/8: 0.0663/0.0654/0.0683 (1500: 0.0665/0.0657/0.0691).
+- Train 1500–2000: 31.4 s/step, peak 76.3 GB, no non-finite steps. Step-2000 EMA on the Hub. Cooldown 2000→2500
+  (linear to 0); step 2500 ≈ 02:30 UTC Oct 15.
+
+## 2026-10-15 02:46 UTC — Phase 5 run r1 (2500 steps) DONE
+- Final val (EMA, N = 4): k0 0.1879 | k1 0.0787 | k5 0.0688 | k9 0.0654 | k17 0.0635 (2000: 0.1891 | 0.0791 | 0.0691 |
+  0.0658 | 0.0639; Phase-3 N = 1 reference 0.1904 | 0.0792 | 0.0693 | 0.0659 | 0.0639). k9 at N = 1/2/8:
+  0.0660/0.0651/0.0678. Below the reference at every k and at N = 2/4; N = 1 (0.0660) ≈ reference; N = 8 0.0678.
+  Monotone through all 5 evals. Trainer exited cleanly after the step-2500 checkpoint; no non-finite steps in the run.
+- 02:48: EMA exported to /dev/shm/ema/ema_loop2500_step-2500.safetensors (5.551B params). hub2 now does a one-off
+  `--once --full --delete-local` upload of step-2500 to Jinyan0924/flux3-agibot-looped (checkpoints/step-2500),
+  then deletes the local copy after verification (needed: /dev/shm at 219 GB with r1's 2500 + the r2 branch 2000).
+- 02:48: light loop-depth eval of the 2500 model (scripts/run_loop_eval.sh 2500; test split, k 1 9, recon 100,
+  FVD 300 at k 1, judge 100 at k 1; N = 8 → 1 on cuda:0, N = 4 → 2 on cuda:1; results/loop2500_loops{1,2,4,8}).
+  Full Phase-4 protocol for both looped models at the end. r2 (2000 → 5000) launches when the evals finish.
+
+### 2026-10-15 05:55 UTC — 2500-model eval half done; new evaluation artifact prepared
+- 03:01: hub2 finished: step-2500 full checkpoint on the Hub (checkpoints/step-2500, 809 s), local copy deleted
+  (13 files verified). /dev/shm 147 GB used, 105 GB free. Phase-3 stale EMA ema_step-1000 still present (11 GB).
+- Eval timings (test, k 1: 300 gens + 100 caption-swapped for the judge; k 9: 100 gens), per-window generation cost
+  scales with depth: N=1 7.9 s, N=2 9.9 s, N=4 13.8 s, N=8 21.7 s (k 1, batch 4, 30 steps × 2 CFG passes). ETA: GPU 1
+  (N 4 → 2) ≈ 07:05, GPU 0 (N 8 → 1) ≈ 08:00 UTC; r2 launches then (≈ 27 h → ends ≈ 11:00 UTC Oct 16).
+- Results so far (test, k 1, 100 windows; FVD 300; judge 100) — Phase-3 ft: PSNR 19.83 / SSIM 0.805 / LPIPS 0.166 /
+  FVD 166.9 / judge 0.46; base: 17.03 / 0.664 / 0.288 / 407.6 / 0.38.
+  loop2500 N=4: 20.00 / 0.807 / 0.162 / 157.1 / 0.39 (k 9: 21.78 / 0.849 / 0.120 vs ft 21.77 / 0.848 / 0.123).
+  loop2500 N=8: 20.03 / 0.803 / 0.164 / 159.2 / 0.42 (zero-shot N=8 was LPIPS 0.357: the trained loop holds at depth 8).
+  Judge differences (±0.07 at n = 100) are within noise.
+- User request: after the eval, a NEW artifact with the same eval cases as the zero-shot gallery
+  (https://claude.ai/artifact/YEtv4D6nkgQ2FSx4BK4rwh: 8 fixed test windows, k 1/9, seed 0) and a description of the
+  fine-tuning and the inference procedure. Prepared: scripts/make_looped_strips.sh (GT | base | ft N=1 | looped
+  N=1/2/4/8 strips from the eval grids) and scripts/build_loop_gallery.py (page "Trained Loop Depth": strips,
+  test tables for all models/depths, zero-shot-vs-trained LPIPS, val curves from metrics.jsonl cached as
+  results/<tag>_val_curve.json, Phase-3 and Phase-5 recipe, sampling procedure and cost per depth). Takes
+  --tags loop2500 loop5000 for the update after r2. Private artifact (AgiBot frames, CC BY-NC-SA).
+
+## 2026-10-15 18:03 UTC — 2500-model eval DONE; r2 launched late (watcher died)
+- Eval incident: the N=1 job on cuda:0 crashed at 06:36 during the test-set decode (huggingface.co read timeout
+  fetching a dataset tar, transient); relaunched 06:38, finished ≈ 08:05 cleanly. The chained launcher for r2 (a
+  background shell waiting on both eval logs) died silently without firing, so the GPUs sat idle 08:05 → 18:02
+  (~10 h lost). r2 launched by hand 18:02 (scripts/launch_loop384.sh configs/looped_ft_384_r2.json, resume from
+  /dev/shm/runs/loop384_r2/step-2000; EMA sidecar in tmux hub2). r2 ends ≈ 21:30 UTC Oct 16. Lesson: use a tmux
+  session (not a tool background shell) for anything that must fire hours later.
+- Test results, 2500 model (EMA; test, 100 windows; FVD 300; judge 100; seed 0; results/loop2500_loops{1,2,4,8}):
+  | N | k1 PSNR | SSIM | LPIPS | FVD | judge | k9 PSNR | SSIM | LPIPS | s/window k1 |
+  | ft (Phase 3) | 19.83 | 0.805 | 0.166 | 166.9 | 0.46 | 21.77 | 0.848 | 0.123 | 7.9 |
+  | 1 | 19.97 | 0.805 | 0.166 | 164.2 | 0.43 | 21.82 | 0.848 | 0.121 | 7.9 |
+  | 2 | 20.02 | 0.808 | 0.161 | 162.0 | 0.43 | 21.75 | 0.848 | 0.121 | 9.9 |
+  | 4 | 20.00 | 0.807 | 0.162 | 157.1 | 0.39 | 21.78 | 0.848 | 0.120 | 13.9 |
+  | 8 | 20.03 | 0.803 | 0.164 | 159.2 | 0.42 | 21.73 | 0.846 | 0.122 | 21.9 |
+  Reading: after 0.5 epoch of looped training every depth is a valid exit (zero-shot N=8 LPIPS was 0.357, now 0.164);
+  depths 2–8 beat the Phase-3 model on PSNR/LPIPS/FVD by small margins (best FVD 157 at the training depth N=4,
+  best LPIPS 0.161 at N=2); N=1 ≈ Phase-3 (the gates at N=1 keep its function). Gains are modest (LPIPS −0.005,
+  FVD −10): the looped model matches the plain model at 1× cost and improves slightly at 1.3–1.8× cost. Judge
+  differences (0.39–0.46, n=100) are within noise. The 5000 model will show whether a full epoch widens the gap.
+- Artifact "Trained Loop Depth" (private, AgiBot frames): https://claude.ai/artifact/DQGteiPLtakyHLP4ia8BEA —
+  same 8 test windows/k/seed as the zero-shot gallery; strips GT | base | ft | looped N=1/2/4/8; tables; recipe and
+  sampling description. results/RESULTS.md rebuilt with the loop2500 rows.

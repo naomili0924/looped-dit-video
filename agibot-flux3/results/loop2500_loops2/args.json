@@ -1,0 +1,29 @@
+{
+ "name": "loop2500_loops2",
+ "config": "/workspace/loop-dit/configs/looped_ft_384_r1.json",
+ "ema": "/dev/shm/ema/ema_loop2500_step-2500.safetensors",
+ "loops": 2,
+ "splits": [
+  "test"
+ ],
+ "k": [
+  1,
+  9
+ ],
+ "n_recon": 100,
+ "n_fvd": 300,
+ "fvd_k": [
+  1
+ ],
+ "n_judge": 100,
+ "judge_k": 1,
+ "steps": 30,
+ "cfg": 4.0,
+ "shift": 5.0,
+ "batch": 4,
+ "seed": 0,
+ "out": "../results/loop2500_loops2",
+ "device": "cuda:1",
+ "no_judge": false,
+ "judge_model": "/workspace/loop-dit/flux-action/outputs/weights/text_encoder"
+}
