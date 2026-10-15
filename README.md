@@ -100,7 +100,9 @@ on AgiBot World Beta humanoid head-camera clips (k past frames + caption → 33 
 evaluation against the base model zero-shot, and the Looped-DiT retrofit (12 / 9 / 12 split, N = 4) of the
 fine-tuned model. See [`agibot-flux3/README.md`](agibot-flux3/README.md) (overview, Phase-3 validation curve,
 caveats) and [`agibot-flux3/results/RESULTS.md`](agibot-flux3/results/RESULTS.md) (PSNR / SSIM / LPIPS / FVD /
-VLM-judge tables, model × context length, per split). Test split, k = 1 (100 windows; FVD on 300); full tables incl. test_unseen, val and the zero-shot loop-depth probe (N = 2/4/8/10) in `agibot-flux3/results/RESULTS.md`:
+VLM-judge tables, model × context length, per split). To evaluate the released weights on another machine (motion-aware
+metrics, loop depth background-vs-motion analysis, fixed cases and prompts) follow
+[`agibot-flux3/EVAL_MOTION.md`](agibot-flux3/EVAL_MOTION.md). Test split, k = 1 (100 windows; FVD on 300); full tables incl. test_unseen, val and the zero-shot loop-depth probe (N = 2/4/8/10) in `agibot-flux3/results/RESULTS.md`:
 
 | model | PSNR ↑ | SSIM ↑ | LPIPS ↓ | FVD ↓ | judge adherence ↑ |
 |---|---:|---:|---:|---:|---:|

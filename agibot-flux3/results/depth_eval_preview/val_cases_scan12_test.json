@@ -1,0 +1,245 @@
+{
+ "note": "val: first 12 fixed picks scanned, 3 hard / 2 easy pass (camera <= 0.3, moving >= 0.05, object >= 1.5, hard if dir cos < 0.5)",
+ "cases": [
+  {
+   "id": "val002_831198",
+   "split": "val",
+   "task": "607",
+   "episode": "831198",
+   "anchor": 633,
+   "stats": {
+    "camera_px_per_frame": 0.078,
+    "moving_frac": 0.0857,
+    "object_px_per_frame": 3.546,
+    "direction_change_cos": -0.77
+   },
+   "class": "hard"
+  },
+  {
+   "id": "val005_893105",
+   "split": "val",
+   "task": "621",
+   "episode": "893105",
+   "anchor": 3557,
+   "stats": {
+    "camera_px_per_frame": 0.104,
+    "moving_frac": 0.0508,
+    "object_px_per_frame": 2.218,
+    "direction_change_cos": -0.907
+   },
+   "class": "hard"
+  },
+  {
+   "id": "val007_712375",
+   "split": "val",
+   "task": "357",
+   "episode": "712375",
+   "anchor": 4163,
+   "stats": {
+    "camera_px_per_frame": 0.067,
+    "moving_frac": 0.0579,
+    "object_px_per_frame": 4.427,
+    "direction_change_cos": -0.673
+   },
+   "class": "hard"
+  },
+  {
+   "id": "val006_804548",
+   "split": "val",
+   "task": "445",
+   "episode": "804548",
+   "anchor": 793,
+   "stats": {
+    "camera_px_per_frame": 0.229,
+    "moving_frac": 0.1224,
+    "object_px_per_frame": 1.533,
+    "direction_change_cos": 0.845
+   },
+   "class": "easy"
+  },
+  {
+   "id": "val010_819627",
+   "split": "val",
+   "task": "544",
+   "episode": "819627",
+   "anchor": 3141,
+   "stats": {
+    "camera_px_per_frame": 0.111,
+    "moving_frac": 0.1759,
+    "object_px_per_frame": 4.323,
+    "direction_change_cos": 1.0
+   },
+   "class": "easy"
+  }
+ ],
+ "scanned": [
+  {
+   "id": "val000_691304",
+   "split": "val",
+   "task": "446",
+   "episode": "691304",
+   "anchor": 166,
+   "stats": {
+    "camera_px_per_frame": 0.064,
+    "moving_frac": 0.0,
+    "object_px_per_frame": 1.139,
+    "direction_change_cos": 0.0
+   },
+   "class": "rejected"
+  },
+  {
+   "id": "val001_712474",
+   "split": "val",
+   "task": "357",
+   "episode": "712474",
+   "anchor": 3647,
+   "stats": {
+    "camera_px_per_frame": 0.064,
+    "moving_frac": 0.0274,
+    "object_px_per_frame": 1.346,
+    "direction_change_cos": 0.0
+   },
+   "class": "rejected"
+  },
+  {
+   "id": "val002_831198",
+   "split": "val",
+   "task": "607",
+   "episode": "831198",
+   "anchor": 633,
+   "stats": {
+    "camera_px_per_frame": 0.078,
+    "moving_frac": 0.0857,
+    "object_px_per_frame": 3.546,
+    "direction_change_cos": -0.77
+   },
+   "class": "hard"
+  },
+  {
+   "id": "val003_883799",
+   "split": "val",
+   "task": "694",
+   "episode": "883799",
+   "anchor": 166,
+   "stats": {
+    "camera_px_per_frame": 0.069,
+    "moving_frac": 0.0012,
+    "object_px_per_frame": 1.294,
+    "direction_change_cos": 0.969
+   },
+   "class": "rejected"
+  },
+  {
+   "id": "val004_851032",
+   "split": "val",
+   "task": "658",
+   "episode": "851032",
+   "anchor": 542,
+   "stats": {
+    "camera_px_per_frame": 0.352,
+    "moving_frac": 0.0405,
+    "object_px_per_frame": 1.656,
+    "direction_change_cos": 0.998
+   },
+   "class": "rejected"
+  },
+  {
+   "id": "val005_893105",
+   "split": "val",
+   "task": "621",
+   "episode": "893105",
+   "anchor": 3557,
+   "stats": {
+    "camera_px_per_frame": 0.104,
+    "moving_frac": 0.0508,
+    "object_px_per_frame": 2.218,
+    "direction_change_cos": -0.907
+   },
+   "class": "hard"
+  },
+  {
+   "id": "val006_804548",
+   "split": "val",
+   "task": "445",
+   "episode": "804548",
+   "anchor": 793,
+   "stats": {
+    "camera_px_per_frame": 0.229,
+    "moving_frac": 0.1224,
+    "object_px_per_frame": 1.533,
+    "direction_change_cos": 0.845
+   },
+   "class": "easy"
+  },
+  {
+   "id": "val007_712375",
+   "split": "val",
+   "task": "357",
+   "episode": "712375",
+   "anchor": 4163,
+   "stats": {
+    "camera_px_per_frame": 0.067,
+    "moving_frac": 0.0579,
+    "object_px_per_frame": 4.427,
+    "direction_change_cos": -0.673
+   },
+   "class": "hard"
+  },
+  {
+   "id": "val008_895373",
+   "split": "val",
+   "task": "781",
+   "episode": "895373",
+   "anchor": 844,
+   "stats": {
+    "camera_px_per_frame": 0.368,
+    "moving_frac": 0.1722,
+    "object_px_per_frame": 2.096,
+    "direction_change_cos": -0.216
+   },
+   "class": "rejected"
+  },
+  {
+   "id": "val009_858697",
+   "split": "val",
+   "task": "681",
+   "episode": "858697",
+   "anchor": 364,
+   "stats": {
+    "camera_px_per_frame": 0.078,
+    "moving_frac": 0.0035,
+    "object_px_per_frame": 1.157,
+    "direction_change_cos": -0.108
+   },
+   "class": "rejected"
+  },
+  {
+   "id": "val010_819627",
+   "split": "val",
+   "task": "544",
+   "episode": "819627",
+   "anchor": 3141,
+   "stats": {
+    "camera_px_per_frame": 0.111,
+    "moving_frac": 0.1759,
+    "object_px_per_frame": 4.323,
+    "direction_change_cos": 1.0
+   },
+   "class": "easy"
+  },
+  {
+   "id": "val011_883799",
+   "split": "val",
+   "task": "694",
+   "episode": "883799",
+   "anchor": 1555,
+   "stats": {
+    "camera_px_per_frame": 0.07,
+    "moving_frac": 0.0082,
+    "object_px_per_frame": 1.746,
+    "direction_change_cos": -1.0
+   },
+   "class": "rejected"
+  }
+ ]
+}

@@ -1,0 +1,29 @@
+{
+ "note": "The 8 fixed test windows of the Phase-4/5 galleries (fixed/test_seed0_n1000.json picks 0-7 of Jinyan0924/agibot-flux3-eval-splits). Head camera nearly static in all 8 (<= 0.24 px/frame). 'caption' is resolved at run time from the eval-splits mirror or data/splits.json (AgiBot's own per-window annotation); alt_prompts are ours: same scene, a different action and/or the other arm.",
+ "cases": [
+  {"id": "test01_toilet", "split": "test", "task": "541", "episode": "779846", "anchor": 831, "class": "hard",
+   "stats": {"camera_px_per_frame": 0.13, "moving_frac": 0.236, "object_px_per_frame": 3.1, "direction_change_cos": -0.76},
+   "alt_prompts": ["Put the held cloth down on the toilet lid.", "Lift the held cloth up and away from the toilet."]},
+  {"id": "test02_cap", "split": "test", "task": "527", "episode": "769126", "anchor": 166, "class": "easy",
+   "stats": {"camera_px_per_frame": 0.05, "moving_frac": 0.090, "object_px_per_frame": 2.0, "direction_change_cos": 0.90},
+   "alt_prompts": ["Push the baseball cap further back onto the sofa.", "Leave the baseball cap on the sofa and pull the hand back."]},
+  {"id": "test03_chips_bag", "split": "test", "task": "492", "episode": "730816", "anchor": 2960, "class": "easy",
+   "stats": {"camera_px_per_frame": 0.05, "moving_frac": 0.087, "object_px_per_frame": 2.2, "direction_change_cos": 1.00},
+   "alt_prompts": ["Lift the large bucket of potato chips held in the left arm straight up.", "Put the large bucket of potato chips down on the counter with the left arm."]},
+  {"id": "test04_vacuum", "split": "test", "task": "554", "episode": "920026", "anchor": 375, "class": "easy",
+   "stats": {"camera_px_per_frame": 0.05, "moving_frac": 0.043, "object_px_per_frame": 2.4, "direction_change_cos": 0.98},
+   "alt_prompts": ["Lift the pink vacuum cleaner up off the floor with the right arm.", "Use pink vacuum cleaner to vacuum the garbage on the floor with left arm."]},
+  {"id": "test05_doorknob", "split": "test", "task": "774", "episode": "902908", "anchor": 1086, "class": "hard",
+   "stats": {"camera_px_per_frame": 0.24, "moving_frac": 0.047, "object_px_per_frame": 1.6, "direction_change_cos": 0.13},
+   "alt_prompts": ["Release the doorknob and pull the left arm back.", "Turn the doorknob to open the door with right arm."]},
+  {"id": "test06_marker", "split": "test", "task": "613", "episode": "839320", "anchor": 166, "class": "static",
+   "stats": {"camera_px_per_frame": 0.05, "moving_frac": 0.014, "object_px_per_frame": 1.3, "direction_change_cos": 0.00},
+   "alt_prompts": ["Slide the uncapped whiteboard marker across the table with the left arm.", "Pick up the uncapped whiteboard marker on the table with right arm."]},
+  {"id": "test07_shorts", "split": "test", "task": "735", "episode": "908086", "anchor": 1627, "class": "hard",
+   "stats": {"camera_px_per_frame": 0.12, "moving_frac": 0.138, "object_px_per_frame": 2.6, "direction_change_cos": -0.55},
+   "alt_prompts": ["Slide the dark shorts on the desktop downward with the left arm.", "Slide the dark shorts on the desktop upward with the right arm."]},
+  {"id": "test08_taro_chips", "split": "test", "task": "566", "episode": "791357", "anchor": 166, "class": "easy",
+   "stats": {"camera_px_per_frame": 0.01, "moving_frac": 0.055, "object_px_per_frame": 1.8, "direction_change_cos": 0.99},
+   "alt_prompts": ["Push the purple taro chips down into the restocking box with the right arm.", "Pick up the purple taro chips from the restocking box with the left arm."]}
+ ]
+}

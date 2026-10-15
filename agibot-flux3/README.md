@@ -11,6 +11,10 @@ model. Task: *k* past frames + caption → 33 future frames at 15 fps, 384×512.
 | 4 | evaluation: fine-tuned vs base zero-shot (PSNR/SSIM/LPIPS, FVD, VLM judge), zero-shot loop-depth probe | done 2026-10-14 |
 | 5 | Looped-DiT training (split 12 / 9 / 12, N = 4, gated attention, deep supervision): 2500-step run (`configs/looped_ft_384_r1.json`) and 5000-step branch from its step 2000 (`_r2.json`), eval at N = 1, 2, 4, 8 | running since 2026-10-14 |
 
+**Evaluating the models on another machine (motion-aware evaluation, loop depth: background vs motion):**
+see [`EVAL_MOTION.md`](EVAL_MOTION.md) — inputs (k past frames + task prompt), weights to download, the fixed
+evaluation cases (`configs/eval_cases_gallery8.json`), the commands and how to read the numbers.
+
 Results: [`results/RESULTS.md`](results/RESULTS.md) (one table per split, model × k). Running lab notebook:
 [`NOTES.md`](NOTES.md). Weights: `Jinyan0924/flux3-agibot-videoft` (private, Hub; EMA `ema_step-6000.safetensors`).
 Eval splits: `Jinyan0924/agibot-flux3-eval-splits` (private; AgiBot World Beta is CC BY-NC-SA 4.0).

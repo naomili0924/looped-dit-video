@@ -654,3 +654,26 @@ Then evaluate at N = 1, 2, 4, 8 with eval_phase4 --config looped_ft_384_r1.json 
   0.11 chance level), looped N2/N4 best (0.19/0.18). Reading (8 windows, preliminary): motion direction agreement is
   modest for every model; looped N4 best at k1 (0.41 vs ft 0.29) and moves ~80% as much as the real clip (ft 62%);
   k9 agreement is near chance for all — to be checked on 50 windows per split.
+
+### 2026-10-15 22:30 UTC — loop-depth "background vs motion" evaluation (user request) + hand-off doc
+- User hypothesis to test: with more loops the Looped-DiT spends its extra compute on the static background rather
+  than on motion accuracy. Design: cases with a static camera (background = copy) and clear object/arm motion
+  ("background-easy, motion-hard"), the same noise at N = 1/2/4/8, metrics split into background vs moving region,
+  the change between consecutive depths localised (concentration = per-pixel change inside / outside the moving
+  region; mass_in vs area share), and alternative prompts (same context frames, different action / arm) without GT.
+- Code (pushed): ldvflux/depth_eval.py (generate / --analyze / --summarize, strips GT | N1 | N2 | N4 | N8),
+  configs/eval_cases_gallery8.json (the 8 gallery test windows by episode/anchor + 2 alt prompts each; captions
+  resolved at run time), scripts/select_motion_cases.py (val scan: camera <= 0.3 px/fr, moving >= 5%, object >= 1.5
+  px/fr, hard if direction cosine first/last third < 0.5), scripts/run_depth_eval.sh, EVAL_MOTION.md (full hand-off
+  for another machine: setup, weights, inputs = k past frames + task prompt, commands, metric reading).
+  Alternative prompts need the real Qwen3-VL encoder (--text-encoder), not the caption lookup table.
+- Preview from the already-saved 8-window grids (seed 0 shared across depths; RAFT small on CPU; results/
+  depth_eval_preview/): change between consecutive depths concentrates in the moving region — concentration 4.4–7.0,
+  mass_in 0.27–0.35 vs area 0.08 — i.e. per pixel the extra loops change the moving region 4–7x more than the
+  background. Background PSNR 21.5–24 for every depth vs 32.6 for the static copy (re-synthesis noise); moving-region
+  PSNR 10.1–11.0 vs static 9.2. k9 dir_cos N1/2/4/8 = 0.31/0.34/0.40/0.36 (small RAFT; large-RAFT k1 numbers in the
+  21:15 entry). 8 cases, no conclusion drawn (user: "this is just an experiment, no need to jump to conclusion").
+- Case selector test on the first 12 val picks: 5 pass (3 hard, 2 easy) → ~50 cases from 120 picks.
+- Planned on the other machine (user: "another claude and another gpu"): run_depth_eval.sh for loop2500 / ft6000 /
+  base on gallery8 then val50; run_motion_gen/metrics on test + test_unseen. Here: after r2 ends, the same for
+  loop5000 and the train split.
