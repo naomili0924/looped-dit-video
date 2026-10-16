@@ -12,10 +12,18 @@ export HF_TOKEN GH_TOKEN PYTHONPATH=/workspace/loop-dit
 log() { echo "[stop $(date -u +%H:%M:%S)] $*"; }
 cd /workspace/loop-dit
 log "waiting for the step-$STEP eval event in $LOG"
-until grep -q "\"event\": \"eval\", \"step\": $STEP," "$LOG"; do sleep 20; done
-log "step $STEP checkpoint + eval done; stopping the trainer"
-pkill -f 'flux_action[.]cli train'; sleep 15
-pkill -9 -f 'flux_action[.]cli train' 2>/dev/null; pkill -f 'multiprocessing[.]forkserver'; pkill -f 'multiprocessing[.]resource_tracker'
+# done when the trainer logged the step-STEP eval, or when it wrote the step-STEP checkpoint and then died before the
+# eval (happened 2026-10-16 21:50 UTC: rank 1 SIGKILLed 3 min after the checkpoint; the val point is then missing)
+has_eval() { grep -q "\"event\": \"eval\", \"step\": $STEP," "$LOG"; }
+has_ckpt() { grep -q "\"event\": \"checkpoint\", \"step\": $STEP," "$LOG"; }
+alive() { pgrep -f 'flux_action[.]cli train' | xargs -r ps -o comm= -p 2>/dev/null | grep -q python; }  # the tmux wrapper shells also match the pattern
+until has_eval || { has_ckpt && ! alive; }; do sleep 20; done
+has_eval && log "step $STEP checkpoint + eval done; stopping the trainer" || log "step $STEP checkpoint written but the trainer died before its eval; finishing without the step-$STEP val point"
+# never `pkill -f` on this pattern: the tmux server's argv contains the launch command too (it killed every tmux session on
+# 2026-10-16 22:08 UTC); only signal python/torch processes
+kill_train() { pgrep -f 'flux_action[.]cli train' | xargs -r ps -o pid=,comm= -p 2>/dev/null | awk '$2 ~ /python|pt_main/ {print $1}' | xargs -r kill "$@"; }
+kill_train; sleep 15
+kill_train -9 2>/dev/null; pkill -f 'multiprocessing[.]forkserver'; pkill -f 'multiprocessing[.]resource_tracker'
 tmux kill-session -t train 2>/dev/null
 for i in $(seq 1 30); do [ "$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits | sort -n | tail -1)" -lt 2000 ] && break; sleep 5; done
 echo TRAIN_EXITED >> "$LOG"   # finish_r2.sh keys on this marker

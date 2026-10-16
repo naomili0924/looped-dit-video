@@ -845,3 +845,20 @@ Then evaluate at N = 1, 2, 4, 8 with eval_phase4 --config looped_ft_384_r1.json 
 - `finish_r2.sh` now treats a step as present once the trainer logged its checkpoint event (the staged sidecar
   renames COMPLETE and deletes entries while uploading); `run_loop_eval.sh` no longer requires /workspace/.env. The
   old `finish` tmux session (waiting for step 5000) was retired.
+
+## 2026-10-16 22:15 UTC — step 4500 reached; trainer OOM-killed 3 min later (before its val eval); watcher took tmux down
+- Step-4500 checkpoint written 21:47:38 UTC (40 s). At 21:50:48 rank 1 got SIGKILL (cgroup `oom_kill` 2 -> 3,
+  `memory.max_usage` = the 367 GB limit) while the sidecar had just consolidated the EMA and started uploading the 83 GB
+  checkpoint from /dev/shm — same failure as the 19:20 kill, now while the trainer was starting the step-4500 eval, so
+  **there is no step-4500 val point in eval/val.jsonl** (the last one is step 4000). Training is over per the 20:05 decision.
+- Sidecar had already landed `ema_step-4500.safetensors`, `checkpoints/step-4500/{model,optimizer}` (local copies deleted);
+  `ema_cpu_0p999`, `rng`, `config.json`, `state.json`, `COMPLETE` were still pending (21 GB left in /dev/shm).
+- 22:08 UTC: `stop_and_eval.sh` (patched to accept "checkpoint written and trainer gone" instead of the eval line) ran
+  `pkill -f 'flux_action[.]cli train'`, which also matched the **tmux server's argv** (it was started by
+  `tmux new-session -d -s train <launch command>`) -> every tmux session died (hub2 mid-upload, stop45 itself).
+  Fixes: `kill_train()` now signals only python/torch pids; the tmux server is started with a neutral `keep` session;
+  `scripts/relaunch_finish45.sh` restarts hub2 (resumes the staged upload via `full_in_progress`) and stop45.
+- Local EMA exported from `step-4500/ema_cpu_0p999` to `/dev/shm/ema/ema_loop4500_step-4500.safetensors` (tmux `ema45`)
+  before the sidecar deletes the shards. Tokens were lost with the killed processes; relaunch needs them re-supplied.
+- Crash tally on the H100 box: 5 in 2000 steps (1 GPU OOM, 2 NCCL hangs, 2 cgroup OOM kills — both during a checkpoint
+  upload from /dev/shm). For any future run here: write checkpoints to disk, not /dev/shm, or cap trainer RSS.
