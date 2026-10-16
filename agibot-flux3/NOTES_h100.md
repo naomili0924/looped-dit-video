@@ -87,3 +87,10 @@
   Jinyan0924/flux3-agibot-looped/random_depth_n1-8/checkpoints/step-2000 (uploaded 99 s, 13 files 88.9 GB, sizes verified);
   step-2500 queued (waits for COMPLETE). Restore on any machine: scripts/restore_full_ckpt.sh <step> <run dir>.
   Fix attempt 1: list_repo_tree raises EntryNotFound for a folder not yet on the Hub -> caught.
+- 22:07 UTC: user: eval moves to another machine, this box only trains. Cancelled the post-train eval chain (tmux post; it
+  had not started anything). Long run armed: configs/looped_rand_384_long.json = looped_rand_384_r1 with output_dir
+  runs/looprand_long (disk), steps 20000, cooldown_start null (constant LR 1e-5), resume auto from the hard-linked
+  pre-cooldown step-2000; ends on the eval early stop (val loss up at 3 consecutive evals) or 20000 steps.
+  tmux chainlong (scripts/launchers/chain_long.sh, logs/chain_long.log) waits for the 2500-step trainer to exit, launches
+  (tmux train, logs/looprand_long.log), starts tmux hublong: hub_backup --full --prefix random_depth_n1-8_long
+  (EMA: latest + best kept; full resumable checkpoint: latest kept). runs/ and ckpt_backup/ gitignored.

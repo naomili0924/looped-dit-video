@@ -1,0 +1,112 @@
+{
+  "source_root": "",
+  "index_dir": "",
+  "output_dir": "/workspace/loop-dit-eval/looped-dit-video/agibot-flux3/runs/looprand_long",
+  "dataset": "ldvflux.stream:build",
+  "dataset_kwargs": {
+    "splits": "/workspace/loop-dit-eval/looped-dit-video/agibot-flux3/eval-splits/splits.json",
+    "split": "train",
+    "k0_prob": 0.1,
+    "shuffle_windows": 48,
+    "frame_hw": [
+      384,
+      512
+    ],
+    "eval_split": "val",
+    "eval": {
+      "loss_windows": 32,
+      "loss_batch": 4,
+      "t_grid": 8,
+      "sample_windows": 8,
+      "sample_steps": 30,
+      "sample_cfg": 4.0,
+      "sample_shift": 5.0,
+      "patience": 3
+    },
+    "k_set": [
+      1,
+      5,
+      9
+    ]
+  },
+  "policy": {
+    "video_only": true,
+    "future_frames": 33,
+    "trunk_weights": "outputs/weights/flux-3-action-base.safetensors",
+    "video_vae_id": "outputs/weights/video_vae.safetensors",
+    "text_encoder_id": "lookup:/dev/shm/agibot/captions.pt",
+    "attn_mode": "torch",
+    "camera_layout": "single",
+    "camera_keys": [
+      "images.head"
+    ],
+    "canvas_hw": [
+      384,
+      512
+    ],
+    "fps": 15.0,
+    "caption_dropout": 0.1,
+    "augment": false,
+    "vae_batch_windows": 1,
+    "video_logit_mean": 1.08,
+    "video_logit_std": 1.0,
+    "optimizer_lr": 1e-05,
+    "loop": {
+      "loop_split": [
+        12,
+        9,
+        12
+      ],
+      "num_loops": 4,
+      "attn_gate": true,
+      "attn_gate_init": 4.0,
+      "xsa": false
+    },
+    "deep_supervision": "uniform",
+    "overlay_weights": "/workspace/loop-dit-eval/looped-dit-video/agibot-flux3/weights/ft/ema_step-6000.safetensors",
+    "loop_sampler": {
+      "min": 1,
+      "max": 8,
+      "seed": 0,
+      "grad_loops": null
+    },
+    "monotone_beta": 0.0
+  },
+  "steps": 20000,
+  "cooldown_start": null,
+  "cooldown_steps": 500,
+  "frozen_steps": 0,
+  "trunk_warmup_steps": 200,
+  "heads_warmup_steps": 500,
+  "seed": 42,
+  "reseed_on_resume": false,
+  "windows_per_rank": 2,
+  "grad_accumulation": 8,
+  "num_workers": 6,
+  "prefetch_factor": 2,
+  "param_dtype": "float32",
+  "compute_dtype": "bfloat16",
+  "reduce_dtype": "float32",
+  "activation_checkpointing": true,
+  "reshard_after_forward": false,
+  "betas": [
+    0.9,
+    0.999
+  ],
+  "eps": 1e-08,
+  "weight_decay": 0.0,
+  "max_grad_norm": 1.0,
+  "optimizer": "adamw",
+  "ema": "cpu",
+  "ema_decay": 0.999,
+  "ema_every": 10,
+  "checkpoint_every": 500,
+  "keep_checkpoints": 1,
+  "keep_every": null,
+  "log_every": 10,
+  "resume": "auto",
+  "nonfinite": "skip",
+  "eval_every": 500,
+  "eval_fn": "ldvflux.evaluate:eval_hook",
+  "compile_blocks": true
+}

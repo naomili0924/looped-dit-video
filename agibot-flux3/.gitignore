@@ -9,3 +9,6 @@ __pycache__/
 .venv/
 # secrets
 .env
+# checkpoints (never on GitHub; mirrored to the private Hub repo)
+runs/
+ckpt_backup/
