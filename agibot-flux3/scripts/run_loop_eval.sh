@@ -10,7 +10,7 @@ STEP=${1:?step}; RUN=${2:-/dev/shm/runs/loop384}; TAG=${3:-loop2500}; CFG=${4:-/
 EMA=/dev/shm/ema/ema_${TAG}_step-$STEP.safetensors
 PY=flux-action/.venv/bin/python
 export PYTHONPATH=/workspace/loop-dit HF_HUB_ENABLE_HF_TRANSFER=0
-set -a; . /workspace/.env; set +a
+[ -f /workspace/.env ] && { set -a; . /workspace/.env; set +a; }  # tokens may instead come from the environment (HF_TOKEN)
 mkdir -p /dev/shm/ema results logs
 if [ ! -f "$EMA" ]; then
   [ -f "$RUN/step-$STEP/COMPLETE" ] || { echo "no complete checkpoint $RUN/step-$STEP and no EMA $EMA"; exit 1; }

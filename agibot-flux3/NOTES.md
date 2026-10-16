@@ -827,3 +827,21 @@ Then evaluate at N = 1, 2, 4, 8 with eval_phase4 --config looped_ft_384_r1.json 
 - Tally: 4 crashes on the H100 box (OOM 3410, hangs 3770/3720, cgroup OOM 4020), ≈ 4.5 h lost. ETA step 5000 ≈ 00:00 UTC
   Oct 17 (1000 steps × ≈ 13 s + evals at 4500 and 5000). Option on the table (user, 20:00): stop at 4000 and evaluate
   `ema_step-4000` (already on the Hub; no cooldown).
+
+### 2026-10-16 20:10 UTC — decision: r2 stops at step 4500 (no cooldown) and is evaluated as `loop4500`
+- After the fourth crash the user chose to stop at 4500 rather than run the planned cooldown 4500→5000 (≈ 4 h more on
+  a box that lost ≈ 4.5 h to crashes today). Steps 0–4500 run at constant LR 1e-5 (0–2500 shared with r1 incl. r1's
+  cooldown 2000→2500, see 05:20 entry), so the `loop4500` model is "r1 + 2000 more constant-LR steps, **without** a
+  final cooldown" — note this in the 2500-vs-4500 comparison (r1's final had one). ETA step 4500 ≈ 21:45 UTC.
+- Mechanics (`scripts/stop_and_eval.sh`, tmux `stop45`, log logs/stop45.log): waits for the trainer's
+  `"event": "eval", "step": 4500` log line (the checkpoint is saved before the eval), kills the trainer (the ≤ 10 extra
+  steps are discarded), appends `TRAIN_EXITED` to the training log, runs `scripts/finish_r2.sh RUN 4500 loop4500`
+  (EMA export → waits for the sidecar's staged upload → server-side copy `ema_step-4500` →
+  `ema_loop4500_step-4500.safetensors` → results/loop4500_{metrics,val}.jsonl → auto note → push both repos), downloads
+  the EMA from the Hub if the local export was lost to the staged deletion, fetches the Qwen3-VL text encoder / judge
+  (`black-forest-labs/flux-3-action-base` `text_encoder/*`, missing on this box — only the trunk and VAE were pulled
+  this morning) into `flux-action/outputs/weights/text_encoder`, then `scripts/run_loop_eval.sh 4500 RUN loop4500
+  configs/looped_ft_384_r2.json` (test split, k 1/9, N = 8,1 on GPU 0 and 4,2 on GPU 1; results/loop4500_loops<N>/).
+- `finish_r2.sh` now treats a step as present once the trainer logged its checkpoint event (the staged sidecar
+  renames COMPLETE and deletes entries while uploading); `run_loop_eval.sh` no longer requires /workspace/.env. The
+  old `finish` tmux session (waiting for step 5000) was retired.

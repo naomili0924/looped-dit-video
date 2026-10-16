@@ -15,15 +15,18 @@ PY=/workspace/loop-dit/flux-action/.venv/bin/python
 export PYTHONPATH=/workspace/loop-dit
 : "${HF_TOKEN:?HF_TOKEN}"; : "${GH_TOKEN:?GH_TOKEN}"
 log() { echo "[finish $(date -u +%H:%M:%S)] $*"; }
+# the step exists once the trainer logged its checkpoint event (the sidecar renames COMPLETE -> COMPLETE.partial and
+# deletes local entries while it uploads, so the marker alone is not a reliable test)
+has_ckpt() { [ -f "$RUN/step-$STEP/COMPLETE" ] || [ -f "$RUN/step-$STEP/COMPLETE.partial" ] || grep -q "\"event\": \"checkpoint\", \"step\": $STEP," "$LOG" 2>/dev/null; }
 
 log "waiting for $RUN/step-$STEP/COMPLETE or trainer exit"
-while [ ! -f "$RUN/step-$STEP/COMPLETE" ] && ! grep -q TRAIN_EXITED "$LOG" 2>/dev/null; do sleep 60; done
-if [ ! -f "$RUN/step-$STEP/COMPLETE" ]; then
+while ! has_ckpt && ! grep -q TRAIN_EXITED "$LOG" 2>/dev/null; do sleep 60; done
+if ! has_ckpt; then
   last=$(grep '"step"' "$LOG" | tail -1 | $PY -c "import sys,json; print(json.loads(sys.stdin.read()).get('step'))")
   log "trainer exited before step $STEP (last logged step $last)"; echo FINISH_TRAIN_EXITED_EARLY; exit 1
 fi
 log "step $STEP complete"
-if [ ! -f "$EMA" ] && [ -d "$RUN/step-$STEP" ]; then
+if [ ! -f "$EMA" ] && [ -d "$RUN/step-$STEP/ema_cpu_0p999" ]; then
   $PY /workspace/loop-dit/scripts/export_ema.py "$RUN/step-$STEP" "$EMA" && log "exported $EMA" || log "local EMA export failed (will fall back to the Hub copy)"
 fi
 for i in $(seq 1 90); do grep -q TRAIN_EXITED "$LOG" && break; sleep 60; done
