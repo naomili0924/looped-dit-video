@@ -94,3 +94,14 @@
   tmux chainlong (scripts/launchers/chain_long.sh, logs/chain_long.log) waits for the 2500-step trainer to exit, launches
   (tmux train, logs/looprand_long.log), starts tmux hublong: hub_backup --full --prefix random_depth_n1-8_long
   (EMA: latest + best kept; full resumable checkpoint: latest kept). runs/ and ckpt_backup/ gitignored.
+- 22:17 UTC: user approved (1) fixed budget and (2) validation checks. Long-run config now: steps 10000, constant LR 1e-5
+  to 9000, linear decay 9000-10000 (WSD), keep_every 9000 (pre-cooldown ckpt kept locally; hub_backup --keep-steps 9000
+  keeps it on the Hub; extend the stable phase from it if still improving). Evidence for the budget: earlier runs on
+  this data still improve ~-0.0018 k9 val loss per doubling of steps at 4000-6000 (no plateau visible); one data pass =
+  ~5000 updates; >4 passes of repeated data loses value (Muennighoff et al. 2023).
+  ldvflux/evaluate.py (opt-in, defaults unchanged): train_ref_windows (fixed train windows, same protocol -> train_ref_loss,
+  gap = val - train_ref), val_loss_k9_mean_loops (mean over eval_loops 1..8), stop_rule "no_best" (no new best of
+  stop_metric for `patience` evals). Long run: 32 train-ref windows, eval_loops 1..8, no_best, patience 4,
+  stop_metric val_loss_k9_mean_loops. hub_backup.py: --keep-steps; full-ckpt cleanup now deletes each old folder once.
+  chain_long.sh v2: after the 2500 run exits -> 2-update smoke with one eval (/dev/shm/runs/evalsmoke.json,
+  logs/evalsmoke.log); on failure falls back to the old eval settings so the GPUs do not idle.

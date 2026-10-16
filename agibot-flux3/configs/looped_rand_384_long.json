@@ -21,7 +21,20 @@
       "sample_steps": 30,
       "sample_cfg": 4.0,
       "sample_shift": 5.0,
-      "patience": 3
+      "patience": 4,
+      "eval_loops": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "train_ref_windows": 32,
+      "stop_rule": "no_best",
+      "stop_metric": "val_loss_k9_mean_loops"
     },
     "k_set": [
       1,
@@ -72,9 +85,9 @@
     },
     "monotone_beta": 0.0
   },
-  "steps": 20000,
-  "cooldown_start": null,
-  "cooldown_steps": 500,
+  "steps": 10000,
+  "cooldown_start": 9000,
+  "cooldown_steps": 1000,
   "frozen_steps": 0,
   "trunk_warmup_steps": 200,
   "heads_warmup_steps": 500,
@@ -102,7 +115,7 @@
   "ema_every": 10,
   "checkpoint_every": 500,
   "keep_checkpoints": 1,
-  "keep_every": null,
+  "keep_every": 9000,
   "log_every": 10,
   "resume": "auto",
   "nonfinite": "skip",

@@ -85,6 +85,8 @@ def main() -> None:
                         "Hub (every local file verified present in the repo). Restore with scripts/restore_checkpoint.sh")
     p.add_argument("--prefix", default="", help="folder in the repo for every upload (shared repos)")
     p.add_argument("--keep-all", action="store_true", help="never delete earlier EMA uploads")
+    p.add_argument("--keep-steps", type=int, nargs="*", default=[],
+                   help="steps whose EMA and full checkpoint are never deleted from the Hub (e.g. the pre-cooldown step)")
     p.add_argument("--squash", action="store_true", help="squash the repo history after deletes (default without --prefix)")
     args = p.parse_args()
     if not args.prefix:
@@ -108,11 +110,14 @@ def main() -> None:
                     state["full_uploaded"].append(step)
                     state_path.write_text(json.dumps(state))
                     print(f"[hub] full checkpoint step {step} uploaded in {time.time() - t0:.0f}s", flush=True)
+                    old = set()
                     for f in api.list_repo_files(args.repo):
                         m = re.fullmatch(re.escape(pre) + r"checkpoints/step-(\d+)/.*", f)
-                        if m and int(m.group(1)) < max(state["full_uploaded"]):
-                            api.delete_folder(f"{pre}checkpoints/step-{m.group(1)}", repo_id=args.repo)
-                            print(f"[hub] deleted {pre}checkpoints/step-{m.group(1)}", flush=True)
+                        if m and int(m.group(1)) < max(state["full_uploaded"]) and int(m.group(1)) not in args.keep_steps:
+                            old.add(int(m.group(1)))
+                    for old_step in sorted(old):  # one delete per folder
+                        api.delete_folder(f"{pre}checkpoints/step-{old_step}", repo_id=args.repo)
+                        print(f"[hub] deleted {pre}checkpoints/step-{old_step}", flush=True)
                 except Exception as e:  # retried on the next poll
                     print(f"[hub] full checkpoint step {step} failed: {e!r}", flush=True)
             if (args.full and args.delete_local and step in state["full_uploaded"] and step in state["uploaded"]
@@ -149,7 +154,7 @@ def main() -> None:
             if args.keep_all:
                 continue
             # retention: keep the latest and the best
-            keep = {max(state["uploaded"])}
+            keep = {max(state["uploaded"]), *args.keep_steps}
             best = best_step(run)
             if best in state["uploaded"]:
                 keep.add(best)
