@@ -1,0 +1,33 @@
+{
+ "name": "loop4500_loops8",
+ "config": "/workspace/loop-dit/configs/looped_ft_384_r2.json",
+ "ema": "/dev/shm/ema/ema_loop4500_step-4500.safetensors",
+ "loops": 8,
+ "splits": [
+  "test"
+ ],
+ "k": [
+  1,
+  9
+ ],
+ "n_recon": 100,
+ "n_fvd": 300,
+ "fvd_k": [
+  1
+ ],
+ "n_judge": 100,
+ "judge_k": 1,
+ "steps": 30,
+ "cfg": 4.0,
+ "shift": 5.0,
+ "batch": 4,
+ "seed": 0,
+ "out": "../results/loop4500_loops8",
+ "device": "cuda:0",
+ "no_judge": false,
+ "judge_model": "/workspace/loop-dit/flux-action/outputs/weights/text_encoder",
+ "no_fvd": false,
+ "text_encoder": null,
+ "mirror": null,
+ "save_clips": false
+}
