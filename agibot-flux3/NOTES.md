@@ -862,3 +862,8 @@ Then evaluate at N = 1, 2, 4, 8 with eval_phase4 --config looped_ft_384_r1.json 
   before the sidecar deletes the shards. Tokens were lost with the killed processes; relaunch needs them re-supplied.
 - Crash tally on the H100 box: 5 in 2000 steps (1 GPU OOM, 2 NCCL hangs, 2 cgroup OOM kills — both during a checkpoint
   upload from /dev/shm). For any future run here: write checkpoints to disk, not /dev/shm, or cap trainer RSS.
+
+## 2026-10-16 22:21 UTC — r2 (loop4500) finished at step 4500 (auto entry, scripts/finish_r2.sh)
+- Final val line (EMA): `{"step": 4000, "val_loss": 0.09955625746806618, "val_loss_k0": 0.18631626083515584, "val_loss_k1": 0.07834369805641472, "val_loss_k5": 0.06848230154719204, "val_loss_k9": 0.06508276943350211, "val_loss_k17": 0.06319505511783063, "val_loss_k9_loops1": 0.06576316908467561, "val_loss_k9_loops2": 0.06488216738216579, "val_loss_k9_loops8": 0.06718271330464631, "ema_samples": true, "stop": false}`
+- Hub: `Jinyan0924/flux3-agibot-looped` has `ema_loop4500_step-4500.safetensors` (= `ema_step-4500.safetensors`) and the full checkpoint under `checkpoints/step-4500` (hub step rc 0).
+- Logs: results/loop4500_metrics.jsonl, results/loop4500_val.jsonl (292 steps logged on the H100 box). Next: loop-depth eval (scripts/run_loop_eval.sh 4500 /dev/shm/runs/loop384_r2 loop4500 configs/looped_ft_384_r2.json), gallery/RESULTS update.
