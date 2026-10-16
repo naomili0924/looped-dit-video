@@ -781,3 +781,24 @@ Then evaluate at N = 1, 2, 4, 8 with eval_phase4 --config looped_ft_384_r1.json 
 - Tally on the H100 box: 2 crashes in 1270 steps (OOM at 3410, hang at 3770) vs none in 2800 steps on the A100 box;
   each costs ≈ 1 h of lost steps + 20 min recovery. New ETA: 1490 steps × ≈ 13 s + 3 evals ≈ 5.8 h → step 5000 ≈ 20:45 UTC
   Oct 16. Evals at 4000 (≈ 16:45), 4500, 5000.
+
+### 2026-10-16 16:55 UTC — third crash (second NCCL hang, after step 3720); restored from step-3500 again; PG timeout 10 → 30 min
+- Same signature as the 14:07 hang, mirrored: last step 3720 logged 15:48:07 (loss 0.147, data_wait 0); rank 1 stopped
+  enqueuing NCCL work while rank 0 enqueued 33 more; rank 0's watchdog timed out an `_ALLGATHER_BASE` after 10 min
+  (15:58) and both ranks were SIGABRTed at 16:06. No OOM, no traceback, no non-finite step. Found at 16:29 (the user
+  asked for status); steps 3501–3720 lost again.
+- Diagnosis: the container is not memory-killing workers (cgroup limit 367 GB, `oom_kill 0`, `failcnt 0`; 426 GB
+  available). The training data streams from the AgiBot-World-Beta tars on the HF CDN by Range request
+  (`ldvflux/stream.py` → `scripts/tar_index.py::RangeReader`, 120 s per-request timeout, 6 attempts with backoff —
+  a stuck worker can retry for ≈ 13 min before failing, longer than the 10 min process-group timeout). A throughput
+  probe at 16:40 read 64 MB ranges at **10–15 MB/s**, and the 83 GB checkpoint restore took 18 min instead of 12, so
+  this box's network to the Hub CDN is slow this afternoon. Hypothesis: one rank's DataLoader blocks on a worker whose
+  episode read trickles/retries past 10 min, the other rank waits in FSDP's all-gather, the watchdog kills both. Each
+  episode is ≈ 32 MB and `shuffle_windows: 48` hides normal jitter (data_wait stayed 0.0), but not a multi-minute stall.
+- Mitigation: `scripts/launch_loop384.sh` now sets `FLUX_ACTION_PG_TIMEOUT_MINUTES=30` (the trainer's own default;
+  10 had been chosen on the A100 box to fail fast). A real deadlock now costs 30 min instead of 10, but a slow read
+  survives. The 16:30 restore + 16:48 relaunch (`resume: auto` → step-3500, `mode: exact`, seed 42, guard 66/42
+  unchanged) gives step 3510: loss 0.218, grad_norm 0.16, 13.2 s/step, peak 76.1 GB; hub2 restarted after the load and
+  deleted the local step-3500. finish_r2.sh still waiting.
+- Tally: 3 crashes in ~1500 H100 steps (OOM 3410, hangs 3770 and 3720); ≈ 3.5 h lost in total. New ETA: 1490 steps ×
+  ≈ 13.3 s + 3 evals ≈ 6 h → step 5000 ≈ 22:50 UTC Oct 16. Evals at 4000 (≈ 18:45), 4500, 5000.

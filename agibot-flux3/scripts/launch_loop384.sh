@@ -11,5 +11,5 @@ cp "$cfg" "/workspace/loop-dit/logs/$name.launched.json"
 mkdir -p "$run" && cp "$cfg" "$run/config.json"
 if pgrep -f '^[^ ]*python[^ ]* .*flux_action[.]cli train' >/dev/null; then echo "a trainer is still running; refusing to launch"; exit 1; fi
 tmux kill-session -t train 2>/dev/null || true
-tmux new-session -d -s train "cd /workspace/loop-dit/flux-action && HF_TOKEN=${HF_TOKEN} PYTHONPATH=/workspace/loop-dit FLUX_ACTION_PG_TIMEOUT_MINUTES=10 OMP_NUM_THREADS=8 PYTORCH_ALLOC_CONF=expandable_segments:True,garbage_collection_threshold:0.8 NCCL_DEBUG=WARN .venv/bin/python .venv/bin/torchrun --nproc_per_node 2 --master_port 29700 -m flux_action.cli train --config $cfg 2>&1 | tee -a $log; echo TRAIN_EXITED; sleep 1d"
+tmux new-session -d -s train "cd /workspace/loop-dit/flux-action && HF_TOKEN=${HF_TOKEN} PYTHONPATH=/workspace/loop-dit FLUX_ACTION_PG_TIMEOUT_MINUTES=30 OMP_NUM_THREADS=8 PYTORCH_ALLOC_CONF=expandable_segments:True,garbage_collection_threshold:0.8 NCCL_DEBUG=WARN .venv/bin/python .venv/bin/torchrun --nproc_per_node 2 --master_port 29700 -m flux_action.cli train --config $cfg 2>&1 | tee -a $log; echo TRAIN_EXITED; sleep 1d"
 echo "launched tmux train (Phase 5) with $cfg -> $run, log $log at $(date -u)"
