@@ -758,3 +758,26 @@ Then evaluate at N = 1, 2, 4, 8 with eval_phase4 --config looped_ft_384_r1.json 
   except for the allocator setting. `finish_r2.sh` kept waiting (its TRAIN_EXITED grep never saw the tmux-only echo).
 - New ETA: 1990 steps × ≈ 12.5 s + 4 evals ≈ 7.2 h → step 5000 ≈ 18:15 UTC Oct 16. Evals at 3500 (≈ 12:40), 4000,
   4500, 5000.
+
+### 2026-10-16 15:00 UTC — r2 step-3500 eval; NCCL hang after step 3770, restored from step-3500 and relaunched
+- **Step-3500 val (EMA, N=4)**: `val_loss 0.1000 | k0 0.1876 | k1 0.0785 | k5 0.0687 | k9 0.0653 | k17 0.0634`; k9 at
+  N=1/2/8: 0.0659 / 0.0651 / 0.0674. Down 0.0002 at k1–k17 (0.0008 at k0) from step 3000, and for the first time
+  *below r1's cooled-down final* (step 2500: 0.1879 | 0.0787 | 0.0688 | 0.0654 | 0.0635; N=1/2/8 0.0660/0.0651/0.0678)
+  at every k without any cooldown yet — the extra constant-LR steps are paying off slowly. Phase-3 N=1 reference
+  (0.1904 | 0.0792 | 0.0693 | 0.0659 | 0.0639) is beaten everywhere; N=2 < N=4 < N=1 < N=8 at k9 persists.
+  Sidecar uploaded `ema_step-3500` + `checkpoints/step-3500` in 172 s, pruned `ema_step-3000` from the Hub.
+- **Second crash, different cause.** Last step logged 14:06:58 (3770, loss 0.147, data_wait 0). At 14:07 rank 0
+  stopped enqueuing NCCL work (last enqueued = last completed = 387671) while rank 1 enqueued 33 more collectives;
+  rank 1's watchdog timed out an `_ALLGATHER_BASE` (FSDP all-gather, 141.7 M elements) after the configured 10 min
+  (`FLUX_ACTION_PG_TIMEOUT_MINUTES=10`) and both ranks were SIGABRTed at 14:25. No OOM, no Python traceback, no
+  non-finite step — rank 0 was stalled at the Python level (data pipeline or a host-side op; the stream dataset has
+  6 workers and data_wait had been 0.0). One-off hang as far as the logs show; FlightRecorder was off so there is no
+  stack of the stuck collective. Steps 3501–3770 (≈ 1 h) lost. Found at the 14:31 check-in.
+- Recovery as before: killed hub2 first, killed the leftover forkserver/resource-tracker workers of the dead ranks,
+  `HUB_REPO=Jinyan0924/flux3-agibot-looped scripts/restore_checkpoint.sh 3500` (83 GB, 15 min), 14:50 relaunch
+  (`resume: auto` → step-3500, `mode: exact`, seed 42; guard at 3501 unchanged: 66 groups / 42 no-op). Step 3510:
+  loss 0.219, grad_norm 0.25, 12.6 s/step, peak 76.1 GB. hub2 restarted 14:56 after the load; it re-verified and
+  deleted the local step-3500. finish_r2.sh still waiting.
+- Tally on the H100 box: 2 crashes in 1270 steps (OOM at 3410, hang at 3770) vs none in 2800 steps on the A100 box;
+  each costs ≈ 1 h of lost steps + 20 min recovery. New ETA: 1490 steps × ≈ 13 s + 3 evals ≈ 5.8 h → step 5000 ≈ 20:45 UTC
+  Oct 16. Evals at 4000 (≈ 16:45), 4500, 5000.
