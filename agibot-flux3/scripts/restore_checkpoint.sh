@@ -11,7 +11,7 @@ sys.path.insert(0, "/workspace/loop-dit/scripts")
 from hub_backup import token
 from huggingface_hub import snapshot_download
 step, run = int(sys.argv[1]), Path(sys.argv[2])
-snapshot_download("Jinyan0924/flux3-agibot-videoft", token=token(), allow_patterns=[f"checkpoints/step-{step}/*"],
+snapshot_download(os.environ.get("HUB_REPO", "Jinyan0924/flux3-agibot-videoft"), token=token(), allow_patterns=[f"checkpoints/step-{step}/*"],
                   local_dir="/dev/shm/hub_restore")
 src = Path("/dev/shm/hub_restore/checkpoints") / f"step-{step}"
 dst = run / f"step-{step}"

@@ -741,3 +741,20 @@ Then evaluate at N = 1, 2, 4, 8 with eval_phase4 --config looped_ft_384_r1.json 
   within 0.0001 — as expected, since this r2 branched from that exact checkpoint 500 steps ago and has not cooled
   down. Still below the Phase-3 N=1 reference at every k (0.1904 | 0.0792 | 0.0693 | 0.0659 | 0.0639), and the
   N=2 < N=4 < N=1 < N=8 ordering at k9 is unchanged. Next evals: 3500 (≈ 09:00), 4000, 4500, 5000.
+
+### 2026-10-16 11:00 UTC — r2 OOM crash at step 3410, restored from step-3000 and relaunched
+- 08:52:55 UTC rank 1 hit `torch.OutOfMemoryError` (tried 744 MiB, 724 MiB free of 79.1 GiB; 75.8 GiB allocated by
+  PyTorch) inside `policy._prepare_video_only` → `video_vae.encode` of the *next* batch, right after step 3410 was
+  logged (peak_mem_gb 76.3 all run). Steps 3001–3410 (≈ 1.5 h) lost; the sidecar had already uploaded and deleted the
+  local step-3000, so `scripts/restore_checkpoint.sh 3000` (now honours `HUB_REPO=Jinyan0924/flux3-agibot-looped`;
+  83 GB in 12 min) brought it back. Discovered at the 10:31 check-in (the H100 run had been dead 1 h 38 min).
+- 10:50 relaunch via `scripts/launch_loop384.sh` (`resume: auto` → `step-3000`, `mode: exact`, seed 42). Guard at
+  step 3001: 66 groups reduced, 42 no-op calls (unchanged). Step 3010: loss 0.195, grad_norm 0.22, 11.9 s/step,
+  peak 75.0 GB. The sidecar (tmux hub2) was stopped before the restore and restarted only after the trainer had
+  loaded the checkpoint, because `--delete-local` would otherwise delete the restored step-3000 at once (it is
+  already in `hub_backup.json`). `PYTORCH_ALLOC_CONF` now adds `garbage_collection_threshold:0.8` so the caching
+  allocator frees unused blocks before hitting the limit — a mitigation for the fragmentation OOM, not a guarantee;
+  the headroom is only ≈ 3 GB. The same resume path (same data position, same RNG) means the result is unchanged
+  except for the allocator setting. `finish_r2.sh` kept waiting (its TRAIN_EXITED grep never saw the tmux-only echo).
+- New ETA: 1990 steps × ≈ 12.5 s + 4 evals ≈ 7.2 h → step 5000 ≈ 18:15 UTC Oct 16. Evals at 3500 (≈ 12:40), 4000,
+  4500, 5000.
