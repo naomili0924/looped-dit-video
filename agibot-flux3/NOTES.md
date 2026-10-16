@@ -698,3 +698,35 @@ Then evaluate at N = 1, 2, 4, 8 with eval_phase4 --config looped_ft_384_r1.json 
   SPLITS); `run_motion_metrics.sh` path-relative. EVAL_MOTION.md updated.
 - Checks here (GPUs busy with r2): mirror window decode OK (50, 3, 384, 512); CPU load of the looped policy with a
   bogus overlay path + EMA + real Qwen3-VL: loaded OK in 61 s (overlay ignored, encoder overridden).
+
+## 2026-10-16 05:20 UTC — A100 box lost; r2 (5000-step run) resumed on a 2×H100 box
+
+- The 2×A100 box (Vast 55451460) went offline between 00:30 and 03:00 UTC Oct 16 (last Hub upload 22:56 UTC Oct 15 =
+  r2's step-2500 EMA; the step-3000 EMA due ≈ 03:00 never came). r2 was at ≈ step 2700–2900. Its step-2500 *full*
+  checkpoint lived only on that box (/dev/shm; the r2 sidecar was EMA-only). Lost: ≈ 3 h of r2 compute.
+- New box (user: "continue training"): Vast 56199722, 2×H100 80GB SXM (cc 9.0), driver 535.309.01 (CUDA 12.2 max),
+  504 GB RAM, 256 CPUs, **/dev/shm 125 GB** (half the old box), / 32 GB, no volume. torch 2.10.0+cu128 (uv.lock),
+  NATTEN 0.21.6+torch2100cu128 (separate wheel, `docs/setup.md`), transformers 5.16.1, bnb 0.50.2, torchmetrics 1.9.0,
+  lpips, cd-fvd, imageio(+ffmpeg), scipy. cu128 wheels run fine on the 12.2 driver (matmul / SDPA / compile / NCCL
+  all-reduce smoke tests passed; no PTX JIT needed on sm_90). Same layout as before (`/workspace/loop-dit`, weights in
+  /dev/shm/flux3/weights symlinked to flux-action/outputs/weights, overlay in /dev/shm/ema, run dir
+  /dev/shm/runs/loop384_r2). captions.pt re-encoded (2783 captions, 80 tokens, 9.1 GB, 15 s on one H100) — kept on /
+  (`/workspace/agibot/captions.pt`, symlinked from /dev/shm/agibot) because /dev/shm is tight.
+- **Resume point = r1's final step-2500 full checkpoint** (Hub `checkpoints/step-2500`, 83 GB), the only resumable state
+  left. Caveat for the 2500-vs-5000 comparison: this r2 now shares steps 0–2500 with r1 *including r1's LR cooldown
+  2000→2500* (the planned r2 kept LR 1e-5 there); at step 2500 the two EMAs were identical within 0.0001 at every k
+  (22:40 UTC Oct 15 entry), so the branch point moved from 2000 to 2500 at a small cost in "constant-LR steps"
+  (≈ 250 effective steps). Steps 2500→5000 follow the r2 config unchanged (LR 1e-5, cooldown 4500→5000). Resume
+  passed the contract checks (`mode: exact`, seed 42, global batch 32, data position replayed: 10000 batches consumed).
+  The Hub copy of r1's full checkpoint was first copied to `r1/checkpoints/step-2500/` (server-side) because the
+  sidecar's `--full` retention prunes `checkpoints/step-N` below the latest.
+- Disk plan (125 GB): a full checkpoint is 83 GB, so two cannot coexist beside the 25 GB of weights. The sidecar
+  (tmux hub2, `--full --delete-local`, state seeded with step 2500 as uploaded) deletes each local step-N once its EMA
+  and full checkpoint are verified on the Hub (step-2500 deleted at 05:19 after the trainer had loaded it; /dev/shm
+  26 GB used). A crash therefore costs a ~15 min restore (`scripts/restore_checkpoint.sh <step> /dev/shm/runs/loop384_r2`
+  with repo flux3-agibot-looped).
+- 05:15 UTC launched (`scripts/launch_loop384.sh configs/looped_ft_384_r2.json`; the script now passes HF_TOKEN into the
+  tmux session — tokens are not stored on this box). Resume event 05:16; step 2501 guard: 66 groups reduced, 42 no-op
+  post_backward calls (as before). Step 2510: loss 0.180, video_mse 0.090, grad_norm 0.47, **step_time 12.95 s**
+  (2.4× the A100 box's 31.4 s), peak 76.1 GB; step 2520: loss 0.165, grad_norm 0.13. ETA: 2480 steps × 13 s ≈ 9 h +
+  evals → step 5000 ≈ 14:45 UTC Oct 16. Evals at 3000 (≈ 07:05), 3500, 4000, 4500, 5000.

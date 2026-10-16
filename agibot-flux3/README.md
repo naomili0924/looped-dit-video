@@ -9,7 +9,7 @@ model. Task: *k* past frames + caption → 33 future frames at 15 fps, 384×512.
 | 1–2 | data index + own train/val/test/test_unseen splits (`data/splits.json`, seed 42) | done |
 | 3 | plain fine-tune, 6000 steps × 32 windows (1.2 epochs), K_SET {1, 5, 9} + 10 % text-only | done 2026-10-13 |
 | 4 | evaluation: fine-tuned vs base zero-shot (PSNR/SSIM/LPIPS, FVD, VLM judge), zero-shot loop-depth probe | done 2026-10-14 |
-| 5 | Looped-DiT training (split 12 / 9 / 12, N = 4, gated attention, deep supervision): 2500-step run (`configs/looped_ft_384_r1.json`) and 5000-step branch from its step 2000 (`_r2.json`), eval at N = 1, 2, 4, 8 | running since 2026-10-14 |
+| 5 | Looped-DiT training (split 12 / 9 / 12, N = 4, gated attention, deep supervision): 2500-step run (`configs/looped_ft_384_r1.json`, done 2026-10-15) and 5000-step run (`_r2.json`; the A100 box died at step ≈ 2800 on 2026-10-16, resumed from r1's step-2500 checkpoint on a 2×H100 box, see NOTES), eval at N = 1, 2, 4, 8 | running |
 
 **Evaluating the models on another machine (motion-aware evaluation, loop depth: background vs motion):**
 see [`EVAL_MOTION.md`](EVAL_MOTION.md) — inputs (k past frames + task prompt), weights to download, the fixed
