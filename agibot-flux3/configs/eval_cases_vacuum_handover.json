@@ -1,0 +1,23 @@
+{
+ "note": "case 04 with user handover prompts; run with --seed 3 (= seed 0 + gallery index 3) for the gallery noise",
+ "cases": [
+  {
+   "id": "test04_vacuum",
+   "split": "test",
+   "task": "554",
+   "episode": "920026",
+   "anchor": 375,
+   "class": "easy",
+   "stats": {
+    "camera_px_per_frame": 0.05,
+    "moving_frac": 0.043,
+    "object_px_per_frame": 2.4,
+    "direction_change_cos": 0.98
+   },
+   "alt_prompts": [
+    "Use the right arm to give the pink vacuum cleaner to the left hand.",
+    "Hand over the pink vacuum cleaner from the right arm to the left arm."
+   ]
+  }
+ ]
+}

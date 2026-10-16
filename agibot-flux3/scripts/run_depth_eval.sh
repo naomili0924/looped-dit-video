@@ -11,8 +11,8 @@ cd "$(dirname "$0")/.."
 NAME=${1:?name}; CFG=${2:?config}; EMA=${3:-}; CASES=${4:?cases json}; DEV=${5:-cuda:0}; OUT=${6:-results/depth_eval}
 TE=${TEXT_ENCODER:-$PWD/flux-action/outputs/weights/text_encoder}
 export PYTHONPATH=$PWD HF_HUB_ENABLE_HF_TRANSFER=0
-PY=flux-action/.venv/bin/python
-args="--config $PWD/$CFG --cases $PWD/$CASES --out $PWD/$OUT/$NAME --device $DEV --text-encoder $TE --depths 1 2 4 8 --k 1 9 --seed 0"
+PY=$PWD/flux-action/.venv/bin/python
+args="--config $PWD/$CFG --cases $PWD/$CASES --out $PWD/$OUT/$NAME --device $DEV --text-encoder $TE --depths 1 2 4 8 --k ${K:-1 9} --seed 0"
 [ -n "$EMA" ] && args="$args --ema $EMA"
 [ -n "$MIRROR" ] && args="$args --mirror $MIRROR"
 mkdir -p "$OUT/$NAME" logs

@@ -22,7 +22,7 @@ LOOP5000_EMA=${LOOP5000_EMA:-/dev/shm/ema/ema_loop5000_step-5000.safetensors}
 if [ -n "$MIRROR" ]; then SPLITS=${SPLITS:-"test test_unseen"}; else SPLITS=${SPLITS:-"train test test_unseen"}; fi
 if [ -z "$GPUS" ]; then n=$(nvidia-smi -L | wc -l); [ "$n" -ge 2 ] && GPUS="0 1" || GPUS="0"; fi
 E="cd $ROOT/flux-action && PYTHONPATH=$ROOT .venv/bin/python -m ldvflux.eval_phase4"
-COMMON="--splits $SPLITS --k 1 9 --n-recon $N --n-fvd 0 --fvd-k --no-fvd --no-judge --n-judge 0 --batch 4 --seed 0 --save-clips"
+COMMON="--splits $SPLITS --k ${K:-1 9} --n-recon $N --n-fvd 0 --fvd-k --no-fvd --no-judge --n-judge 0 --batch 4 --seed 0 --save-clips"
 [ -n "$MIRROR" ] && COMMON="$COMMON --mirror $MIRROR"
 # off the training box the config's lookup: caption table does not exist -> real text encoder
 [ -n "$MIRROR" ] || [ -n "$TEXT_ENCODER" ] && COMMON="$COMMON --text-encoder $TE"

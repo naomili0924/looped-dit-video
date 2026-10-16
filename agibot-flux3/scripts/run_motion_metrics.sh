@@ -5,7 +5,7 @@
 set -e
 cd "$(dirname "$0")/.."
 DEV=${1:-cuda:0}; GEN=${2:-results/motion_gen}; OUT=${3:-results/motion}
-export PYTHONPATH=/workspace/loop-dit
+export PYTHONPATH=$PWD
 PY=flux-action/.venv/bin/python
 mkdir -p "$OUT"
 for cell in "$GEN"/*/clips/*/; do
