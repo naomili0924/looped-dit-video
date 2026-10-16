@@ -3,7 +3,7 @@
 # summary.json and MOTION.md.  Runs on a GPU when one is free (RAFT), else on CPU with --flow-scale 0.5.
 #   scripts/run_motion_metrics.sh [DEVICE=cuda:0] [GEN_DIR=results/motion_gen] [OUT=results/motion]
 set -e
-cd /workspace/loop-dit
+cd "$(dirname "$0")/.."
 DEV=${1:-cuda:0}; GEN=${2:-results/motion_gen}; OUT=${3:-results/motion}
 export PYTHONPATH=/workspace/loop-dit
 PY=flux-action/.venv/bin/python

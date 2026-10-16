@@ -677,3 +677,24 @@ Then evaluate at N = 1, 2, 4, 8 with eval_phase4 --config looped_ft_384_r1.json 
 - Planned on the other machine (user: "another claude and another gpu"): run_depth_eval.sh for loop2500 / ft6000 /
   base on gallery8 then val50; run_motion_gen/metrics on test + test_unseen. Here: after r2 ends, the same for
   loop5000 and the train split.
+
+### 2026-10-15 22:40 UTC — r2 (5000-step run) step-2500 eval
+- Val (EMA, N = 4): k0 0.1879 | k1 0.0787 | k5 0.0689 | k9 0.0655 | k17 0.0636; k9 at N = 1/2/8: 0.0661/0.0652/0.0678.
+  r1's final (cooled-down) 2500: 0.1879 | 0.0787 | 0.0688 | 0.0654 | 0.0635; 0.0660/0.0651/0.0678 — identical within
+  0.0001 although r2 is still at the constant LR (EMA 0.999 smooths over ~1000 steps, so the cooldown's effect on the
+  EMA is small at this point). Steps 2030–2500: 29.5–32 s/step, peak 76.4 GB, no non-finite steps. Sidecar uploaded
+  r2's ema_step-2500 and pruned ema_step-2000 (r1's EMA stays under ema_loop2500_step-2500). Next eval 3000 ≈ 03:00 UTC.
+
+### 2026-10-16 00:20 UTC — portability fixes for the off-box evaluation (user opened a 2×H100 box with its own Claude)
+- Found while writing the hand-off: (1) `ldvflux.eval_phase4` (motion-gen stage) had no `--mirror` / `--text-encoder`,
+  so part B of EVAL_MOTION.md could not run without data/splits.json and the caption lookup table; (2) the looped
+  configs carry `policy.overlay_weights=/dev/shm/ema/ema_ft384_step-6000.safetensors` (init-time overlay) which the
+  policy loads at construction → part A would also have crashed off-box.
+- Fixes: `load_policy(..., text_encoder=)` overrides `text_encoder_id` and drops `overlay_weights` whenever an `--ema`
+  is given (the EMA replaces the whole DiT); `--mirror` in eval_phase4 reads fixed picks (`fixed/<split>_seed0_n*.json`,
+  verified identical order to `stream.fixed_windows` for the first 60 test / test_unseen picks), `meta.json` and the
+  frames from the eval-splits snapshot; depth_eval uses the same path (no temp config). `run_motion_gen.sh` is
+  path-relative with env overrides (MIRROR, TEXT_ENCODER, FT_EMA, LOOP2500_EMA, LOOP5000_EMA, GPUS, MODELS_ONLY,
+  SPLITS); `run_motion_metrics.sh` path-relative. EVAL_MOTION.md updated.
+- Checks here (GPUs busy with r2): mirror window decode OK (50, 3, 384, 512); CPU load of the looped policy with a
+  bogus overlay path + EMA + real Qwen3-VL: loaded OK in 61 s (overlay ignored, encoder overridden).

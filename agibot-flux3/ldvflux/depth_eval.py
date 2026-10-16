@@ -107,14 +107,9 @@ def generate(args: argparse.Namespace) -> None:
     mirror = Path(args.mirror) if args.mirror else None
     dev = torch.device(args.device)
     cfg = json.load(open(args.config))
-    if args.text_encoder:  # alternative prompts are not in the pre-encoded caption table: use the real encoder
-        cfg = {**cfg, "policy": {**cfg["policy"], "text_encoder_id": args.text_encoder}}
-        tmp = out / "config_eval.json"
-        tmp.write_text(json.dumps(cfg, indent=1))
-        config_path = str(tmp)
-    else:
-        config_path = args.config
-    policy, cfg = load_policy(config_path, args.ema, dev, args.depths[0] if cfg["policy"].get("loop") else None)
+    # alternative prompts are not in the pre-encoded caption table: --text-encoder selects the real Qwen3-VL encoder
+    policy, cfg = load_policy(args.config, args.ema, dev, args.depths[0] if cfg["policy"].get("loop") else None,
+                              args.text_encoder)
     looped = cfg["policy"].get("loop") is not None
     depths = args.depths if looped else [1]
     splits = None if mirror else load_splits(cfg["dataset_kwargs"]["splits"])

@@ -6,7 +6,7 @@ questions that the Phase-4 pixel metrics cannot:
 1. Does the model move the right things in the right direction (not just keep the background)?
 2. When a Looped-DiT runs more loops (N = 1 → 8), does the extra compute go into the static background or into the motion?
 
-Everything below needs one GPU with ≥ 40 GB (A100/H100 class; the 7B DiT in bf16 is 13.6 GB, the Qwen3-VL text
+Everything below needs one GPU with ≥ 40 GB (two GPUs halve part B) (A100/H100 class; the 7B DiT in bf16 is 13.6 GB, the Qwen3-VL text
 encoder 8 GB, RAFT/LPIPS small), ~60 GB of disk for weights, and a Hugging Face token for the two public weight
 repos plus the **private** eval-clip dataset (same HF account as the training machine, user `Jinyan0924`).
 
@@ -64,11 +64,13 @@ hf download Jinyan0924/agibot-flux3-eval-splits --repo-type dataset --local-dir 
 export MIRROR=$PWD/eval-splits
 ```
 
-The training-time configs point the text encoder at a pre-encoded caption table (`lookup:/dev/shm/...`) that does
-not exist elsewhere; the evaluation scripts replace it with the real Qwen3-VL encoder
-(`--text-encoder flux-action/outputs/weights/text_encoder`, `TEXT_ENCODER=` for the shell driver), which is also
-what alternative prompts need. `--mirror $MIRROR` reads frames from the downloaded clips instead of the streaming
-index used on the training box (`data/splits.json` is not in the public repo).
+The training-time configs point the text encoder at a pre-encoded caption table (`lookup:/dev/shm/...`) and the
+looped configs at an init-time overlay (`/dev/shm/ema/ema_ft384_step-6000.safetensors`); neither exists elsewhere.
+`--text-encoder flux-action/outputs/weights/text_encoder` (`TEXT_ENCODER=` for the shell drivers) selects the real
+Qwen3-VL encoder (also what alternative prompts need), and the overlay is dropped automatically whenever `--ema` is
+given (the EMA replaces the whole DiT). `--mirror $MIRROR` reads the fixed picks, the split meta and the frames from
+the downloaded dataset instead of the streaming index used on the training box (`data/splits.json` is not in the
+public repo).
 
 ## 4. Run
 
@@ -90,11 +92,14 @@ Outputs per model in `results/depth_eval/<name>/`: `clips/<case>/k<k>/{gt,contex
 then the offline analysis (`results/motion/MOTION.md`):
 
 ```bash
-scripts/run_motion_gen.sh 50            # edit MODELS / add --mirror as needed; two GPUs by default
-scripts/run_motion_metrics.sh cuda:0
+MIRROR=$MIRROR FT_EMA=$PWD/weights/ft/ema_step-6000.safetensors LOOP2500_EMA=$PWD/weights/loop/ema_loop2500_step-2500.safetensors \
+  scripts/run_motion_gen.sh 50          # tmux mgen0 / mgen1 (one per GPU); ~2.5 h per model-GPU on an A100
+scripts/run_motion_metrics.sh cuda:0    # after every logs/motion_gen_gpu*.log ends with MOTION_GEN_GPU<g>_DONE
 ```
-(`train` needs the streaming index of the full dataset and is only available on the training box; on another
-machine run `test` and `test_unseen` from the mirror.)
+With `MIRROR` set the driver evaluates `test` and `test_unseen` (the `train` split needs the streaming index of the
+full dataset and only exists on the training box) and passes `--mirror` + `--text-encoder` to `ldvflux.eval_phase4`;
+`LOOP5000_EMA=...` adds the 5000-step model, `MODELS_ONLY="base loop2500_loops4"` restricts the set, `GPUS="0"` uses
+one GPU. Each model writes `results/motion_gen/<name>/clips/<split>_k<k>/win*_{gen,gt}.mp4`.
 
 ## 5. What the numbers mean
 

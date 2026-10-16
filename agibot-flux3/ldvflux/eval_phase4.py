@@ -34,11 +34,17 @@ DEFAULT_CONFIG = "/workspace/loop-dit/configs/video_ft_384.json"
 
 
 # ---------------------------------------------------------------------------- model
-def load_policy(config_path: str, ema: str | None, device: torch.device, loops: int | None = None):
+def load_policy(config_path: str, ema: str | None, device: torch.device, loops: int | None = None,
+                text_encoder: str | None = None):
     cfg = json.load(open(config_path))
     pol = dict(cfg["policy"])
     pol["torch_dtype"] = "bfloat16"
+    if text_encoder:  # real Qwen3-VL instead of the training box's pre-encoded caption table (lookup:...)
+        pol["text_encoder_id"] = text_encoder
+        cfg = {**cfg, "policy": {**cfg["policy"], "text_encoder_id": text_encoder}}
     retrofit = loops is not None and pol.get("loop") is None
+    if ema and not retrofit:  # the EMA replaces the whole DiT: the init-time overlay (training box path) is not needed
+        pol.pop("overlay_weights", None)
     if retrofit:  # zero-shot loop-depth probe of a plain checkpoint: the gate-free Looped-DiT retrofit at depth N
         pol["loop"] = {"loop_split": [12, 9, 12], "num_loops": loops, "attn_gate": False, "xsa": False}
         pol["overlay_weights"] = ema
@@ -58,6 +64,34 @@ def load_policy(config_path: str, ema: str | None, device: torch.device, loops: 
     policy.eval()
     policy.loops = loops
     return policy, cfg
+
+
+# ---------------------------------------------------------------------------- data (mirror of the eval splits)
+def mirror_picks(mirror: Path, split: str, n: int, seed: int) -> list[dict]:
+    """The fixed picks of a split from a local snapshot of Jinyan0924/agibot-flux3-eval-splits (``fixed/<split>_seed<seed>_n*.json``,
+    same order as ``stream.fixed_windows``)."""
+    files = sorted(mirror.glob(f"fixed/{split}_seed{seed}_n*.json"), key=lambda f: int(f.stem.rsplit("_n", 1)[1]))
+    if not files:
+        raise FileNotFoundError(f"{mirror}/fixed/{split}_seed{seed}_n*.json")
+    picks = json.loads(files[-1].read_text())["picks"]
+    if len(picks) < n:
+        print(f"[{split}] mirror has only {len(picks)} fixed picks (asked {n})", flush=True)
+    return picks[:n]
+
+
+def load_windows_mirror(picks: list[dict], mirror: Path, split: str, meta: dict, hw=None) -> list[dict]:
+    """Like ``evaluate._load_windows`` but from ``<mirror>/videos/<split>/<episode>.mp4``."""
+    from .stream import decode_frames, window_frame_indices
+
+    out, stride, future, kmax = [], meta["stride"], meta["future_frames"], max(meta["k_set"])
+    for w in picks:
+        idx = window_frame_indices(w["anchor"], kmax, stride, future)
+        data = (mirror / "videos" / split / f"{w['episode']}.mp4").read_bytes()
+        frames = decode_frames(data, set(idx), hw)
+        if all(i in frames for i in idx):
+            out.append({"frames": np.stack([frames[i] for i in idx]), "kmax": kmax, "caption": w["caption"],
+                        "episode": str(w["episode"]), "task": w.get("task"), "anchor": w["anchor"]})
+    return out
 
 
 # ---------------------------------------------------------------------------- metrics
@@ -181,6 +215,11 @@ def main() -> None:
     p.add_argument("--judge-model", default="/workspace/loop-dit/flux-action/outputs/weights/text_encoder",
                    help="Qwen3-VL directory for the prompt-adherence judge")
     p.add_argument("--no-fvd", action="store_true", help="skip FVD even if --fvd-k is set")
+    p.add_argument("--text-encoder", default=None,
+                   help="Qwen3-VL directory or Hub id; replaces the config's lookup: caption table (needed off the training box)")
+    p.add_argument("--mirror", default=None,
+                   help="local snapshot of Jinyan0924/agibot-flux3-eval-splits: fixed picks, meta and frames come from it "
+                        "instead of data/splits.json + the streaming dataset (splits val/test/test_unseen only)")
     p.add_argument("--save-clips", action="store_true",
                    help="write every generated window and its ground truth as <out>/clips/<split>_k<k>/win<i>_{gen,gt}.mp4 "
                         "(near-lossless h264) plus meta.json, for the offline motion / pixel analysis (ldvflux.clip_eval)")
@@ -191,11 +230,12 @@ def main() -> None:
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     (out / "args.json").write_text(json.dumps(vars(args), indent=1))
-    policy, cfg = load_policy(args.config, args.ema, dev, args.loops)
+    policy, cfg = load_policy(args.config, args.ema, dev, args.loops, args.text_encoder)
     pcfg = policy.config
+    mirror = Path(args.mirror) if args.mirror else None
     splits_path = cfg["dataset_kwargs"]["splits"]
     hw = tuple(cfg["dataset_kwargs"].get("frame_hw") or ())
-    meta = load_splits(splits_path)["meta"]
+    meta = json.loads((mirror / "meta.json").read_text()) if mirror else load_splits(splits_path)["meta"]
     future = pcfg.future_frames
     recon = Recon(dev)
     fvd = FVD(dev) if args.fvd_k else None
@@ -203,9 +243,11 @@ def main() -> None:
     summary: dict[str, dict] = {f.stem: json.loads(f.read_text()) for f in sorted(out.glob("*_k*.json"))}
     for split in args.splits:
         n_max = max(args.n_recon, args.n_fvd if set(args.k) & set(args.fvd_k) else 0, args.n_judge)
-        picks = fixed_windows(split, n_max, seed=args.seed, splits_path=splits_path)
         t0 = time.time()
-        windows = _load_windows(picks, meta, hw or None)
+        if mirror:
+            windows = load_windows_mirror(mirror_picks(mirror, split, n_max, args.seed), mirror, split, meta, hw or None)
+        else:
+            windows = _load_windows(fixed_windows(split, n_max, seed=args.seed, splits_path=splits_path), meta, hw or None)
         print(f"[{split}] {len(windows)} windows decoded in {time.time() - t0:.0f}s", flush=True)
         for k in args.k:
             name = f"{split}_k{k}"
