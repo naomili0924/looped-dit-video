@@ -802,3 +802,28 @@ Then evaluate at N = 1, 2, 4, 8 with eval_phase4 --config looped_ft_384_r1.json 
   deleted the local step-3500. finish_r2.sh still waiting.
 - Tally: 3 crashes in ~1500 H100 steps (OOM 3410, hangs 3770 and 3720); ≈ 3.5 h lost in total. New ETA: 1490 steps ×
   ≈ 13.3 s + 3 evals ≈ 6 h → step 5000 ≈ 22:50 UTC Oct 16. Evals at 4000 (≈ 18:45), 4500, 5000.
+
+### 2026-10-16 20:05 UTC — r2 step-4000 eval; fourth crash (cgroup OOM-kill at step 4020); sidecar now stages the full upload
+- **Step-4000 val (EMA, N=4)**: `val_loss 0.0996 | k0 0.1863 | k1 0.0783 | k5 0.0685 | k9 0.0651 | k17 0.0632`; k9 at
+  N=1/2/8: 0.0658 / 0.0649 / 0.0672. Another −0.0002 at every k vs step 3500 (−0.0013 at k0), −0.0003 vs r1's final
+  (step 2500: 0.1879 | 0.0787 | 0.0688 | 0.0654 | 0.0635) and −0.0008 at k9 vs the Phase-3 N=1 reference (0.0659) —
+  all still without the cooldown (4500→5000). `ema_step-4000` + `checkpoints/step-4000` are on the Hub (upload 161 s +
+  1109 s), `ema_step-3500` pruned.
+- **Crash 4 (19:20:09 UTC)**: both ranks SIGKILLed — the container cgroup's OOM killer (`memory.oom_control` oom_kill
+  0 → 2, limit 367 GB, `max_usage` = limit). Timeline: checkpoint 19:00:33, eval done 19:09:33, steps 4010/4020 at
+  19:12/19:16, killed 19:20 while the sidecar was still uploading the 83 GB full checkpoint (1109 s; the local copy
+  was deleted only at 19:22). /dev/shm is RAM and counts against the limit: 26 GB weights/captions + 83 GB step-4000
+  (+11 GB EMA temp) on top of the trainer's ≈ 170 GB RSS (47 GB per rank, 20 loader/forkserver processes) + shmem.
+  The step-3500 upload (1247 s) survived the same window — by luck. Steps 4001–4020 lost (20 steps).
+- Fix: `scripts/hub_backup.py` now uploads the EMA first, then the full checkpoint **staged** — entries largest-first
+  (`optimizer`, `model`, `ema_cpu_0p999`, …) as separate commits, each local entry verified on the Hub and deleted
+  immediately, `COMPLETE` renamed to `COMPLETE.partial` locally during the stage (so `resume: auto` / the restore
+  script never see a partial dir; tracked in `hub_backup.json["full_in_progress"]`) and uploaded last; a restored
+  copy of an already-mirrored step is still verified and deleted (old behaviour). Smoke-tested with `--once` on an
+  empty run dir. Effect: the 83 GB shrinks as the upload proceeds instead of sitting in RAM for 20 min.
+- 19:33 restore of step-4000 (83 GB, 21 min — the HF CDN was slow again), 19:54 relaunch (`resume: auto` → step-4000,
+  `mode: exact`, seed 42, guard 66/42 unchanged). Step 4010: loss 0.225, 11.3 s/step; cgroup usage 205 GB at steady
+  state (rss 101 GB + cache 104 GB of which shmem 93 GB). hub2 restarted after the load, deleted local step-4000.
+- Tally: 4 crashes on the H100 box (OOM 3410, hangs 3770/3720, cgroup OOM 4020), ≈ 4.5 h lost. ETA step 5000 ≈ 00:00 UTC
+  Oct 17 (1000 steps × ≈ 13 s + evals at 4500 and 5000). Option on the table (user, 20:00): stop at 4000 and evaluate
+  `ema_step-4000` (already on the Hub; no cooldown).
