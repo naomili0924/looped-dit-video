@@ -24,7 +24,7 @@ BLOCK = 512
 
 def token() -> str:
     tok = os.environ.get("HF_TOKEN")
-    if not tok:
+    if not tok and Path("/workspace/.env").exists():  # tokens normally come from the environment
         for line in Path("/workspace/.env").read_text().splitlines():
             if line.startswith("HF_TOKEN="):
                 tok = line.split("=", 1)[1].strip()

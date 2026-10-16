@@ -18,7 +18,7 @@ if [ ! -f "$EMA" ]; then
 fi
 ls -la "$EMA"
 ARGS="--config $CFG --ema $EMA --splits test --k 1 9 --n-recon 100 --n-fvd 300 --fvd-k 1 --n-judge 100 --judge-k 1 --batch 4 --seed 0"
-E="cd /workspace/loop-dit/flux-action && PYTHONPATH=/workspace/loop-dit .venv/bin/python -m ldvflux.eval_phase4"
+E="cd /workspace/loop-dit/flux-action && HF_TOKEN=${HF_TOKEN:-} PYTHONPATH=/workspace/loop-dit .venv/bin/python -m ldvflux.eval_phase4"  # tmux sessions do not inherit the caller env
 for s in eval_gpu0 eval_gpu1; do tmux kill-session -t $s 2>/dev/null || true; done
 tmux new-session -d -s eval_gpu0 "( $E --name ${TAG}_loops8 --loops 8 $ARGS --out ../results/${TAG}_loops8 --device cuda:0 \
   && $E --name ${TAG}_loops1 --loops 1 $ARGS --out ../results/${TAG}_loops1 --device cuda:0 \
