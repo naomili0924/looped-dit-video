@@ -730,3 +730,14 @@ Then evaluate at N = 1, 2, 4, 8 with eval_phase4 --config looped_ft_384_r1.json 
   post_backward calls (as before). Step 2510: loss 0.180, video_mse 0.090, grad_norm 0.47, **step_time 12.95 s**
   (2.4× the A100 box's 31.4 s), peak 76.1 GB; step 2520: loss 0.165, grad_norm 0.13. ETA: 2480 steps × 13 s ≈ 9 h +
   evals → step 5000 ≈ 14:45 UTC Oct 16. Evals at 3000 (≈ 07:05), 3500, 4000, 4500, 5000.
+
+### 2026-10-16 08:35 UTC — r2 step-3000 eval (first val point of the resumed run)
+- Trainer healthy on the H100 box: step 3320 at 08:31, loss 0.12–0.19, 12.8 s/step, peak 76 GB, no non-finite steps.
+  Sidecar uploaded `ema_step-3000` + `checkpoints/step-3000` in 194 s and deleted the local copy (/dev/shm 26 GB used).
+  ETA for step 5000 still ≈ 15:10 UTC.
+- Val (EMA, N=4): `val_loss 0.10035 | k0 0.1884 | k1 0.0787 | k5 0.0688 | k9 0.0655 | k17 0.0636`; k9 at N=1/2/8:
+  0.0660 / 0.0652 / 0.0678. Versus the step-2000 point (k9 0.0658, k17 0.0639) every k improved by 0.0003–0.0007,
+  so constant LR 1e-5 keeps buying a little; versus r1's cooled-down step 2500 (k9 0.0654, k17 0.0635) it is identical
+  within 0.0001 — as expected, since this r2 branched from that exact checkpoint 500 steps ago and has not cooled
+  down. Still below the Phase-3 N=1 reference at every k (0.1904 | 0.0792 | 0.0693 | 0.0659 | 0.0639), and the
+  N=2 < N=4 < N=1 < N=8 ordering at k9 is unchanged. Next evals: 3500 (≈ 09:00), 4000, 4500, 5000.
