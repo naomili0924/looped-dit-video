@@ -105,3 +105,7 @@
   stop_metric val_loss_k9_mean_loops. hub_backup.py: --keep-steps; full-ckpt cleanup now deletes each old folder once.
   chain_long.sh v2: after the 2500 run exits -> 2-update smoke with one eval (/dev/shm/runs/evalsmoke.json,
   logs/evalsmoke.log); on failure falls back to the old eval settings so the GPUs do not idle.
+- 22:45 UTC: flux3-agibot-looped (and flux3-agibot-videoft) are PUBLIC repos (I had wrongly called it private); user: fine,
+  keep random_depth_n1-8/ there; long run uploads to random_depth_n1-8_long/ in the same repo. No "best" checkpoint
+  (user: video eval has no single criterion): hub_backup --keep-every 1000 (EMA every 1000 steps + latest + 9000; ~88 GB),
+  full ckpt latest + 9000. Account is PRO; public storage does not count toward the private quota. Never squash this repo.

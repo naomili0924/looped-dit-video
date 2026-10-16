@@ -3,7 +3,7 @@
 # /dev/shm/runs/looprand, LR 1e-5 constant to 9000, linear decay to 10000; early stop when the mean k9 val loss over
 # N=1..8 has no new best for 4 evals. Waits for the 2500-step run to exit, smoke-tests the eval hook (2 updates + one
 # eval, /dev/shm/runs/evalsmoke.json), falls back to the old eval settings if the smoke fails, launches, then the Hub
-# sidecar (EMA latest+best, full latest, step 9000 always kept).
+# sidecar (EMA every 1000 steps + latest, full latest, step 9000 always kept).
 cd /workspace/loop-dit-eval/looped-dit-video/agibot-flux3
 A=$PWD; set -a; . /workspace/.env; set +a
 RUN=$A/runs/looprand_long; LOG=$A/logs/chain_long.log
@@ -42,5 +42,5 @@ bash scripts/launch_looprand.sh $CFG 2>&1 | tee -a $LOG
 tmux kill-session -t hublong 2>/dev/null
 tmux new-session -d -s hublong "cd $A && set -a && . /workspace/.env && set +a && HF_HUB_ENABLE_HF_TRANSFER=0 \
   flux-action/.venv/bin/python scripts/hub_backup.py --run $RUN --repo Jinyan0924/flux3-agibot-looped \
-  --prefix random_depth_n1-8_long --full --keep-steps 9000 --poll 300 2>&1 | tee -a logs/hub_looprand_long.log; sleep 1d"
+  --prefix random_depth_n1-8_long --full --keep-steps 9000 --keep-every 1000 --poll 300 2>&1 | tee -a logs/hub_looprand_long.log; sleep 1d"
 ts "hub sidecar started (tmux hublong -> random_depth_n1-8_long/)"

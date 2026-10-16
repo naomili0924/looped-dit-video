@@ -87,6 +87,8 @@ def main() -> None:
     p.add_argument("--keep-all", action="store_true", help="never delete earlier EMA uploads")
     p.add_argument("--keep-steps", type=int, nargs="*", default=[],
                    help="steps whose EMA and full checkpoint are never deleted from the Hub (e.g. the pre-cooldown step)")
+    p.add_argument("--keep-every", type=int, default=0,
+                   help="keep every EMA whose step is a multiple of this (replaces keeping the best by val loss)")
     p.add_argument("--squash", action="store_true", help="squash the repo history after deletes (default without --prefix)")
     args = p.parse_args()
     if not args.prefix:
@@ -155,9 +157,12 @@ def main() -> None:
                 continue
             # retention: keep the latest and the best
             keep = {max(state["uploaded"]), *args.keep_steps}
-            best = best_step(run)
-            if best in state["uploaded"]:
-                keep.add(best)
+            if args.keep_every:  # a regular series instead of a "best" pick
+                keep |= {st for st in state["uploaded"] if st % args.keep_every == 0}
+            else:
+                best = best_step(run)
+                if best in state["uploaded"]:
+                    keep.add(best)
             for f in api.list_repo_files(args.repo):
                 m = re.fullmatch(re.escape(pre) + r"ema_step-(\d+)\.safetensors", f)
                 if m and int(m.group(1)) not in keep:
