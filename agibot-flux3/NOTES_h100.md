@@ -74,3 +74,16 @@
   Jinyan0924/flux3-agibot-looped --prefix random_depth_n1-8 --keep-all, polls every 300 s; uploads
   random_depth_n1-8/ema_step-<N>.safetensors (bf16, 11 GB) + metrics.jsonl, eval/val.jsonl, config.json for every
   complete 500-step checkpoint; never deletes, no history squash. Log logs/hub_looprand.log.
+- 21:27 UTC: post-train chain armed (tmux post, scripts/launchers/posttrain_looprand.sh, logs/posttrain.log): waits for
+  step-2500 COMPLETE + idle GPUs -> consolidate EMA to weights/looprand/ema_step-2500.safetensors (verified on step-2000:
+  395 tensors, same keys/shapes as loop2500) -> copy step-2500 to ckpt_backup/looprand (RAM -> disk) -> rollouts
+  N=16,1 (gpu0) / 8,4,2 (gpu1), prompts 0 1 2 -> motion gen k=1 test+test_unseen 50 windows, looprand N=1,2,4,8 +
+  loop2500 N=2,8 (same seed/windows as results/motion_gen) -> run_motion_metrics.sh.
+- 21:50 UTC: copied pre-cooldown checkpoint /dev/shm/runs/looprand/step-2000 (LR still 1e-5) to ckpt_backup/looprand/step-2000
+  (83 GB) before keep_checkpoints=1 deletes it. User will run the long fine-tune later themselves ("until no improvement");
+  no long run launched here. Resume recipe: same config, output_dir new, resume=<that step dir>, steps/cooldown_start moved.
+- 21:57 UTC: /workspace is NOT a persistent volume (vast-capabilities workspace_is_volume=false) -> full resumable
+  checkpoints mirrored to the Hub, never deleted: scripts/hub_full_ckpt.py (tmux fullckpt, logs/hub_full_ckpt.log) ->
+  Jinyan0924/flux3-agibot-looped/random_depth_n1-8/checkpoints/step-2000 (uploaded 99 s, 13 files 88.9 GB, sizes verified);
+  step-2500 queued (waits for COMPLETE). Restore on any machine: scripts/restore_full_ckpt.sh <step> <run dir>.
+  Fix attempt 1: list_repo_tree raises EntryNotFound for a folder not yet on the Hub -> caught.
