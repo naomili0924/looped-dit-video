@@ -19,8 +19,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RES = ROOT / "results"
-RUNS = {"loop2500": "/dev/shm/runs/loop384", "loop5000": "/dev/shm/runs/loop384_r2", "ft_step6000": "/dev/shm/runs/ft384"}
-LABEL = {"loop2500": "looped, 2500 steps", "loop5000": "looped, 5000 steps"}
+RUNS = {"loop2500": "/dev/shm/runs/loop384", "loop4500": "/dev/shm/runs/loop384_r2", "loop5000": "/dev/shm/runs/loop384_r2", "ft_step6000": "/dev/shm/runs/ft384"}
+LABEL = {"loop2500": "looped, 2500 steps", "loop4500": "looped, 4500 steps", "loop5000": "looped, 5000 steps"}
 DEPTHS = (1, 2, 4, 8)
 BLOCK_PASSES = {n: 12 + 9 * n + 12 for n in (1, 2, 4, 8, 10)}
 WINDOWS = [  # the first 8 windows of the Phase-4 test evaluation set (seed 0), captions as recorded in AgiBot World Beta
@@ -141,19 +141,20 @@ def val_table(tags) -> str:
         rows = val_curve(tag)
         seen = set()
         for r in rows:
-            if r["step"] in seen or (tag == "loop5000" and r["step"] <= 2000):
+            if r["step"] in seen or (tag in ("loop4500", "loop5000") and r["step"] <= 2000):
                 continue
             seen.add(r["step"])
-            body.append(f"<tr{' class=train' if r['step'] in (2500, 5000) else ''}><td>{LABEL[tag]}</td><td>{r['step']}</td>" + "".join(cell(r, k, 4) for k, _ in cols) + "</tr>")
+            body.append(f"<tr{' class=train' if r['step'] in (2500, 4500, 5000) else ''}><td>{LABEL[tag]}</td><td>{r['step']}</td>" + "".join(cell(r, k, 4) for k, _ in cols) + "</tr>")
     return (f'<div class="tbl"><table><thead>{head}</thead><tbody>{"".join(body)}</tbody></table></div>'
-            '<p class="note">Velocity-prediction MSE of the EMA weights on 32 fixed validation windows at 8 timesteps, per context length k; the looped runs are evaluated at the training depth N = 4 unless the column says otherwise. Lower is better. The 5000-step run shares steps 0–2000 with the 2500-step run and continues from that checkpoint.</p>')
+            '<p class="note">Velocity-prediction MSE of the EMA weights on 32 fixed validation windows at 8 timesteps, per context length k; the looped runs are evaluated at the training depth N = 4 unless the column says otherwise. Lower is better. The 4500-step run shares steps 0–2000 with the 2500-step run and continues from that checkpoint (the step-4500 point itself is missing: the trainer was killed before that eval).</p>')
 
 
-def strips_js(tags) -> str:
+def strips_js(tags, urls=None) -> str:
     caps = json.dumps([[c, m] for c, m in WINDOWS])
     return f"""
 (function () {{
   var caps = {caps};
+  var URLS = {json.dumps(urls or {})};
   var tags = {json.dumps(tags)}, labels = {json.dumps([LABEL[t] for t in tags])};
   var tag = tags[tags.length - 1], k = 1, w = 0, FPS = 15, NF = 34, rate = 0.25;
   try {{ var saved = +localStorage.getItem('strip_rate'); if (saved === 0.25 || saved === 0.5 || saved === 1) {{ rate = saved; }} }} catch (e) {{}}
@@ -178,7 +179,8 @@ def strips_js(tags) -> str:
   }}
   function load() {{
     render();
-    v.src = 'videos_' + tag + '/k' + k + '_win' + w + '.mp4';
+    var name = tag + '_k' + k + '_win' + w + '.mp4';
+    v.src = URLS[name] || ('videos_' + tag + '/k' + k + '_win' + w + '.mp4');
     v.load();
     v.playbackRate = rate;
     v.play().catch(function () {{}});
@@ -273,7 +275,7 @@ code { font-family: var(--mono); font-size: 13px; background: var(--surface-2); 
 """
 
 
-def build(tags: list[str], allow_missing: bool = False) -> str:
+def build(tags: list[str], allow_missing: bool = False, urls: dict[str, str] | None = None) -> str:
     base, ft = load("base"), load("ft_step6000")
     probe = {n: load(f"ft_step6000_loops{n}") for n in (2, 4, 8, 10)}
     loops = {t: {n: load(f"{t}_loops{n}") for n in DEPTHS} for t in tags}
@@ -321,7 +323,7 @@ def build(tags: list[str], allow_missing: bool = False) -> str:
   <p class="note" style="margin-top:8px">Columns from left: ground-truth future, base FLUX 3 Action zero-shot, the Phase-3 fine-tune (grey underline, the previous reference), then the looped model sampled with the core run 1, 2, 4 and 8 times. N = 4 (green underline) is the depth it was trained at. Cells are downscaled to 256×192 for the page.</p>
 
   <h2>Test split, the same 100 windows as Phase 4</h2>
-  <p>At the training depth the looped model reaches LPIPS {s4['lpips']:.3f} and FVD {s4['fvd']:.0f} at k = 1, against {f4['lpips']:.3f} and {f4['fvd']:.0f} for the Phase-3 fine-tune it started from, after half an epoch of looped training. Green rows are the training depth; the best value in each column is marked. The last column is the measured sampling time per 33-frame window (one A100, batch 4, 30 Euler steps, two forward passes per step for guidance).</p>
+  <p>At the training depth the looped model reaches LPIPS {s4['lpips']:.3f} and FVD {s4['fvd']:.0f} at k = 1, against {f4['lpips']:.3f} and {f4['fvd']:.0f} for the Phase-3 fine-tune it started from, after {'half an epoch' if latest == 'loop2500' else '0.9 epoch'} of looped training. Green rows are the training depth; the best value in each column is marked. The last column is the measured sampling time per 33-frame window (batch 4; one A100 for the 2500 model, one H100 for the 4500 model; 30 Euler steps, two forward passes per step for guidance).</p>
   {test_table(tags, base, ft, loops)}
 
   <h2>Before and after training the loop</h2>
@@ -357,7 +359,7 @@ def build(tags: list[str], allow_missing: bool = False) -> str:
       <dl class="kv">
         <dt>initialisation</dt><dd>All trunk weights are the Phase-3 EMA at step 6000. The only new parameters are head-wise sigmoid attention gates in the 9 core blocks (one linear map for text tokens, one for video tokens, zero weights, bias +4), so at initialisation each gate passes 98% of the attention output and the model computes almost exactly what the fine-tune did at N = 1.</dd>
         <dt>loss</dt><dd>Deep supervision: after each pass through the core the state is decoded through C and scored with the same velocity loss. Weights 1/3, 1/3, 1/3, 1 over exits 1–4, rescaled to sum 2, so the final exit counts most but every depth is trained.</dd>
-        <dt>schedule</dt><dd>Same data stream, seed, batch size, learning rate and optimizer as Phase 3; 200-step warmup. The 2500-step run cools down over steps 2000–2500 (half an epoch). The 5000-step run restarts from the step-2000 checkpoint, keeps the learning rate constant to 4500 and cools down over 4500–5000 (one epoch).</dd>
+        <dt>schedule</dt><dd>Same data stream, seed, batch size, learning rate and optimizer as Phase 3; 200-step warmup. The 2500-step run cools down over steps 2000–2500 (half an epoch). The 4500-step run restarts from the step-2000 checkpoint and keeps the learning rate constant to step 4500 (0.9 epoch), where it was stopped without a cooldown; its EMA (decay 0.999) is the evaluated model.</dd>
         <dt>cost</dt><dd>12 + 4 × 9 + 4 × 12 = 96 block passes per training forward against 33 for the plain model; 31 s per step on the same two GPUs, so the 2500-step run roughly matches Phase 3's compute.</dd>
       </dl>
     </div>
@@ -381,7 +383,7 @@ def build(tags: list[str], allow_missing: bool = False) -> str:
         <thead><tr><th>N</th><th>block passes per forward</th><th>relative</th>{"".join(f"<th>s / window, {LABEL[t]}</th>" for t in tags)}</tr></thead>
         <tbody>{"".join(f"<tr{' class=train' if n == 4 else ''}><td>{n}</td><td>{BLOCK_PASSES[n]}</td><td>{BLOCK_PASSES[n] / BLOCK_PASSES[1]:.2f}×</td>" + "".join(f"<td>{f(per_window(loops[t][n]['test_k1']), 1)}</td>" for t in tags) + "</tr>" for n in DEPTHS)}</tbody>
       </table></div>
-      <p class="note">Seconds per 33-frame window at k = 1, including the guidance pass (two forwards per step) and the VAE decode; one A100, batch 4. The plain Phase-3 model takes {f(per_window(ft['test_k1']), 1)} s under the same protocol.</p>
+      <p class="note">Seconds per 33-frame window at k = 1, including the guidance pass (two forwards per step) and the VAE decode; batch 4, one A100 for the 2500 model and one H100 for the 4500 model, so the two columns are not comparable in absolute terms. The plain Phase-3 model takes {f(per_window(ft['test_k1']), 1)} s under the same protocol.</p>
     </div>
   </div>
 
@@ -390,7 +392,7 @@ def build(tags: list[str], allow_missing: bool = False) -> str:
   </div>
 </div>
 
-<script>{strips_js(tags)}</script>
+<script>{strips_js(tags, urls)}</script>
 """
     return page
 
@@ -400,6 +402,8 @@ if __name__ == "__main__":
     ap.add_argument("--tags", nargs="+", default=["loop2500"])
     ap.add_argument("--out", required=True)
     ap.add_argument("--allow-missing", action="store_true", help="draft: render missing depths as dashes")
+    ap.add_argument("--urls", default=None, help="json {<tag>_k<k>_win<w>.mp4: asset url} after uploading the strips as artifact assets")
     a = ap.parse_args()
-    Path(a.out).write_text(build(a.tags, a.allow_missing))
+    urls = json.loads(Path(a.urls).read_text()) if a.urls else {}
+    Path(a.out).write_text(build(a.tags, a.allow_missing, urls))
     print(f"wrote {a.out} ({Path(a.out).stat().st_size} bytes)")

@@ -881,3 +881,33 @@ Then evaluate at N = 1, 2, 4, 8 with eval_phase4 --config looped_ft_384_r1.json 
 - Lessons: a queue that keys on a log marker must use fresh logs (a stale DONE line fired it early and killed the 4500
   run once); parallel rollout processes now merge times.json; `pkill -f` on a trainer pattern also matches the tmux
   server argv (see the 22:15 entry).
+
+## 2026-10-17 02:40 UTC — loop-depth eval of the 4500 model DONE; random-depth (other box) long rollout; gallery updated
+- Eval (scripts/run_loop_eval.sh 4500 …, same light protocol as the 2500 model: test, k 1 9, recon 100, FVD 300, judge
+  100, seed 0; results/loop4500_loops{1,2,4,8}) ran 22:25 → 02:08 UTC with two SIGSTOP pauses for the rollouts, so its
+  gen_seconds are not usable as timings.
+- Test results, 4500 model (EMA, no cooldown) vs the 2500 model (in parentheses):
+  | N | k1 PSNR | SSIM | LPIPS | FVD | judge | k9 PSNR | SSIM | LPIPS |
+  | ft (Phase 3) | 19.83 | 0.805 | 0.166 | 166.9 | 0.46 | 21.77 | 0.848 | 0.123 |
+  | 1 | 19.74 (19.97) | 0.804 | 0.168 (0.166) | 166.3 (164.2) | 0.39 | 21.91 (21.82) | 0.850 | 0.120 (0.121) |
+  | 2 | 19.94 (20.02) | 0.808 | 0.162 (0.161) | 154.4 (162.0) | 0.46 | 21.85 (21.75) | 0.849 | 0.120 (0.121) |
+  | 4 | 19.93 (20.00) | 0.807 | 0.163 (0.162) | 150.5 (157.1) | 0.40 | 21.78 (21.78) | 0.849 | 0.121 (0.120) |
+  | 8 | 20.05 (20.03) | 0.807 | 0.161 (0.164) | 151.5 (159.2) | 0.40 | 21.79 (21.73) | 0.847 | 0.122 (0.122) |
+  Reading: the extra 0.4 epoch (no cooldown) buys FVD at every depth ≥ 2 (N=4 157 → 150.5, N=8 159 → 151.5, N=2
+  162 → 154) while LPIPS/PSNR/SSIM stay within ±0.003 / ±0.1 dB; the N=1 exit got slightly worse at k 1 (PSNR −0.2 dB,
+  FVD 164 → 166), so the longer-trained model leans more on the loop: depth now matters more (FVD 166 → 154 → 150 → 152
+  across N = 1/2/4/8, against 164 → 162 → 157 → 159 for the 2500 model). Best LPIPS 0.161 at N=8, best FVD 150.5 at
+  the training depth N=4. k 9 is flat across depth as before. Judge (0.39–0.46, n=100) within noise. Caveat: the
+  evaluated EMA has no cooldown, and the 2500 model had a 500-step cooldown — the comparison mixes the two effects.
+- Pages: "Trained Loop Depth" https://claude.ai/artifact/DQGteiPLtakyHLP4ia8BEA now has a model selector (2500 / 4500),
+  the 4500 rows and val points 3000–4000, and the strips are stored as artifact assets (scripts/build_loop_gallery.py
+  --tags loop2500 loop4500 --urls results/loop_gallery_urls.json; strips results/loop_videos_loop4500 from
+  scripts/make_looped_strips.sh loop4500). results/RESULTS.md rebuilt (14 models).
+- Random-depth model (other box; Hub random_depth_n1-8/ema_step-2500, trained with loop depth sampled in 1–8 and a
+  new loss; its training code is not in this repo, configs/looped_ft_384_random_n1-8.json is an inference-only wrapper):
+  long rollout `scripts/run_long_rollout.sh rand2500 configs/looped_ft_384_random_n1-8.json /dev/shm/ema/ema_rand2500_step-2500.safetensors`,
+  120 rollouts in 64 GPU-min (per 4-window rollout N1 15 s, N2 18 s, N4 25 s, N8 37 s, N16 65 s; the eval was paused
+  meanwhile). Page: https://claude.ai/artifact/5drSFdmwL568cLMByS3C3B (label "random depth N 1–8, step 2500", depths 1–8
+  marked as trained). Builder syntax: --models tag=step[=label[=trained depths]].
+- Still open: Hub prune of checkpoints/step-4000 (delete blocked for the agent; user to decide); Phase-4 full protocol
+  for the looped models.

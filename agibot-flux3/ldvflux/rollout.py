@@ -110,8 +110,7 @@ def main() -> None:
     out = Path(a.out)
     (out / "clips").mkdir(parents=True, exist_ok=True)
     cases = json.loads(Path(a.cases).read_text())["cases"]
-    if a.cases_only:
-        cases = [c for c in cases if c["id"] in a.cases_only]
+    cases = [(ci, c) for ci, c in enumerate(cases) if not a.cases_only or c["id"] in a.cases_only]  # ci: index in the file (noise seed)
     mirror = Path(a.mirror) if a.mirror else None
     dev = torch.device(a.device)
     cfg = json.load(open(a.config))
@@ -125,7 +124,7 @@ def main() -> None:
     prompts_p, times_p = out / "prompts.json", out / "times.json"
     prompts_all = json.loads(prompts_p.read_text()) if prompts_p.exists() else {}
     times = json.loads(times_p.read_text()) if times_p.exists() else {}
-    for ci, case in enumerate(cases):
+    for ci, case in cases:
         cid = case["id"]
         cdir = out / "clips" / cid
         cdir.mkdir(exist_ok=True)

@@ -57,7 +57,7 @@ def mean_time(folder: Path, depth: int | None) -> float | None:
     return sum(vals) / len(vals) if vals else None
 
 
-def build(models: list[tuple[str, int]], out: Path, urls: dict[str, str], box: str, windows: int) -> None:
+def build(models: list[tuple[str, int, str, list[int]]], out: Path, urls: dict[str, str], box: str, windows: int, allow_missing: bool = False) -> None:
     vdir = out.parent / "videos"
     vdir.mkdir(parents=True, exist_ok=True)
     gt_meta = json.loads((ROLL / "gt" / "meta.json").read_text())
@@ -66,12 +66,18 @@ def build(models: list[tuple[str, int]], out: Path, urls: dict[str, str], box: s
     n = len(cases)
     case_rows = []
     for i, c in enumerate(cases):
-        for tag, _ in models:
-            for pi in range(len(prompts[c])):
-                compose(tag, c, pi, vdir)
+        try:
+            for tag, *_ in models:
+                for pi in range(len(prompts[c])):
+                    compose(tag, c, pi, vdir)
+        except FileNotFoundError as e:
+            if not allow_missing:
+                raise
+            print(f"[{c}] skipped (clips not finished): {e.args[0][0]}")
+            continue
         case_rows.append({"id": c, "btn": f"#{n - i} {SHORT.get(c, c)}", "gt_s": gt_meta[c]["gt_s"], "gt_full": gt_meta[c]["gt_full"], "prompts": prompts[c]})
     times = {}
-    for tag, step in models:
+    for tag, *_ in models:
         times[tag] = {f"N{d}": mean_time(ROLL / tag, d) for d in DEPTHS}
     t_base, t_ft = mean_time(ROLL / "base", 1), mean_time(ROLL / "ft6000", 1)
     nf = 1 + windows * FUTURE
@@ -81,9 +87,10 @@ def build(models: list[tuple[str, int]], out: Path, urls: dict[str, str], box: s
 
     time_note = (f"Generation time for {windows} windows on one GPU of the {html.escape(box)} box, while other jobs shared it: "
                  f"base {secs(t_base)}, fine-tuned {secs(t_ft)}; " + "; ".join(
-                     f"looped {step} steps: " + ", ".join(f"N = {d} {secs(times[tag][f'N{d}'])}" for d in DEPTHS) for tag, step in models) +
-                 ". The looped models were trained at N = 4 only; N = 8 and 16 are extrapolation.")
+                     f"{html.escape(label)}: " + ", ".join(f"N = {d} {secs(times[tag][f'N{d}'])}" for d in DEPTHS) for tag, step, label, _ in models) +
+                 ". Depths marked (trained) in the column headers are the ones the selected checkpoint was trained at; the others are extrapolation.")
     model_sel = ('<div class="group"><span class="lbl">looped checkpoint (training step)</span><div class="btns" id="mbtns"></div></div>')
+    models_js = [{"tag": t, "step": s, "label": l, "trained": tr} for t, s, l, tr in models]
     page = f"""<title>Long Rollout</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -157,7 +164,7 @@ button.play:focus-visible {{ outline: 2px solid var(--accent); outline-offset: 2
   <div class="prompt"><div class="sub" id="psub"></div><div class="text" id="ptext"></div></div>
 
   <div class="strip"><div class="inner">
-    <div class="cols"><div>ground truth</div><div>base (zero-shot)</div><div>fine-tuned 6000</div><div id="h1"></div><div>N = 2</div><div class="train">N = 4 (trained)</div><div>N = 8</div><div>N = 16</div></div>
+    <div class="cols"><div>ground truth</div><div>base (zero-shot)</div><div>fine-tuned 6000</div><div id="h1"></div><div id="h2"></div><div id="h4"></div><div id="h8"></div><div id="h16"></div></div>
     <video id="v" muted loop playsinline autoplay preload="auto"></video>
     <div class="tl" id="tl"><div class="track"></div><div class="fill" id="fill"></div></div>
     <div class="ctlrow"><button type="button" class="play" id="play">Pause</button><button type="button" class="opt" id="restart">Restart</button><div class="readout" id="ro"></div></div>
@@ -169,7 +176,7 @@ button.play:focus-visible {{ outline: 2px solid var(--accent); outline-offset: 2
 
 <script>
 var CASES = {json.dumps(case_rows)};
-var MODELS = {json.dumps([{"tag": t, "step": s} for t, s in models])};
+var MODELS = {json.dumps(models_js)};
 var URLS = {json.dumps(urls)};
 (function () {{
   var FPS = {FPS}, NF = {nf}, DUR = NF / FPS, starts = {json.dumps([1 + FUTURE * i for i in range(windows)])};
@@ -187,12 +194,16 @@ var URLS = {json.dumps(urls)};
   }}
   function render(reload) {{
     var c = CASES[st.c], m = MODELS[st.m];
-    mk('mbtns', MODELS.map(function (_, i) {{ return i; }}), st.m, function (i) {{ return 'looped, step ' + MODELS[i].step; }}, function (i) {{ st.m = i; render(true); }});
+    mk('mbtns', MODELS.map(function (_, i) {{ return i; }}), st.m, function (i) {{ return MODELS[i].label; }}, function (i) {{ st.m = i; render(true); }});
     mk('cbtns', CASES.map(function (_, i) {{ return i; }}), st.c, function (i) {{ return CASES[i].btn; }}, function (i) {{ st.c = i; render(true); }});
     mk('sbtns', [0.25, 0.5, 1], st.r, function (x) {{ return x === 1 ? 'real time' : (x === 0.5 ? '½' : '¼'); }},
        function (x) {{ st.r = x; v.playbackRate = x; try {{ localStorage.setItem('roll_rate', String(x)); }} catch (e) {{}} render(false); }});
     mk('pbtns', [0, 1, 2], st.p, function (p) {{ return ['real', 'alt 1', 'alt 2'][p]; }}, function (p) {{ st.p = p; render(true); }});
-    document.getElementById('h1').innerHTML = '<b>loop step ' + m.step + '</b> · N = 1';
+    [1, 2, 4, 8, 16].forEach(function (d) {{
+      var h = document.getElementById('h' + d), tr = m.trained.indexOf(d) >= 0;
+      h.innerHTML = (d === 1 ? '<b>' + m.label.replace(/<[^>]*>/g, '') + '</b> · ' : '') + 'N = ' + d + (tr ? ' (trained)' : '');
+      h.className = tr ? 'train' : '';
+    }});
     document.getElementById('psub').textContent = st.p === 0 ? 'real prompt (AgiBot annotation), used for all ' + starts.length + ' windows'
       : 'alt ' + st.p + ' (cases file), used for all ' + starts.length + ' windows; no ground truth of its own, the GT column is the real continuation';
     document.getElementById('ptext').textContent = c.prompts[st.p];
@@ -235,7 +246,14 @@ if __name__ == "__main__":
     ap.add_argument("--urls", default=None, help="json {strip filename: asset url} after uploading the strips as artifact assets")
     ap.add_argument("--box", default="2×H100 SXM")
     ap.add_argument("--windows", type=int, default=4)
+    ap.add_argument("--allow-missing", action="store_true", help="preview: skip cases whose clips are not finished yet")
     a = ap.parse_args()
-    models = [(m.split("=")[0], int(m.split("=")[1])) for m in a.models]
+    models = []
+    for m in a.models:  # tag=step[=label[=trained depths]]
+        parts = m.split("=")
+        tag, step = parts[0], int(parts[1])
+        label = parts[2] if len(parts) > 2 and parts[2] else f"looped, step {step}"
+        trained = [int(x) for x in parts[3].split(",")] if len(parts) > 3 and parts[3] else [4]
+        models.append((tag, step, label, trained))
     urls = json.loads(Path(a.urls).read_text()) if a.urls and Path(a.urls).exists() else {}
-    build(models, Path(a.out), urls, a.box, a.windows)
+    build(models, Path(a.out), urls, a.box, a.windows, a.allow_missing)
