@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Long Rollout</title>
+<style>:root{color-scheme:light;box-sizing:border-box}body{margin:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Viewing bench: selectors, a full-width 8-column strip, a timeline under it marking where each 2.2 s window starts. */
+:root {
+  --bg: #f3f4f6; --surface: #ffffff; --ink: #16191d; --ink-2: #4a515a; --ink-3: #7c848e; --line: #d5d9de;
+  --accent: #2f5d8a; --accent-ink: #ffffff; --train: #1f6f69;
+  --body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif; --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { color-scheme: dark;
+  --bg: #121417; --surface: #1b1e22; --ink: #e6e8eb; --ink-2: #b0b7bf; --ink-3: #7f8892; --line: #2f343a;
+  --accent: #7fb0e0; --accent-ink: #0f1820; --train: #5fbfb4; } }
+:root[data-theme="dark"] { color-scheme: dark;
+  --bg: #121417; --surface: #1b1e22; --ink: #e6e8eb; --ink-2: #b0b7bf; --ink-3: #7f8892; --line: #2f343a;
+  --accent: #7fb0e0; --accent-ink: #0f1820; --train: #5fbfb4; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.55 var(--body); }
+.wrap { max-width: 1320px; margin: 0 auto; padding-block: 26px 60px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 18px; }
+h1 { font-size: 24px; font-weight: 600; margin: 0; text-wrap: balance; }
+p { margin: 0; max-width: 88ch; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.head { display: grid; gap: 6px; }
+.note { font-size: 13.5px; color: var(--ink-3); }
+.sel { display: flex; flex-wrap: wrap; gap: 14px 26px; align-items: flex-start; }
+.group { display: grid; gap: 6px; }
+.group .lbl { font-family: var(--mono); font-size: 11.5px; color: var(--ink-3); letter-spacing: .07em; text-transform: uppercase; }
+.btns { display: flex; flex-wrap: wrap; gap: 6px; }
+button.opt { font: 500 12.5px var(--mono); padding: 5px 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 4px; cursor: pointer; }
+button.opt[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+button.opt:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.prompt .text { font-size: 18px; max-width: 90ch; }
+.prompt .sub { font-family: var(--mono); font-size: 12px; color: var(--ink-3); }
+.strip { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 10px; overflow-x: auto; }
+.inner { min-width: 1080px; }
+.cols { display: grid; grid-template-columns: repeat(8, 1fr); margin-bottom: 4px; }
+.cols div { font-family: var(--mono); font-size: 11.5px; text-align: center; color: var(--ink-2); border-bottom: 2px solid var(--line); padding: 2px; }
+.cols div:first-child { color: var(--ink); border-bottom-color: var(--ink-3); }
+.cols div.train { color: var(--ink); border-bottom-color: var(--train); }
+.cols div b { font-weight: 500; color: var(--ink); }
+video { width: 100%; display: block; background: #000; border-radius: 2px; }
+.tl { position: relative; height: 34px; margin-top: 8px; cursor: pointer; }
+.tl .track { position: absolute; left: 0; right: 0; top: 6px; height: 6px; background: var(--line); border-radius: 3px; }
+.tl .fill { position: absolute; left: 0; top: 6px; height: 6px; background: var(--accent); border-radius: 3px; width: 0; }
+.tl .mk { position: absolute; top: 2px; width: 0; height: 14px; border-left: 1px solid var(--ink-3); }
+.tl .mk span { position: absolute; top: 15px; transform: translateX(-50%); font: 11px var(--mono); color: var(--ink-3); white-space: nowrap; }
+.tl .mk.big { border-left: 2px solid var(--ink); }
+.tl .mk.big span { color: var(--ink); font-weight: 500; }
+.readout { font-family: var(--mono); font-size: 13px; color: var(--ink-2); }
+.ctlrow { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 8px; }
+button.play { font: 600 14px var(--body); padding: 7px 16px; min-width: 96px; border: 1px solid var(--accent); background: var(--accent); color: var(--accent-ink); border-radius: 4px; cursor: pointer; }
+button.play:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.readout b { color: var(--ink); font-weight: 500; }
+</style>
+
+<div class="wrap">
+  <div class="head">
+    <div class="eyebrow">2×H100 SXM · gallery set, 8 test windows · k = 1 · Euler 30, CFG 4, shift 5</div>
+    <h1>Autoregressive rollout to 8.9 s</h1>
+    <p class="note">Each model makes 4 windows of 33 frames in a row. Window 1 starts from the real last frame and is the gallery clip. Each later window starts from the last frame the model itself generated, with the same prompt and fresh noise. 133 frames at 15 fps. The looped columns belong to the checkpoint selected below; its training step is in the column header.</p>
+  </div>
+
+  <div class="sel">
+    <div class="group"><span class="lbl">looped checkpoint (training step)</span><div class="btns" id="mbtns"></div></div>
+    <div class="group"><span class="lbl">case, worst → best motion (gallery order)</span><div class="btns" id="cbtns"></div></div>
+    <div class="group"><span class="lbl">prompt</span><div class="btns" id="pbtns"></div></div>
+    <div class="group"><span class="lbl">playback</span><div class="btns" id="sbtns"></div></div>
+  </div>
+
+  <div class="prompt"><div class="sub" id="psub"></div><div class="text" id="ptext"></div></div>
+
+  <div class="strip"><div class="inner">
+    <div class="cols"><div>ground truth</div><div>base (zero-shot)</div><div>fine-tuned 6000</div><div id="h1"></div><div id="h2"></div><div id="h4"></div><div id="h8"></div><div id="h16"></div></div>
+    <video id="v" muted loop playsinline autoplay preload="auto"></video>
+    <div class="tl" id="tl"><div class="track"></div><div class="fill" id="fill"></div></div>
+    <div class="ctlrow"><button type="button" class="play" id="play">Pause</button><button type="button" class="opt" id="restart">Restart</button><div class="readout" id="ro"></div></div>
+  </div></div>
+
+  <p class="note" id="gtnote"></p>
+  <p class="note">Generation time for 4 windows on one GPU of the 2×H100 SXM box, while other jobs shared it: base 31 s, fine-tuned 31 s; looped, 4500 steps: N = 1 20 s, N = 2 19 s, N = 4 27 s, N = 8 39 s, N = 16 70 s; random depth N 1–8, step 2500: N = 1 15 s, N = 2 18 s, N = 4 25 s, N = 8 37 s, N = 16 65 s. Depths marked (trained) in the column headers are the ones the selected checkpoint was trained at; the others are extrapolation. Frames from <a href="https://agibot-world.com/">AgiBot World Beta</a> (CC BY-NC-SA 4.0: attribution, non-commercial, share-alike).</p>
+</div>
+
+<script>
+var CASES = [{"id": "test04_vacuum", "btn": "#8 vacuum", "gt_s": 5.3, "gt_full": false, "prompts": ["Use pink vacuum cleaner to vacuum the garbage on the floor with right arm.", "Lift the pink vacuum cleaner up off the floor with the right arm.", "Use pink vacuum cleaner to vacuum the garbage on the floor with left arm."]}, {"id": "test01_toilet", "btn": "#7 toilet", "gt_s": 8.9, "gt_full": true, "prompts": ["Wipe the toilet with the held cloth.", "Put the held cloth down on the toilet lid.", "Lift the held cloth up and away from the toilet."]}, {"id": "test05_doorknob", "btn": "#6 doorknob", "gt_s": 6.1, "gt_full": false, "prompts": ["Turn the doorknob to open the door with left arm.", "Release the doorknob and pull the left arm back.", "Turn the doorknob to open the door with right arm."]}, {"id": "test06_marker", "btn": "#5 marker", "gt_s": 8.9, "gt_full": true, "prompts": ["Pick up the uncapped whiteboard marker on the table with left arm.", "Slide the uncapped whiteboard marker across the table with the left arm.", "Pick up the uncapped whiteboard marker on the table with right arm."]}, {"id": "test02_cap", "btn": "#4 cap", "gt_s": 8.9, "gt_full": true, "prompts": ["Pick up the baseball cap on the sofa.", "Push the baseball cap further back onto the sofa.", "Leave the baseball cap on the sofa and pull the hand back."]}, {"id": "test07_shorts", "btn": "#3 shorts", "gt_s": 7.3, "gt_full": false, "prompts": ["Slide the dark shorts on the desktop upward with the left arm.", "Slide the dark shorts on the desktop downward with the left arm.", "Slide the dark shorts on the desktop upward with the right arm."]}, {"id": "test03_chips_bag", "btn": "#2 chips bag", "gt_s": 8.9, "gt_full": true, "prompts": ["Place the large bucket of potato chips held in the left arm into the gray felt bag on the left side of the cash register.", "Lift the large bucket of potato chips held in the left arm straight up.", "Put the large bucket of potato chips down on the counter with the left arm."]}, {"id": "test08_taro_chips", "btn": "#1 taro chips", "gt_s": 8.9, "gt_full": true, "prompts": ["Pick up the purple taro chips from the restocking box with the right arm.", "Push the purple taro chips down into the restocking box with the right arm.", "Pick up the purple taro chips from the restocking box with the left arm."]}];
+var MODELS = [{"tag": "loop4500", "step": 4500, "label": "looped, 4500 steps", "trained": [4]}, {"tag": "rand2500", "step": 2500, "label": "random depth N 1\u20138, step 2500", "trained": [1, 2, 3, 4, 5, 6, 7, 8]}];
+var URLS = {};
+(function () {
+  var FPS = 15, NF = 133, DUR = NF / FPS, starts = [1, 34, 67, 100];
+  var st = { m: MODELS.length - 1, c: 0, p: 0, r: 0.5 };
+  try { var s = +localStorage.getItem('roll_rate'); if (s === 0.25 || s === 0.5 || s === 1) st.r = s; } catch (e) {}
+  var v = document.getElementById('v'), tl = document.getElementById('tl'), fill = document.getElementById('fill'), ro = document.getElementById('ro');
+  function mark(t, label, big) { var m = document.createElement('div'); m.className = 'mk' + (big ? ' big' : ''); m.style.left = (100 * t / DUR) + '%';
+    var s = document.createElement('span'); s.textContent = label; m.appendChild(s); tl.appendChild(m); }
+  starts.slice(1).forEach(function (f, i) { mark(f / FPS, 'w' + (i + 2), false); });
+  mark(6, '6 s', true); mark(8, '8 s', true);
+  function mk(id, vals, cur, fmt, on) {
+    var box = document.getElementById(id); if (!box) return; box.innerHTML = '';
+    vals.forEach(function (x) { var b = document.createElement('button'); b.type = 'button'; b.className = 'opt'; b.textContent = fmt(x);
+      b.setAttribute('aria-pressed', x === cur ? 'true' : 'false'); b.addEventListener('click', function () { on(x); }); box.appendChild(b); });
+  }
+  function render(reload) {
+    var c = CASES[st.c], m = MODELS[st.m];
+    mk('mbtns', MODELS.map(function (_, i) { return i; }), st.m, function (i) { return MODELS[i].label; }, function (i) { st.m = i; render(true); });
+    mk('cbtns', CASES.map(function (_, i) { return i; }), st.c, function (i) { return CASES[i].btn; }, function (i) { st.c = i; render(true); });
+    mk('sbtns', [0.25, 0.5, 1], st.r, function (x) { return x === 1 ? 'real time' : (x === 0.5 ? '½' : '¼'); },
+       function (x) { st.r = x; v.playbackRate = x; try { localStorage.setItem('roll_rate', String(x)); } catch (e) {} render(false); });
+    mk('pbtns', [0, 1, 2], st.p, function (p) { return ['real', 'alt 1', 'alt 2'][p]; }, function (p) { st.p = p; render(true); });
+    [1, 2, 4, 8, 16].forEach(function (d) {
+      var h = document.getElementById('h' + d), tr = m.trained.indexOf(d) >= 0;
+      h.innerHTML = (d === 1 ? '<b>' + m.label.replace(/<[^>]*>/g, '') + '</b> · ' : '') + 'N = ' + d + (tr ? ' (trained)' : '');
+      h.className = tr ? 'train' : '';
+    });
+    document.getElementById('psub').textContent = st.p === 0 ? 'real prompt (AgiBot annotation), used for all ' + starts.length + ' windows'
+      : 'alt ' + st.p + ' (cases file), used for all ' + starts.length + ' windows; no ground truth of its own, the GT column is the real continuation';
+    document.getElementById('ptext').textContent = c.prompts[st.p];
+    document.getElementById('gtnote').textContent = c.gt_full ? 'The ground truth covers the full ' + DUR.toFixed(1) + ' s.'
+      : 'The recorded episode ends at ' + c.gt_s + ' s; after that the ground-truth column is black. The models keep going.';
+    if (reload) { var name = m.tag + '_' + c.id + '_p' + st.p + '.mp4'; v.src = URLS[name] || ('videos/' + name); v.load(); v.playbackRate = st.r; v.play().catch(function () {}); }
+  }
+  function tick() {
+    var t = v.currentTime || 0, f = Math.min(NF - 1, Math.floor(t * FPS + 1e-6)), w = 0;
+    for (var i = 0; i < starts.length; i++) if (f >= starts[i]) w = i + 1;
+    fill.style.width = (100 * Math.min(t, DUR) / DUR) + '%';
+    ro.innerHTML = '';
+    var a = document.createElement('b'); a.textContent = 't = ' + t.toFixed(1) + ' s'; ro.appendChild(a);
+    ro.appendChild(document.createTextNode(w ? '  ·  window ' + w + ' of ' + starts.length + (w === 1 ? ' (from the real frame)' : ' (from its own last frame)') : '  ·  context frame'));
+    requestAnimationFrame(tick);
+  }
+  tl.addEventListener('click', function (e) { var r = tl.getBoundingClientRect(); v.currentTime = DUR * Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)); });
+  var pb = document.getElementById('play');
+  function toggle() { if (v.paused) v.play().catch(function () {}); else v.pause(); }
+  function sync() { pb.textContent = v.paused ? 'Play' : 'Pause'; }
+  pb.addEventListener('click', toggle);
+  document.getElementById('restart').addEventListener('click', function () { v.currentTime = 0; v.play().catch(function () {}); });
+  v.addEventListener('click', toggle);
+  v.addEventListener('play', sync); v.addEventListener('pause', sync);
+  document.addEventListener('keydown', function (e) { if (e.key === ' ' && e.target === document.body) { e.preventDefault(); toggle(); } });
+  v.addEventListener('loadedmetadata', function () { v.playbackRate = st.r; });
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) v.autoplay = false;
+  render(true); sync(); requestAnimationFrame(tick);
+})();
+</script>
+
+</body>
+</html>

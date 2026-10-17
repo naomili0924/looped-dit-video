@@ -10,7 +10,9 @@
 # MIRROR (local snapshot of Jinyan0924/agibot-flux3-eval-splits on a box without the streaming index), DEPTHS.
 # Two GPUs: tmux roll_gpu0 = depths 16 1, roll_gpu1 = base, ft6000, depths 2 4 8 (about 1 h on H100s); one GPU: everything
 # in sequence in roll_gpu<g>. Logs: logs/rollout_<tag>_gpu<g>.log, each ending with ROLLOUT_<tag>_GPU<g>_DONE.
-# Afterwards: scripts/build_rollout_page.py --models <tag>=<step> [...] (composes the 8-column strips and the page).
+# A finisher (tmux roll_finish_<tag>) waits for the DONE markers, then rebuilds the GitHub Pages site (scripts/build_pages.sh)
+# and prints LONG_ROLLOUT_<tag>_DONE; publish with GH_TOKEN=... scripts/push_all.sh "...".  Env for a new model:
+# STEP (default: from the EMA file name), LABEL ("looped, step <STEP>"), TRAINED ("4"; comma-separated trained depths).
 set -eu
 cd "$(dirname "$0")/.."
 TAG=${1:?tag}; CFG=${2:?config}; EMA=${3:?ema}; GPUS=${4:-"0 1"}
@@ -19,7 +21,10 @@ FT_EMA=${FT_EMA:-/dev/shm/ema/ema_ft384_step-6000.safetensors}
 DEPTHS=${DEPTHS:-"1 2 4 8 16"}
 CASES=$PWD/configs/eval_cases_gallery8.json
 OUT=$PWD/results/rollout
+case "$EMA" in hf://*) dst=/dev/shm/ema/ema_${TAG}.safetensors; HF_TOKEN=${HF_TOKEN:-} flux-action/.venv/bin/python scripts/hf_get.py "$EMA" "$dst"; EMA=$dst;; esac
 [ -f "$EMA" ] || { echo "missing EMA $EMA"; exit 1; }
+STEP=${STEP:-$(echo "$EMA" | grep -o 'step-[0-9]*' | head -1 | cut -d- -f2)}; LABEL=${LABEL:-"looped, step $STEP"}; TRAINED=${TRAINED:-4}
+flux-action/.venv/bin/python scripts/register_model.py "$TAG" "${STEP:-0}" "$LABEL" "$TRAINED" "$CFG" "$3"   # configs/models.json entry (no-op if present)
 [ -f "$FT_EMA" ] || { echo "missing Phase-3 EMA $FT_EMA (hf download Jinyan0924/flux3-agibot-videoft ema_step-6000.safetensors)"; exit 1; }
 [ -f "$TE/config.json" ] || { echo "missing text encoder $TE"; exit 1; }
 mkdir -p logs "$OUT"
@@ -48,3 +53,7 @@ else
   tmux new-session -d -s roll_gpu$1 "$cmd"
   echo "long rollout of $TAG launched $(date -u): tmux roll_gpu$1 (refs + depths $DEPTHS); logs/rollout_${TAG}_gpu$1.log"
 fi
+LOGS=$(for g in $GPUS; do printf 'logs/rollout_%s_gpu%s.log ' "$TAG" "$g"; done)
+tmux kill-session -t roll_finish_$TAG 2>/dev/null || true
+tmux new-session -d -s roll_finish_$TAG "cd $PWD; until [ \$(grep -l ROLLOUT_${TAG}_GPU._DONE $LOGS 2>/dev/null | wc -l) -ge $# ]; do sleep 60; done; bash scripts/build_pages.sh 2>&1 | tail -n 5; echo LONG_ROLLOUT_${TAG}_DONE; sleep 86400"
+echo "finisher: tmux roll_finish_$TAG (rebuilds the pages when both GPUs are done, prints LONG_ROLLOUT_${TAG}_DONE)"

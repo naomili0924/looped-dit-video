@@ -171,7 +171,7 @@ button.play:focus-visible {{ outline: 2px solid var(--accent); outline-offset: 2
   </div></div>
 
   <p class="note" id="gtnote"></p>
-  <p class="note">{time_note} Frames from AgiBot World Beta (CC BY-NC-SA 4.0); this page is private for that reason.</p>
+  <p class="note">{time_note} Frames from <a href="https://agibot-world.com/">AgiBot World Beta</a> (CC BY-NC-SA 4.0: attribution, non-commercial, share-alike).</p>
 </div>
 
 <script>

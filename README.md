@@ -95,6 +95,8 @@ For the 4.81B model, a step at batch 64 (4 micro-batches of 16, gradient checkpo
 
 ## AgiBot World Beta: FLUX 3 Action fine-tune + Looped-DiT retrofit (`agibot-flux3/`)
 
+**Evaluation pages with videos: https://naomili0924.github.io/looped-dit-video/** — [Trained Loop Depth](https://naomili0924.github.io/looped-dit-video/loop-depth/) ("normal eval": test metrics at loop depth N = 1/2/4/8, strips) and [Long Rollout](https://naomili0924.github.io/looped-dit-video/long-rollout/) (zero-shot 8.8 s autoregressive rollouts). How to run them for a new checkpoint: [`agibot-flux3/EVAL.md`](agibot-flux3/EVAL.md).
+
 A follow-up experiment on the released **FLUX 3 Action 7B** backbone: full fine-tune of the video + text streams
 on AgiBot World Beta humanoid head-camera clips (k past frames + caption → 33 future frames, 15 fps, 384×512),
 evaluation against the base model zero-shot, and the Looped-DiT retrofit (12 / 9 / 12 split, N = 4) of the

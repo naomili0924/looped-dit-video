@@ -21,6 +21,11 @@ ROOT = Path(__file__).resolve().parents[1]
 RES = ROOT / "results"
 RUNS = {"loop2500": "/dev/shm/runs/loop384", "loop4500": "/dev/shm/runs/loop384_r2", "loop5000": "/dev/shm/runs/loop384_r2", "ft_step6000": "/dev/shm/runs/ft384"}
 LABEL = {"loop2500": "looped, 2500 steps", "loop4500": "looped, 4500 steps", "loop5000": "looped, 5000 steps"}
+try:  # labels of every registered model (configs/models.json)
+    for _m in json.loads((ROOT / "configs" / "models.json").read_text())["models"]:
+        LABEL.setdefault(_m["tag"], _m["label"])
+except (OSError, KeyError, ValueError):
+    pass
 DEPTHS = (1, 2, 4, 8)
 BLOCK_PASSES = {n: 12 + 9 * n + 12 for n in (1, 2, 4, 8, 10)}
 WINDOWS = [  # the first 8 windows of the Phase-4 test evaluation set (seed 0), captions as recorded in AgiBot World Beta
@@ -388,7 +393,7 @@ def build(tags: list[str], allow_missing: bool = False, urls: dict[str, str] | N
   </div>
 
   <div class="foot">
-    Evaluation protocol as in Phase 4 (<code>ldvflux/eval_phase4.py</code>, seed 0, Euler 30, CFG 4, shift 5). Looped weights: EMA of the Phase-5 run, loaded strictly; depth set with <code>--loops N</code>. Frames are from AgiBot World Beta (CC BY-NC-SA 4.0); this page is private for that reason. Weights: <code>Jinyan0924/flux3-agibot-looped</code> and <code>Jinyan0924/flux3-agibot-videoft</code>; code: <code>naomili0924/looped-dit-video</code>, <code>agibot-flux3/</code>.
+    Evaluation protocol as in Phase 4 (<code>ldvflux/eval_phase4.py</code>, seed 0, Euler 30, CFG 4, shift 5). Looped weights: EMA of the Phase-5 run, loaded strictly; depth set with <code>--loops N</code>. Frames are from <a href="https://agibot-world.com/">AgiBot World Beta</a> (CC BY-NC-SA 4.0: attribution, non-commercial, share-alike). Weights: <code>Jinyan0924/flux3-agibot-looped</code> and <code>Jinyan0924/flux3-agibot-videoft</code>; code: <code>naomili0924/looped-dit-video</code>, <code>agibot-flux3/</code>.
   </div>
 </div>
 

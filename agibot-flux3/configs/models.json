@@ -1,0 +1,18 @@
+{
+ "_note": "Registry of the evaluated looped models. scripts/build_pages.sh reads it to build the GitHub Pages site; scripts/normal_eval.sh and scripts/run_long_rollout.sh add an entry when given a new tag. ema: local path or hf://<repo>/<file>.",
+ "models": [
+  {"tag": "loop2500", "step": 2500, "label": "looped, 2500 steps", "trained_depths": [4],
+   "config": "configs/looped_ft_384_r1.json", "ema": "hf://Jinyan0924/flux3-agibot-looped/ema_loop2500_step-2500.safetensors",
+   "note": "r1: trained at N = 4 with deep supervision, 500-step cooldown over steps 2000-2500 (0.5 epoch); 2 x A100."},
+  {"tag": "loop4500", "step": 4500, "label": "looped, 4500 steps", "trained_depths": [4],
+   "config": "configs/looped_ft_384_r2.json", "ema": "hf://Jinyan0924/flux3-agibot-looped/ema_loop4500_step-4500.safetensors",
+   "note": "r2: resumed from r1's step 2000, constant learning rate, stopped at step 4500 without cooldown (0.9 epoch); 2 x H100."},
+  {"tag": "rand2500", "step": 2500, "label": "random depth N 1–8, step 2500", "trained_depths": [1, 2, 3, 4, 5, 6, 7, 8],
+   "config": "configs/looped_ft_384_random_n1-8.json", "ema": "hf://Jinyan0924/flux3-agibot-looped/random_depth_n1-8/ema_step-2500.safetensors",
+   "note": "trained on another box with the loop depth sampled in 1-8 per step and a new loss; its training code is not in this repo, the config here is inference-only."}
+ ],
+ "references": {
+  "base": {"label": "base FLUX 3 Action, zero-shot", "config": "configs/video_ft_384_r3.json"},
+  "ft6000": {"label": "fine-tuned 6000 steps (Phase 3)", "config": "configs/video_ft_384_r3.json", "ema": "hf://Jinyan0924/flux3-agibot-videoft/ema_step-6000.safetensors"}
+ }
+}

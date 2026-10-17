@@ -9,7 +9,9 @@ model. Task: *k* past frames + caption → 33 future frames at 15 fps, 384×512.
 | 1–2 | data index + own train/val/test/test_unseen splits (`data/splits.json`, seed 42) | done |
 | 3 | plain fine-tune, 6000 steps × 32 windows (1.2 epochs), K_SET {1, 5, 9} + 10 % text-only | done 2026-10-13 |
 | 4 | evaluation: fine-tuned vs base zero-shot (PSNR/SSIM/LPIPS, FVD, VLM judge), zero-shot loop-depth probe | done 2026-10-14 |
-| 5 | Looped-DiT training (split 12 / 9 / 12, N = 4, gated attention, deep supervision): 2500-step run (`configs/looped_ft_384_r1.json`, done 2026-10-15) and 5000-step run (`_r2.json`; the A100 box died at step ≈ 2800 on 2026-10-16, resumed from r1's step-2500 checkpoint on a 2×H100 box, see NOTES), eval at N = 1, 2, 4, 8 | running |
+| 5 | Looped-DiT training (split 12 / 9 / 12, N = 4, gated attention, deep supervision): `loop2500` (`configs/looped_ft_384_r1.json`, 2500 steps with cooldown, done 2026-10-15) and `loop4500` (`_r2.json`, resumed from step 2000 on a 2×H100 box, stopped at 4500 without cooldown, done 2026-10-16); a random-depth (N 1–8) model `rand2500` trained on another box; eval at N = 1, 2, 4, 8 and 8.8 s long rollouts | done |
+
+**Evaluation pages (videos): https://naomili0924.github.io/looped-dit-video/** — "normal eval" (Trained Loop Depth) and "long-rollout eval" (Long Rollout); how to run either for a new checkpoint: [`EVAL.md`](EVAL.md). Models: [`configs/models.json`](configs/models.json).
 
 **Evaluating the models on another machine (motion-aware evaluation, loop depth: background vs motion):**
 see [`EVAL_MOTION.md`](EVAL_MOTION.md) — inputs (k past frames + task prompt), weights to download, the fixed
