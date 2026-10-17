@@ -105,7 +105,18 @@
   stop_metric val_loss_k9_mean_loops. hub_backup.py: --keep-steps; full-ckpt cleanup now deletes each old folder once.
   chain_long.sh v2: after the 2500 run exits -> 2-update smoke with one eval (/dev/shm/runs/evalsmoke.json,
   logs/evalsmoke.log); on failure falls back to the old eval settings so the GPUs do not idle.
-- 22:45 UTC: flux3-agibot-looped (and flux3-agibot-videoft) are PUBLIC repos (I had wrongly called it private); user: fine,
+- 22:23 UTC: flux3-agibot-looped (and flux3-agibot-videoft) are PUBLIC repos (I had wrongly called it private); user: fine,
   keep random_depth_n1-8/ there; long run uploads to random_depth_n1-8_long/ in the same repo. No "best" checkpoint
   (user: video eval has no single criterion): hub_backup --keep-every 1000 (EMA every 1000 steps + latest + 9000; ~88 GB),
   full ckpt latest + 9000. Account is PRO; public storage does not count toward the private quota. Never squash this repo.
+- 22:25 UTC: user confirmed: keep the no_best early stop (patience 4) and the in-training sample videos; repo stays public.
+- 23:35-23:52 UTC: 2500 run done (final val k9 N=1/2/4/8 = 0.0665/0.0657/0.0659/0.0671; decay 2000->2500 gained
+  0.0003-0.0005 at every depth). EMA + full ckpt step-2500 on the Hub (random_depth_n1-8/). Eval smoke OK (all new keys;
+  new eval takes 603 s vs 265 s before -> ~2.7 h over the long run). Long run launched 23:52, resume "exact" from step 2000,
+  seed 42. Step 2010: lr 1e-5, 25.3 s, peak 73.4 GB, loop draws [6,1,5,6,5,6,6,7] identical to the original run's step
+  2010 (exact data/RNG continuation; loss 0.190 vs 0.185 there because LR 1e-5 vs 9.82e-6 in its cooldown).
+
+- 03:47 UTC Oct 17: long run at step 2560 (~25 s/update, lr 1e-5). First eval (step 2500, no decay yet): k9 val
+  N=1/2/3/4/5/6/7/8 = .0667/.0660/.0660/.0661/.0664/.0667/.0671/.0675, mean .06657; train_ref k9 .0689,
+  gap (mean over k, val - train_ref) = -0.0011 (no overfitting signal). Hub: random_depth_n1-8_long/ EMA 2500 +
+  full checkpoint 2500 uploaded.
