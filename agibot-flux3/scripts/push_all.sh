@@ -16,7 +16,7 @@ cp ldvflux/*.py "$M/ldvflux/"
 cp configs/*.json "$M/configs/"
 find results -maxdepth 2 \( -name '*.md' -o -name '*.json' -o -name '*.jsonl' \) -size -5M | while read -r f; do mkdir -p "$M/$(dirname "$f")"; cp "$f" "$M/$f"; done
 cd /workspace/loop_dit_video
-git add -A agibot-flux3 docs README.md
+git add -A agibot-flux3 docs README.md .gitignore
 git commit -qm "$MSG" 2>/dev/null || echo "mirror: nothing new to commit"
 git push -q "https://naomili0924:${GH_TOKEN}@github.com/naomili0924/looped-dit-video.git" HEAD:main && echo "public mirror pushed ($(git rev-parse --short HEAD))"
 echo PUSH_ALL_DONE

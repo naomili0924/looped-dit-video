@@ -8,3 +8,6 @@ samples/
 *.tar
 *.mp4
 wandb/
+
+# the evaluation pages ship their strip videos
+!docs/**/*.mp4
