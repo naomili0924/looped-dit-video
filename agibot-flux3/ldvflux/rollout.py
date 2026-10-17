@@ -147,6 +147,8 @@ def main() -> None:
             t0 = time.time()
             vid = rollout(policy, ctx, prompts[pi], a.windows, a.seed + ci, a.steps, a.cfg, a.shift, d if looped else None)
             write_clip(cdir / f"p{pi}_N{d}.mp4", vid, FPS)
+            # several processes (different --depths) share one times.json: merge on every write
+            times = {**(json.loads(times_p.read_text()) if times_p.exists() else {}), **times}
             times[f"{cid}/p{pi}_N{d}"] = round(time.time() - t0, 1)
             times_p.write_text(json.dumps(times, indent=1))
             print(f"[{cid} p{pi} N{d}] {times[f'{cid}/p{pi}_N{d}']} s  {prompts[pi][:60]!r}", flush=True)

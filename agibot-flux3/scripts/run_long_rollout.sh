@@ -23,6 +23,7 @@ OUT=$PWD/results/rollout
 [ -f "$FT_EMA" ] || { echo "missing Phase-3 EMA $FT_EMA (hf download Jinyan0924/flux3-agibot-videoft ema_step-6000.safetensors)"; exit 1; }
 [ -f "$TE/config.json" ] || { echo "missing text encoder $TE"; exit 1; }
 mkdir -p logs "$OUT"
+for g in $GPUS; do : > "logs/rollout_${TAG}_gpu$g.log"; done   # fresh logs: a stale DONE marker from an earlier launch misled a queue once
 common="--cases $CASES --text-encoder $TE --gt-out $OUT/gt --windows 4 --seed 0"
 [ -n "${MIRROR:-}" ] && common="$common --mirror $MIRROR"
 E="cd $PWD/flux-action && HF_TOKEN=${HF_TOKEN:-} PYTHONPATH=$PWD HF_HUB_ENABLE_HF_TRANSFER=0 .venv/bin/python -m ldvflux.rollout"

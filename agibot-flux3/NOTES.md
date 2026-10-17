@@ -867,3 +867,17 @@ Then evaluate at N = 1, 2, 4, 8 with eval_phase4 --config looped_ft_384_r1.json 
 - Final val line (EMA): `{"step": 4000, "val_loss": 0.09955625746806618, "val_loss_k0": 0.18631626083515584, "val_loss_k1": 0.07834369805641472, "val_loss_k5": 0.06848230154719204, "val_loss_k9": 0.06508276943350211, "val_loss_k17": 0.06319505511783063, "val_loss_k9_loops1": 0.06576316908467561, "val_loss_k9_loops2": 0.06488216738216579, "val_loss_k9_loops8": 0.06718271330464631, "ema_samples": true, "stop": false}`
 - Hub: `Jinyan0924/flux3-agibot-looped` has `ema_loop4500_step-4500.safetensors` (= `ema_step-4500.safetensors`) and the full checkpoint under `checkpoints/step-4500` (hub step rc 0).
 - Logs: results/loop4500_metrics.jsonl, results/loop4500_val.jsonl (292 steps logged on the H100 box). Next: loop-depth eval (scripts/run_loop_eval.sh 4500 /dev/shm/runs/loop384_r2 loop4500 configs/looped_ft_384_r2.json), gallery/RESULTS update.
+
+## 2026-10-17 00:00 UTC — long-rollout eval of the 4500 model (new tooling, page published)
+- The "Long Rollout" page of the other box was made with code that was never pushed. Re-implemented here:
+  `ldvflux/rollout.py` (k = 1, 4 chained 33-frame windows = 8.9 s; each later window starts from the model's own last
+  frame, same prompt, fresh noise; 8 gallery cases × real + 2 alt prompts × loop depths 1 2 4 8 16),
+  `scripts/run_long_rollout.sh <tag> <config> <ema>` (two tmux jobs, reference columns GT/base/ft6000 generated once
+  into results/rollout/{gt,base,ft6000}), `scripts/build_rollout_page.py --models <tag>=<step>` (8-column 256×192
+  strips + page with a checkpoint selector showing the training step; the strips are uploaded as artifact assets).
+- loop4500: 120 rollouts in 48 min on the 2 H100s with the loop-depth eval paused (SIGSTOP) meanwhile; per 4-window
+  rollout: base 31 s, ft6000 31 s, N1 20 s, N2 19 s, N4 27 s, N8 39 s, N16 70 s. Page:
+  https://claude.ai/artifact/Wb78A2HPZ7qESX9ULWh4ph (private; AgiBot frames). User decision: no 2500 rollout re-run.
+- Lessons: a queue that keys on a log marker must use fresh logs (a stale DONE line fired it early and killed the 4500
+  run once); parallel rollout processes now merge times.json; `pkill -f` on a trainer pattern also matches the tmux
+  server argv (see the 22:15 entry).
