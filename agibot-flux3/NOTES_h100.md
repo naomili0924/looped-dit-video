@@ -120,3 +120,7 @@
   N=1/2/3/4/5/6/7/8 = .0667/.0660/.0660/.0661/.0664/.0667/.0671/.0675, mean .06657; train_ref k9 .0689,
   gap (mean over k, val - train_ref) = -0.0011 (no overfitting signal). Hub: random_depth_n1-8_long/ EMA 2500 +
   full checkpoint 2500 uploaded.
+
+- 23:55 UTC Oct 18: step 9100, cooldown started (lr 9.0e-6). k9 mean over N=1..8: 8000 .06489, 8500 .06478,
+  9000 .06477 (plateau at constant LR). Shared host disk fell 368 -> 248 GB in 4 h (not this container); deleted
+  ckpt_backup/looprand/step-2000 after re-verifying its HF copy (random_depth_n1-8/checkpoints/step-2000) -> 329 GB free.
