@@ -77,3 +77,19 @@ GH_TOKEN=ghp_... bash scripts/push_all.sh "agibot-flux3: eval of <tag>"     # pu
 
 The claude.ai artifact versions of the pages (private, strips stored as artifact assets) are built from the same results:
 `scripts/build_loop_gallery.py ... --urls results/loop_gallery_urls.json` and `scripts/build_rollout_page.py ... --urls ...`.
+
+## seed sweep (random-depth long run)
+
+The "Random-Depth Seed Sweep" artifact page (https://claude.ai/artifact/PN27FAM1mM5UsLdamGzzFK): the long rollout of the
+`random_depth_n1-8_long` EMAs with 5 noise seeds per prompt (seed s of case ci: noise 10000·s + ci, so seed 0 is the
+single-seed Long Rollout noise), N = 1 2 4 8 16, one 5 × 5 seed-by-depth grid video per case and prompt.
+
+```bash
+HF_TOKEN=... scripts/run_seed_sweep.sh "9500 4000 5000 9000 7000 6000 8000" cuda:0    # ~5.5 h per step on one H100
+python scripts/build_seed_sweep_page.py --steps 3000 4000 5000 6000 7000 8000 9000 9500 --running <step>
+```
+
+- `ldvflux/seed_sweep.py` → `results/seedsweep/rlong<step>/clips/<case>/p<i>_N<d>_s<seed>.mp4`; `ldvflux/seed_metrics.py`
+  → grids `results/seedsweep/grids/`, `summary.json` (definitions in its docstring) once all seeds of a step exist.
+- The page is `results/seedsweep/page/template.html` with its `DATA` line rebuilt; steps without local clips (3000, the
+  reference columns) keep the numbers and videos already on the artifact.

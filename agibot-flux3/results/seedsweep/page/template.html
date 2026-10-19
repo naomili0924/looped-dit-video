@@ -1,0 +1,233 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Random-Depth Seed Sweep</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=IBM+Plex+Mono:wght@400;500&family=Public+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: a lab contact sheet. Checkpoint rail on top, then case/prompt controls, then GT beside the seed x depth grid. */
+:root {
+  --bg: #f3f5f7;
+  --panel: #ffffff;
+  --ink: #16202a;
+  --muted: #5d6b78;
+  --line: #d6dde4;
+  --accent: #0d6a8a;
+  --accent-soft: #dcedf3;
+  --ok: #2c7a4b;
+  --run: #a86a00;
+  --cell: #15181c;
+  --f-display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --f-body: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0f1418; --panel: #172026; --ink: #e4eaef; --muted: #93a2ae; --line: #2a3640;
+    --accent: #5cb9d8; --accent-soft: #163543; --ok: #6cc28f; --run: #e0a440; --cell: #05070a;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0f1418; --panel: #172026; --ink: #e4eaef; --muted: #93a2ae; --line: #2a3640;
+  --accent: #5cb9d8; --accent-soft: #163543; --ok: #6cc28f; --run: #e0a440; --cell: #05070a;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font: 15px/1.5 var(--f-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 56px;
+}
+.wrap { max-width: 1480px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px; }
+header { display: flex; flex-direction: column; gap: 6px; }
+h1 { font: 800 clamp(26px, 3.4vw, 38px)/1.05 var(--f-display); font-stretch: 82%; letter-spacing: -0.01em; margin: 0; text-wrap: balance; }
+.lede { color: var(--muted); max-width: 78ch; margin: 0; }
+.lede code, td code { font: 13px var(--f-mono); }
+.label { font: 600 11px/1 var(--f-display); font-stretch: 90%; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.rail { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.ck {
+  appearance: none; border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 6px;
+  padding: 10px 12px; text-align: left; cursor: pointer; display: flex; flex-direction: column; gap: 6px; font: inherit;
+}
+.ck:disabled { cursor: default; opacity: 0.55; }
+.ck[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.ck:focus-visible, .tab:focus-visible, .seg button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.ck .step { font: 700 20px/1 var(--f-display); font-stretch: 85%; font-variant-numeric: tabular-nums; }
+.ck .meta { display: flex; align-items: center; gap: 8px; font: 12px var(--f-mono); color: var(--muted); }
+.dots { display: inline-flex; gap: 3px; }
+.dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--line); display: block; }
+.dots i.on { background: var(--ok); }
+.state-run .dots i.next { background: var(--run); animation: pulse 1.6s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: 0.35; } }
+@media (prefers-reduced-motion: reduce) { .state-run .dots i.next { animation: none; } }
+.controls { display: flex; flex-wrap: wrap; gap: 14px 28px; align-items: flex-end; }
+.group { display: flex; flex-direction: column; gap: 8px; }
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.tab {
+  appearance: none; border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 999px;
+  padding: 5px 12px; font: 500 14px var(--f-body); cursor: pointer; display: inline-flex; gap: 6px; align-items: center;
+}
+.tab[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.tab .cls { font: 500 10px var(--f-mono); text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.7; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; background: var(--panel); }
+.seg button { appearance: none; border: 0; background: none; color: var(--ink); padding: 6px 14px; font: 500 14px var(--f-body); cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.prompt { font: 500 17px/1.4 var(--f-body); margin: 0; max-width: 90ch; }
+.prompt q { quotes: "\201C" "\201D"; }
+.stage { display: grid; grid-template-columns: minmax(220px, 300px) 1fr; gap: 18px; align-items: start; }
+@media (max-width: 900px) { .stage { grid-template-columns: 1fr; } .gt { max-width: 360px; } }
+.gt { display: flex; flex-direction: column; gap: 8px; }
+.gt video { width: 100%; aspect-ratio: 4 / 3; background: var(--cell); border-radius: 4px; display: block; }
+.note { font: 12px/1.45 var(--f-mono); color: var(--muted); margin: 0; }
+.sheet-scroll { overflow-x: auto; }
+.sheet { min-width: 760px; display: grid; grid-template-columns: 56px 2fr 5fr; gap: 0 10px; }
+.colhead { display: grid; padding-bottom: 6px; }
+.colhead.refs { grid-column: 2; grid-template-columns: repeat(2, 1fr); }
+.colhead.model { grid-column: 3; grid-template-columns: repeat(5, 1fr); }
+.colhead div { display: flex; flex-direction: column; align-items: center; gap: 3px; padding-bottom: 4px; border-bottom: 2px solid transparent; }
+.colhead div b { font: 700 15px var(--f-display); font-stretch: 88%; }
+.colhead div span { font: 11px var(--f-mono); color: var(--muted); }
+.colhead div.trained { border-bottom-color: var(--accent); }
+.colhead div.ref b { color: var(--muted); }
+.rowhead { display: grid; grid-column: 1; }
+.rowhead div { display: flex; align-items: center; justify-content: flex-end; font: 500 12px var(--f-mono); color: var(--muted); }
+.vidbox { background: var(--cell); border-radius: 4px; overflow: hidden; }
+.vidbox.refs { grid-column: 2; aspect-ratio: 384 / 720; }
+.vidbox.model { grid-column: 3; aspect-ratio: 960 / 720; }
+.vidbox video { width: 100%; height: 100%; display: block; }
+.empty { grid-column: 1 / -1; padding: 40px; border: 1px dashed var(--line); border-radius: 6px; color: var(--muted); text-align: center; }
+.transport { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.transport button { appearance: none; border: 1px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 6px; padding: 5px 12px; font: 500 13px var(--f-body); cursor: pointer; }
+.transport .win { font: 12px var(--f-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+section.numbers { display: flex; flex-direction: column; gap: 10px; }
+h2 { font: 700 20px/1.2 var(--f-display); font-stretch: 88%; margin: 0; }
+.tblwrap { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; }
+table { border-collapse: collapse; width: 100%; font: 13px var(--f-mono); font-variant-numeric: tabular-nums; }
+th, td { padding: 7px 12px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { font: 600 11px var(--f-display); text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+th:first-child, td:first-child { text-align: left; }
+tr:last-child td { border-bottom: 0; }
+tr.trained td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
+tr.ref td { color: var(--muted); }
+.pending { color: var(--muted); font-style: italic; }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="label">AgiBot FLUX 3 Action · Looped-DiT · zero-shot long rollout</span>
+    <h1>Random-Depth Seed Sweep</h1>
+    <p class="lede">Model <code>random_depth_n1-8_long</code>, trained with the loop depth drawn from 1–8 at every step. Each rollout starts from one real frame and chains 4 windows of 33 frames (8.8 s at 15 fps), every window conditioned on the model's own last frame. Every prompt is rolled out with 5 noise seeds. Seed 0 uses the same noise as the earlier single-seed Long Rollout pages, and every checkpoint and depth shares the same 5 seeds.</p>
+  </header>
+
+  <div class="group">
+    <span class="label">Checkpoint</span>
+    <div class="rail" id="rail"></div>
+  </div>
+
+  <div class="controls">
+    <div class="group"><span class="label">Case</span><div class="tabs" id="cases"></div></div>
+    <div class="group"><span class="label">Prompt</span><div class="seg" id="prompts"></div></div>
+  </div>
+  <p class="prompt" id="ptext"></p>
+
+  <div class="stage">
+    <div class="gt">
+      <span class="label">Ground truth (real continuation)</span>
+      <video id="gtv" muted playsinline loop preload="auto"></video>
+      <p class="note" id="gtnote"></p>
+      <div class="transport">
+        <button id="play" type="button">Pause</button>
+        <button id="restart" type="button">Restart</button>
+        <span class="win" id="win"></span>
+      </div>
+      <p class="note">Black rows: that seed has not been generated yet. Underlined columns are depths inside the training range (N 1–8). The base and Phase-3 columns are the same for every checkpoint.</p>
+    </div>
+    <div class="sheet-scroll"><div class="sheet" id="sheet"></div></div>
+  </div>
+
+  <section class="numbers">
+    <h2>Per-depth numbers, this checkpoint</h2>
+    <p class="lede">Means over the 8 cases. Speed is the time for one 4-window rollout on one H100. LPIPS vs GT is for the real prompt only and covers frames inside the episode. Seed spread is the mean pairwise LPIPS between the 5 seeds, over all prompts: higher means the seeds differ more. Motion is the mean absolute frame-to-frame change (0–255). Window columns are w1…w4. Steps after 3000 come from a rebuilt runner that regenerates the step-3000 N 1 clips bit-identically and reproduces all its numbers, except seed spread in w1 (0.180 vs the published 0.187).</p>
+    <div class="tblwrap"><table id="tbl"></table></div>
+  </section>
+</div>
+
+<script>
+const DATA = {"tag": "rlong", "steps": [3000, 4000, 5000, 6000, 7000, 8000, 9000, 9500], "seeds": [0, 1, 2, 3, 4], "depths": [1, 2, 4, 8, 16], "trained": [1, 2, 3, 4, 5, 6, 7, 8], "running": 9500, "status": {"3000": {"seeds_done": [0, 1, 2, 3, 4], "any": true, "times": {"1": 15.3, "2": 18.6, "4": 25.2, "8": 38.6, "16": 65.5}, "metrics": {"1": {"n_clips": 120, "seeds": [0, 1, 2, 3, 4], "gt_psnr": [18.6192, 15.8005, 14.923, 13.9722], "gt_psnr_seed_std": [0.4581, 0.2437, 0.2212, 0.6273], "gt_lpips": [0.1851, 0.2836, 0.3443, 0.395], "gt_lpips_seed_std": [0.0091, 0.0073, 0.0061, 0.0311], "motion": [2.457, 2.123, 2.441, 2.39], "div_lpips": [0.1871, 0.2723, 0.326, 0.376]}, "2": {"n_clips": 120, "seeds": [0, 1, 2, 3, 4], "gt_psnr": [18.5234, 15.6813, 14.4572, 13.5102], "gt_psnr_seed_std": [0.4822, 0.489, 0.3077, 0.2955], "gt_lpips": [0.1833, 0.2824, 0.3568, 0.4182], "gt_lpips_seed_std": [0.0046, 0.0106, 0.0088, 0.0112], "motion": [2.461, 2.18, 2.537, 2.294], "div_lpips": [0.1826, 0.2657, 0.3236, 0.3697]}, "4": {"n_clips": 120, "seeds": [0, 1, 2, 3, 4], "gt_psnr": [18.3925, 15.837, 14.8184, 13.7766], "gt_psnr_seed_std": [0.3663, 0.4877, 0.2899, 0.1474], "gt_lpips": [0.1868, 0.2832, 0.3604, 0.4295], "gt_lpips_seed_std": [0.0044, 0.0116, 0.0148, 0.0152], "motion": [2.477, 2.136, 2.683, 2.552], "div_lpips": [0.1814, 0.2626, 0.3372, 0.403]}, "8": {"n_clips": 120, "seeds": [0, 1, 2, 3, 4], "gt_psnr": [18.3338, 15.9694, 15.2199, 13.8156], "gt_psnr_seed_std": [0.2841, 0.3453, 0.5226, 0.7554], "gt_lpips": [0.1822, 0.2837, 0.3422, 0.4235], "gt_lpips_seed_std": [0.005, 0.0106, 0.0119, 0.0399], "motion": [2.311, 2.143, 2.638, 2.462], "div_lpips": [0.1782, 0.262, 0.3281, 0.4047]}, "16": {"n_clips": 120, "seeds": [0, 1, 2, 3, 4], "gt_psnr": [18.4176, 16.0169, 15.0322, 13.4523], "gt_psnr_seed_std": [0.3186, 0.342, 0.3132, 0.3923], "gt_lpips": [0.1813, 0.2948, 0.3628, 0.4538], "gt_lpips_seed_std": [0.0093, 0.0143, 0.0214, 0.0331], "motion": [2.181, 2.479, 3.054, 3.346], "div_lpips": [0.1799, 0.2893, 0.3618, 0.4495]}}}, "4000": {"seeds_done": [0], "any": true, "times": {"1": 15.3, "2": 18.6, "4": 25.2, "8": 38.6, "16": 65.5}, "metrics": null}, "5000": {"seeds_done": [], "any": false, "times": {}, "metrics": null}, "6000": {"seeds_done": [], "any": false, "times": {}, "metrics": null}, "7000": {"seeds_done": [], "any": false, "times": {}, "metrics": null}, "8000": {"seeds_done": [], "any": false, "times": {}, "metrics": null}, "9000": {"seeds_done": [], "any": false, "times": {}, "metrics": null}, "9500": {"seeds_done": [], "any": false, "times": {"1": 15.7, "2": 18.5, "4": 25.2}, "metrics": null}}, "grids": {"refs_test04_vacuum_p0": {"refs": {"base": [0, 1, 2, 3, 4], "ft6000": [0, 1, 2, 3, 4]}}, "refs_test04_vacuum_p1": {"refs": {"base": [0, 1, 2, 3, 4], "ft6000": [0, 1, 2, 3, 4]}}, "refs_test04_vacuum_p2": {"refs": {"base": [0, 1, 2, 3, 4], "ft6000": [0, 1, 2, 3, 4]}}, "refs_test01_toilet_p0": {"refs": {"base": [0, 1, 2, 3, 4], "ft6000": [0, 1, 2, 3, 4]}}, "refs_test01_toilet_p1": {"refs": {"base": [0, 1, 2, 3, 4], "ft6000": [0, 1, 2, 3, 4]}}, "refs_test01_toilet_p2": {"refs": {"base": [0, 1, 2, 3, 4], "ft6000": [0, 1, 2, 3, 4]}}, "refs_test05_doorknob_p0": {"refs": {"base": [0, 1, 2, 3, 4], "ft6000": [0, 1, 2, 3, 4]}}, "refs_test05_doorknob_p1": {"refs": {"base": [0, 1, 2, 3, 4], "ft6000": [0, 1, 2, 3, 4]}}, "refs_test05_doorknob_p2": {"refs": {"base": [0, 1, 2, 3, 4], "ft6000": [0, 1, 2, 3, 4]}}, "refs_test06_marker_p0": {"refs": {"base": [0, 1, 2, 3, 4], "ft6000": [0, 1, 2, 3, 4]}}, "refs_test06_marker_p1": {"refs": {"base": [0, 1, 2, 3, 4], "ft6000": [0, 1, 2, 3, 4]}}, "refs_test06_marker_p2": {"refs": {"base": [0, 1, 2, 3, 4], "ft6000": [0, 1, 2, 3, 4]}}, "refs_test02_cap_p0": {"refs": {"base": [0, 1, 2, 3, 4], "ft6000": [0, 1, 2, 3, 4]}}, "refs_test02_cap_p1": {"refs": {"base": [0, 1, 2, 3, 4], "ft6000": [0, 1, 2, 3, 4]}}, "refs_test02_cap_p2": {"refs": {"base": [0, 1, 2, 3, 4], "ft6000": [0, 1, 2, 3, 4]}}, "refs_test07_shorts_p0": {"refs": {"base": [0, 1, 2, 3, 4], "ft6000": [0, 1, 2, 3, 4]}}, "refs_test07_shorts_p1": {"refs": {"base": [0, 1, 2, 3, 4], "ft6000": [0, 1, 2, 3, 4]}}, "refs_test07_shorts_p2": {"refs": {"base": [0, 1, 2, 3, 4], "ft6000": [0, 1, 2, 3, 4]}}, "refs_test03_chips_bag_p0": {"refs": {"base": [0, 1, 2, 3, 4], "ft6000": [0, 1, 2, 3, 4]}}, "refs_test03_chips_bag_p1": {"refs": {"base": [0, 1, 2, 3, 4], "ft6000": [0, 1, 2, 3, 4]}}, "refs_test03_chips_bag_p2": {"refs": {"base": [0, 1, 2, 3, 4], "ft6000": [0, 1, 2, 3, 4]}}, "refs_test08_taro_chips_p0": {"refs": {"base": [0, 1, 2, 3, 4], "ft6000": [0, 1, 2, 3, 4]}}, "refs_test08_taro_chips_p1": {"refs": {"base": [0, 1, 2, 3, 4], "ft6000": [0, 1, 2, 3, 4]}}, "refs_test08_taro_chips_p2": {"refs": {"base": [0, 1, 2, 3, 4], "ft6000": [0, 1, 2, 3, 4]}}, "rlong3000_test04_vacuum_p0": {"seeds": [0, 1, 2, 3, 4]}, "rlong3000_test04_vacuum_p1": {"seeds": [0, 1, 2, 3, 4]}, "rlong3000_test04_vacuum_p2": {"seeds": [0, 1, 2, 3, 4]}, "rlong3000_test01_toilet_p0": {"seeds": [0, 1, 2, 3, 4]}, "rlong3000_test01_toilet_p1": {"seeds": [0, 1, 2, 3, 4]}, "rlong3000_test01_toilet_p2": {"seeds": [0, 1, 2, 3, 4]}, "rlong3000_test05_doorknob_p0": {"seeds": [0, 1, 2, 3, 4]}, "rlong3000_test05_doorknob_p1": {"seeds": [0, 1, 2, 3, 4]}, "rlong3000_test05_doorknob_p2": {"seeds": [0, 1, 2, 3, 4]}, "rlong3000_test06_marker_p0": {"seeds": [0, 1, 2, 3, 4]}, "rlong3000_test06_marker_p1": {"seeds": [0, 1, 2, 3, 4]}, "rlong3000_test06_marker_p2": {"seeds": [0, 1, 2, 3, 4]}, "rlong3000_test02_cap_p0": {"seeds": [0, 1, 2, 3, 4]}, "rlong3000_test02_cap_p1": {"seeds": [0, 1, 2, 3, 4]}, "rlong3000_test02_cap_p2": {"seeds": [0, 1, 2, 3, 4]}, "rlong3000_test07_shorts_p0": {"seeds": [0, 1, 2, 3, 4]}, "rlong3000_test07_shorts_p1": {"seeds": [0, 1, 2, 3, 4]}, "rlong3000_test07_shorts_p2": {"seeds": [0, 1, 2, 3, 4]}, "rlong3000_test03_chips_bag_p0": {"seeds": [0, 1, 2, 3, 4]}, "rlong3000_test03_chips_bag_p1": {"seeds": [0, 1, 2, 3, 4]}, "rlong3000_test03_chips_bag_p2": {"seeds": [0, 1, 2, 3, 4]}, "rlong3000_test08_taro_chips_p0": {"seeds": [0, 1, 2, 3, 4]}, "rlong3000_test08_taro_chips_p1": {"seeds": [0, 1, 2, 3, 4]}, "rlong3000_test08_taro_chips_p2": {"seeds": [0, 1, 2, 3, 4]}, "rlong4000_test04_vacuum_p0": {"seeds": [0]}, "rlong4000_test04_vacuum_p1": {"seeds": [0]}, "rlong4000_test04_vacuum_p2": {"seeds": [0]}, "rlong4000_test01_toilet_p0": {"seeds": [0]}, "rlong4000_test01_toilet_p1": {"seeds": [0]}, "rlong4000_test01_toilet_p2": {"seeds": [0]}, "rlong4000_test05_doorknob_p0": {"seeds": [0]}, "rlong4000_test05_doorknob_p1": {"seeds": [0]}, "rlong4000_test05_doorknob_p2": {"seeds": [0]}, "rlong4000_test06_marker_p0": {"seeds": [0]}, "rlong4000_test06_marker_p1": {"seeds": [0]}, "rlong4000_test06_marker_p2": {"seeds": [0]}, "rlong4000_test02_cap_p0": {"seeds": [0]}, "rlong4000_test02_cap_p1": {"seeds": [0]}, "rlong4000_test02_cap_p2": {"seeds": [0]}, "rlong4000_test07_shorts_p0": {"seeds": [0]}, "rlong4000_test07_shorts_p1": {"seeds": [0]}, "rlong4000_test07_shorts_p2": {"seeds": [0]}, "rlong4000_test03_chips_bag_p0": {"seeds": [0]}, "rlong4000_test03_chips_bag_p1": {"seeds": [0]}, "rlong4000_test03_chips_bag_p2": {"seeds": [0]}, "rlong4000_test08_taro_chips_p0": {"seeds": [0]}, "rlong4000_test08_taro_chips_p1": {"seeds": [0]}, "rlong4000_test08_taro_chips_p2": {"seeds": [0]}}, "ref_metrics": {"base": {"1": {"n_clips": 120, "seeds": [0, 1, 2, 3, 4], "gt_psnr": [14.9677, 11.9711, 11.0575, 10.4199], "gt_psnr_seed_std": [0.3774, 0.5978, 0.5007, 0.4113], "gt_lpips": [0.353, 0.546, 0.6251, 0.6593], "gt_lpips_seed_std": [0.02, 0.0309, 0.0294, 0.019], "motion": [6.155, 6.228, 7.761, 7.069], "div_lpips": [0.3881, 0.5643, 0.6475, 0.6738]}}, "ft6000": {"1": {"n_clips": 120, "seeds": [0, 1, 2, 3, 4], "gt_psnr": [18.7311, 15.8239, 15.0489, 13.9756], "gt_psnr_seed_std": [0.6773, 0.5479, 0.4719, 0.4122], "gt_lpips": [0.1773, 0.2753, 0.3318, 0.3983], "gt_lpips_seed_std": [0.015, 0.0172, 0.0138, 0.0221], "motion": [2.383, 2.039, 2.144, 2.127], "div_lpips": [0.1746, 0.2454, 0.2835, 0.3352]}}}, "cases": [{"id": "test04_vacuum", "short": "vacuum", "class": "easy", "prompts": ["Use pink vacuum cleaner to vacuum the garbage on the floor with right arm.", "Lift the pink vacuum cleaner up off the floor with the right arm.", "Use pink vacuum cleaner to vacuum the garbage on the floor with left arm."], "gt_s": 5.3, "gt_full": false}, {"id": "test01_toilet", "short": "toilet", "class": "hard", "prompts": ["Wipe the toilet with the held cloth.", "Put the held cloth down on the toilet lid.", "Lift the held cloth up and away from the toilet."], "gt_s": 8.9, "gt_full": true}, {"id": "test05_doorknob", "short": "doorknob", "class": "hard", "prompts": ["Turn the doorknob to open the door with left arm.", "Release the doorknob and pull the left arm back.", "Turn the doorknob to open the door with right arm."], "gt_s": 6.1, "gt_full": false}, {"id": "test06_marker", "short": "marker", "class": "static", "prompts": ["Pick up the uncapped whiteboard marker on the table with left arm.", "Slide the uncapped whiteboard marker across the table with the left arm.", "Pick up the uncapped whiteboard marker on the table with right arm."], "gt_s": 8.9, "gt_full": true}, {"id": "test02_cap", "short": "cap", "class": "easy", "prompts": ["Pick up the baseball cap on the sofa.", "Push the baseball cap further back onto the sofa.", "Leave the baseball cap on the sofa and pull the hand back."], "gt_s": 8.9, "gt_full": true}, {"id": "test07_shorts", "short": "shorts", "class": "hard", "prompts": ["Slide the dark shorts on the desktop upward with the left arm.", "Slide the dark shorts on the desktop downward with the left arm.", "Slide the dark shorts on the desktop upward with the right arm."], "gt_s": 7.3, "gt_full": false}, {"id": "test03_chips_bag", "short": "chips bag", "class": "easy", "prompts": ["Place the large bucket of potato chips held in the left arm into the gray felt bag on the left side of the cash register.", "Lift the large bucket of potato chips held in the left arm straight up.", "Put the large bucket of potato chips down on the counter with the left arm."], "gt_s": 8.9, "gt_full": true}, {"id": "test08_taro_chips", "short": "taro chips", "class": "easy", "prompts": ["Pick up the purple taro chips from the restocking box with the right arm.", "Push the purple taro chips down into the restocking box with the right arm.", "Pick up the purple taro chips from the restocking box with the left arm."], "gt_s": 8.9, "gt_full": true}]};
+const REFCOLS = [["base", "zero-shot", "ref"], ["Phase 3", "ft 6000", "ref"]];
+const COLS = DATA.depths.map(d => ["N " + d, d <= 8 ? "trained" : "beyond", d <= 8 ? "trained" : ""]);
+const head = (cols, cls) => `<div class="colhead ${cls}">${cols.map(([a, b, c]) => `<div class="${c}"><b>${a}</b><span>${b}</span></div>`).join("")}</div>`;
+const vids = () => [$("grid"), $("refv"), $("gtv")].filter(Boolean);
+const state = { step: null, case: DATA.cases[0].id, prompt: 0, playing: true };
+try { Object.assign(state, JSON.parse(localStorage.getItem("seedsweep") || "{}")); } catch (e) {}
+const st = s => DATA.status[s] || { seeds_done: [], any: false };
+if (!DATA.steps.includes(state.step) || !st(state.step).any) state.step = DATA.steps.find(s => st(s).any) ?? DATA.steps[0];
+const $ = id => document.getElementById(id);
+const save = () => { try { localStorage.setItem("seedsweep", JSON.stringify({ step: state.step, case: state.case, prompt: state.prompt })); } catch (e) {} };
+
+function rail() {
+  $("rail").innerHTML = DATA.steps.map(s => {
+    const x = st(s), n = x.seeds_done.length, run = DATA.running === s;
+    const dots = DATA.seeds.map((sd, i) => `<i class="${x.seeds_done.includes(sd) ? "on" : (run && i === n ? "next" : "")}"></i>`).join("");
+    const txt = n === DATA.seeds.length ? "all seeds" : run ? `seed ${n} running` : n ? `${n}/${DATA.seeds.length} seeds` : "queued";
+    return `<button class="ck ${run ? "state-run" : ""}" type="button" data-step="${s}" aria-pressed="${s === state.step}" ${x.any ? "" : "disabled"}>
+      <span class="step">step ${s}</span><span class="meta"><span class="dots">${dots}</span>${txt}</span></button>`;
+  }).join("");
+  $("rail").querySelectorAll(".ck").forEach(b => b.onclick = () => { state.step = +b.dataset.step; render(); });
+}
+function controls() {
+  $("cases").innerHTML = DATA.cases.map(c => `<button class="tab" type="button" data-case="${c.id}" aria-pressed="${c.id === state.case}">${c.short}<span class="cls">${c.class}</span></button>`).join("");
+  $("cases").querySelectorAll(".tab").forEach(b => b.onclick = () => { state.case = b.dataset.case; render(); });
+  $("prompts").innerHTML = ["real", "alt 1", "alt 2"].map((p, i) => `<button type="button" data-p="${i}" aria-pressed="${i === state.prompt}">${p}</button>`).join("");
+  $("prompts").querySelectorAll("button").forEach(b => b.onclick = () => { state.prompt = +b.dataset.p; render(); });
+  const c = DATA.cases.find(c => c.id === state.case);
+  const p = c.prompts[state.prompt];
+  $("ptext").innerHTML = p ? `${state.prompt === 0 ? "AgiBot annotation" : "Alternative prompt (no ground truth)"}: <q>${p.replace(/</g, "&lt;")}</q>` : "";
+  $("gtnote").textContent = c.gt_s == null ? "" : (c.gt_full ? `${c.gt_s} s of real frames, the full rollout length` : `episode ends after ${c.gt_s} s, black afterwards`);
+}
+function sheet() {
+  const key = `${DATA.tag}${state.step}_${state.case}_p${state.prompt}`, g = DATA.grids[key];
+  const el = $("sheet");
+  if (!g) { el.innerHTML = `<div class="empty">This checkpoint has no rollouts for this case yet.</div>`; return; }
+  const rk = `refs_${state.case}_p${state.prompt}`, hasRef = !!DATA.grids[rk];
+  el.innerHTML = head(REFCOLS, "refs") + head(COLS, "model") +
+    `<div class="rowhead" style="grid-template-rows:repeat(${DATA.seeds.length},1fr)">${DATA.seeds.map(s => `<div>seed ${s}${g.seeds.includes(s) ? "" : " ·"}</div>`).join("")}</div>
+    <div class="vidbox refs">${hasRef ? `<video id="refv" muted playsinline loop preload="auto" src="videos/${rk}.mp4"></video>` : ""}</div>
+    <div class="vidbox model"><video id="grid" muted playsinline loop preload="auto" src="videos/${key}.mp4"></video></div>`;
+}
+function table() {
+  const m = st(state.step).metrics, t = st(state.step).times || {};
+  const f = (v, k = 3) => v == null || Number.isNaN(v) ? "–" : (+v).toFixed(k);
+  const w = a => a ? a.map(v => f(v)).join(" / ") : "–";
+  const head = `<tr><th>depth</th><th>speed (s)</th><th>LPIPS vs GT, w1 / w2 / w3 / w4</th><th>± seed std, w4</th><th>PSNR vs GT, w4</th><th>seed spread, w1 / w4</th><th>motion, w1 / w4</th></tr>`;
+  const row = (label, cls, s, time) => !s ? `<tr class="${cls}"><td>${label}</td><td>${time == null ? "–" : f(time, 1)}</td><td colspan="5" class="pending">metrics after all 5 seeds of this model finish</td></tr>` :
+    `<tr class="${cls}"><td>${label}</td><td>${time == null ? "–" : f(time, 1)}</td><td>${w(s.gt_lpips)}</td><td>${f(s.gt_lpips_seed_std?.at(-1))}</td><td>${f(s.gt_psnr?.at(-1), 2)}</td><td>${f(s.div_lpips?.[0])} / ${f(s.div_lpips?.at(-1))}</td><td>${f(s.motion?.[0], 2)} / ${f(s.motion?.at(-1), 2)}</td></tr>`;
+  const rm = DATA.ref_metrics || {};
+  $("tbl").innerHTML = head +
+    row("base, zero-shot", "ref", rm.base?.["1"], null) + row("Phase-3 fine-tune", "ref", rm.ft6000?.["1"], null) +
+    DATA.depths.map(d => row(`N ${d}`, d <= 8 ? "trained" : "", m?.[String(d)], t[String(d)])).join("");
+}
+function sync() {
+  const gv = $("grid"), tv = $("gtv");
+  tv.src = `videos/gt_${state.case}.mp4`;
+  vids().forEach(v => { v.currentTime = 0; if (state.playing) v.play().catch(() => {}); });
+  $("play").textContent = state.playing ? "Pause" : "Play";
+  if (gv) gv.ontimeupdate = () => {
+    [tv, $("refv")].filter(Boolean).forEach(v => { if (Math.abs(v.currentTime - gv.currentTime) > 0.12) v.currentTime = gv.currentTime; });
+    const t = Math.max(0, gv.currentTime * 15 - 1);
+    $("win").textContent = gv.currentTime < 1 / 15 ? "context frame" : `window ${Math.min(4, Math.floor(t / 33) + 1)} of 4 · ${gv.currentTime.toFixed(1)} s`;
+  };
+}
+$("play").onclick = () => {
+  state.playing = !state.playing;
+  vids().forEach(v => state.playing ? v.play().catch(() => {}) : v.pause());
+  $("play").textContent = state.playing ? "Pause" : "Play";
+};
+$("restart").onclick = () => vids().forEach(v => { v.currentTime = 0; });
+function render() { save(); rail(); controls(); sheet(); table(); sync(); }
+render();
+</script>
+
+</body></html>
