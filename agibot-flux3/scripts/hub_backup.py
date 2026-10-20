@@ -7,6 +7,9 @@ uploads so the repo holds only the latest and the best (lowest val loss in eval/
 
     PYTHONPATH=/workspace/loop-dit .venv/bin/python ../scripts/hub_backup.py --run /dev/shm/runs/ft384 \
         --repo Jinyan0924/flux3-agibot-videoft
+
+``--prefix <folder>`` puts every upload under that folder of a shared repo; with it, nothing outside the folder is
+touched, ``--keep-all`` skips the retention deletes and history squashing is off unless ``--squash``.
 """
 
 from __future__ import annotations
@@ -80,7 +83,17 @@ def main() -> None:
     p.add_argument("--delete-local", action="store_true",
                    help="with --full: delete a local step-N directory once its EMA and full checkpoint are on the "
                         "Hub (every local file verified present in the repo). Restore with scripts/restore_checkpoint.sh")
+    p.add_argument("--prefix", default="", help="folder in the repo for every upload (shared repos)")
+    p.add_argument("--keep-all", action="store_true", help="never delete earlier EMA uploads")
+    p.add_argument("--keep-steps", type=int, nargs="*", default=[],
+                   help="steps whose EMA and full checkpoint are never deleted from the Hub (e.g. the pre-cooldown step)")
+    p.add_argument("--keep-every", type=int, default=0,
+                   help="keep every EMA whose step is a multiple of this (replaces keeping the best by val loss)")
+    p.add_argument("--squash", action="store_true", help="squash the repo history after deletes (default without --prefix)")
     args = p.parse_args()
+    if not args.prefix:
+        args.squash = True  # the original behaviour for a run's own repo
+    pre = f"{args.prefix.strip('/')}/" if args.prefix else ""
     from huggingface_hub import HfApi
 
     api = HfApi(token=token())
@@ -109,39 +122,44 @@ def main() -> None:
                     with tempfile.TemporaryDirectory(dir="/dev/shm") as tmp:
                         f = Path(tmp) / f"ema_step-{step}.safetensors"
                         save_file(ema, str(f), metadata={"step": str(step), "run": str(run)})
-                        api.upload_file(path_or_fileobj=str(f), path_in_repo=f.name, repo_id=args.repo)
+                        api.upload_file(path_or_fileobj=str(f), path_in_repo=pre + f.name, repo_id=args.repo)
                     del ema
                     for name in ("metrics.jsonl", "eval/val.jsonl"):
                         if (run / name).exists():
-                            api.upload_file(path_or_fileobj=str(run / name), path_in_repo=name, repo_id=args.repo)
+                            api.upload_file(path_or_fileobj=str(run / name), path_in_repo=pre + name, repo_id=args.repo)
                     cfg = sd / "config.json"
                     if cfg.exists():
-                        api.upload_file(path_or_fileobj=str(cfg), path_in_repo="config.json", repo_id=args.repo)
+                        api.upload_file(path_or_fileobj=str(cfg), path_in_repo=pre + "config.json", repo_id=args.repo)
                     state["uploaded"].append(step)
                     state_path.write_text(json.dumps(state))
                     print(f"[hub] step {step} uploaded in {time.time() - t0:.0f}s", flush=True)
                 except Exception as e:  # retried on the next poll
                     print(f"[hub] step {step} failed: {e!r}", flush=True)
                     continue
-                # retention: keep the latest and the best
-                keep = {max(state["uploaded"])}
-                best = best_step(run)
-                if best in state["uploaded"]:
-                    keep.add(best)
-                for f in api.list_repo_files(args.repo):
-                    m = re.fullmatch(r"ema_step-(\d+)\.safetensors", f)
-                    if m and int(m.group(1)) not in keep:
-                        api.delete_file(f, repo_id=args.repo)
-                        print(f"[hub] deleted {f}", flush=True)
-                try:
-                    api.super_squash_history(args.repo)  # drop LFS history of deleted uploads (storage quota)
-                except Exception as e:
-                    print(f"[hub] squash failed: {e!r}", flush=True)
+                if not args.keep_all:
+                    # retention: keep the latest and the best
+                    keep = {max(state["uploaded"]), *args.keep_steps}
+                    if args.keep_every:  # a regular series instead of a "best" pick
+                        keep |= {st for st in state["uploaded"] if st % args.keep_every == 0}
+                    else:
+                        best = best_step(run)
+                        if best in state["uploaded"]:
+                            keep.add(best)
+                    for f in api.list_repo_files(args.repo):
+                        m = re.fullmatch(re.escape(pre) + r"ema_step-(\d+)\.safetensors", f)
+                        if m and int(m.group(1)) not in keep:
+                            api.delete_file(f, repo_id=args.repo)
+                            print(f"[hub] deleted {f}", flush=True)
+                    if args.squash:
+                        try:
+                            api.super_squash_history(args.repo)  # drop LFS history of deleted uploads (storage quota)
+                        except Exception as e:
+                            print(f"[hub] squash failed: {e!r}", flush=True)
             if (args.full and args.delete_local and step in state["full_uploaded"] and sd.exists()):
                 # a restored (or leftover) copy of a checkpoint that is already on the Hub: verify, then free /dev/shm
                 local = sorted(local_files(sd))
                 remote = set(api.list_repo_files(args.repo))
-                absent = [f for f in local if f"checkpoints/{f}" not in remote]
+                absent = [f for f in local if f"{pre}checkpoints/{f}" not in remote]
                 if absent:
                     print(f"[hub] step {step}: {len(absent)} files not on the Hub, keeping local: {absent[:3]}", flush=True)
                 else:
@@ -162,7 +180,7 @@ def main() -> None:
                     entries = sorted((p for p in sd.iterdir() if p.name != "COMPLETE.partial"), key=tree_size, reverse=True)
                     for p in entries:
                         size_gb = tree_size(p) / 1e9
-                        dest = f"checkpoints/step-{step}/{p.name}"
+                        dest = f"{pre}checkpoints/step-{step}/{p.name}"
                         if p.is_dir():
                             api.upload_folder(folder_path=str(p), path_in_repo=dest, repo_id=args.repo,
                                               commit_message=f"full checkpoint step {step}: {p.name}")
@@ -171,13 +189,13 @@ def main() -> None:
                                             commit_message=f"full checkpoint step {step}: {p.name}")
                         if args.delete_local:
                             remote = set(api.list_repo_files(args.repo))
-                            absent = [f for f in local_files(p) if f"checkpoints/{f}" not in remote]
+                            absent = [f for f in local_files(p) if f"{pre}checkpoints/{f}" not in remote]
                             if absent:
                                 raise RuntimeError(f"{p.name}: {len(absent)} files missing on the Hub after upload: {absent[:3]}")
                             shutil.rmtree(p) if p.is_dir() else p.unlink()
                         print(f"[hub] step {step}: {p.name} ({size_gb:.1f} GB) on the Hub"
                               f"{', local copy deleted' if args.delete_local else ''} ({time.time() - t0:.0f}s)", flush=True)
-                    api.upload_file(path_or_fileobj=str(sd / "COMPLETE.partial"), path_in_repo=f"checkpoints/step-{step}/COMPLETE",
+                    api.upload_file(path_or_fileobj=str(sd / "COMPLETE.partial"), path_in_repo=f"{pre}checkpoints/step-{step}/COMPLETE",
                                     repo_id=args.repo, commit_message=f"full checkpoint step {step}: COMPLETE")
                     state["full_uploaded"].append(step)
                     state["full_in_progress"].remove(step)
@@ -190,11 +208,14 @@ def main() -> None:
                     print(f"[hub] full checkpoint step {step} failed: {e!r}", flush=True)
                     continue
                 try:  # keep only the latest full checkpoint on the Hub
+                    old = set()
                     for f in api.list_repo_files(args.repo):
-                        m = re.fullmatch(r"checkpoints/step-(\d+)/.*", f)
-                        if m and int(m.group(1)) < max(state["full_uploaded"]):
-                            api.delete_folder(f"checkpoints/step-{m.group(1)}", repo_id=args.repo)
-                            print(f"[hub] deleted checkpoints/step-{m.group(1)}", flush=True)
+                        m = re.fullmatch(re.escape(pre) + r"checkpoints/step-(\d+)/.*", f)
+                        if m and int(m.group(1)) < max(state["full_uploaded"]) and int(m.group(1)) not in args.keep_steps:
+                            old.add(int(m.group(1)))
+                    for old_step in sorted(old):  # one delete per folder
+                        api.delete_folder(f"{pre}checkpoints/step-{old_step}", repo_id=args.repo)
+                        print(f"[hub] deleted {pre}checkpoints/step-{old_step}", flush=True)
                 except Exception as e:
                     print(f"[hub] prune failed: {e!r}", flush=True)
         if args.once:

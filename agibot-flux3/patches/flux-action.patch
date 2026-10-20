@@ -1,8 +1,8 @@
 diff --git a/src/flux_action/config.py b/src/flux_action/config.py
-index 3464f8c..6e1af2b 100644
+index 3464f8c..9d65baa 100644
 --- a/src/flux_action/config.py
 +++ b/src/flux_action/config.py
-@@ -45,6 +45,18 @@ DROID_INFERENCE_SETTINGS: dict[str, object] = {
+@@ -45,6 +45,28 @@ DROID_INFERENCE_SETTINGS: dict[str, object] = {
  class PolicyConfig:
      action_dim: int = 8
      action_modality: str = "action"
@@ -14,14 +14,24 @@ index 3464f8c..6e1af2b 100644
 +    # Looped-DiT retrofit (models/looped.py): LoopParams fields, e.g. {"loop_split": [12, 9, 12], "num_loops": 4,
 +    # "attn_gate": true, "attn_gate_init": 4.0}; None = the plain backbone.
 +    loop: dict | None = None
-+    # Deep supervision over the loop exits in training: None | "uniform" | "final_plus_mean" | "exponential".
++    # Deep supervision over the loop exits in training: None | "uniform" | "final_plus_mean" | "exponential" |
++    # "sigmoid" (w_r = sigmoid((r - center) / temperature); center None = (N + 1) / 2, N = loop.num_loops).
 +    deep_supervision: str | None = "final_plus_mean"
++    deep_supervision_center: float | None = None
++    deep_supervision_temperature: float = 1.0
++    # Random loop depth in training: {"min": 1, "max": 8, "seed": 0, "grad_loops": null}. Each micro-batch runs
++    # N ~ uniform(min..max) loops (same N on every rank: drawn from seed, update and micro-batch index); exit r gets
++    # weight w*(r) / P(exit r supervised), w* = the deep_supervision profile over 1..max, so its expected weight is
++    # w*(r). grad_loops = k: gradients through the last k loops only. Evaluation keeps loop.num_loops.
++    loop_sampler: dict | None = None
++    # Monotonic hinge over consecutive supervised exits: beta * sum_r relu(L_{r+1} - stopgrad(L_r)).
++    monotone_beta: float = 0.0
 +    # Weights overlaid on the trunk after construction (a fine-tuned EMA from scripts/hub_backup.py).
 +    overlay_weights: str | None = None
      # How the cameras are composited onto the canvas: "droid" (three 360x640 cameras [wrist, left exterior,
      # right exterior]: wrist full-res on top, exteriors half-res below, reflect-padded), "single" (one resized
      # camera), "side_by_side" (two cameras, scene then wrist, each half the width) or "grid" (any number of
-@@ -250,6 +262,9 @@ class PolicyConfig:
+@@ -250,6 +272,9 @@ class PolicyConfig:
  
      def validate_training(self):
          """Training uses the reference model and its augmentation settings."""
@@ -33,10 +43,10 @@ index 3464f8c..6e1af2b 100644
          assert self.vae_batch_windows >= 1, "invalid VAE batch size"
 diff --git a/src/flux_action/models/looped.py b/src/flux_action/models/looped.py
 new file mode 100644
-index 0000000..fe0989c
+index 0000000..b2074a7
 --- /dev/null
 +++ b/src/flux_action/models/looped.py
-@@ -0,0 +1,218 @@
+@@ -0,0 +1,252 @@
 +"""Looped-DiT retrofit of ``JointSingleSeq`` (Chng et al., 2026, arXiv 2609.40305; reference implementation
 +``looped-dit-video/ldv/model.py``).
 +
@@ -61,6 +71,7 @@ index 0000000..fe0989c
 +
 +from __future__ import annotations
 +
++import math
 +from collections.abc import Sequence
 +from dataclasses import dataclass
 +from typing import Any
@@ -90,10 +101,13 @@ index 0000000..fe0989c
 +            raise ValueError("num_loops must be >= 1")
 +
 +
-+def deep_supervision_weights(num_loops: int, weighting: str) -> list[float]:
++def deep_supervision_weights(num_loops: int, weighting: str, center: float | None = None,
++                             temperature: float = 1.0) -> list[float]:
 +    """Loss weights (w_1, ..., w_N) of the exits after each loop, w_N the final one; rescaled to WEIGHT_SUM.
 +
-+    At N = 4 before rescaling: uniform 1,1,1,1 | final_plus_mean 1/3,1/3,1/3,1 | exponential 1/8,1/4,1/2,1."""
++    At N = 4 before rescaling: uniform 1,1,1,1 | final_plus_mean 1/3,1/3,1/3,1 | exponential 1/8,1/4,1/2,1.
++    "sigmoid": w_r = sigmoid((r - center) / temperature), rising smoothly with r (no jump at the final exit);
++    center defaults to the middle exit (N + 1) / 2. At N = 4, temperature 1: 0.18, 0.38, 0.62, 0.82 (sum 2)."""
 +    if num_loops < 2:
 +        raise ValueError("deep supervision needs at least two loops")
 +    if weighting == "uniform":
@@ -102,10 +116,35 @@ index 0000000..fe0989c
 +        raw = [1.0 / (num_loops - 1)] * (num_loops - 1) + [1.0]
 +    elif weighting == "exponential":
 +        raw = [0.5 ** (num_loops - r) for r in range(1, num_loops + 1)]
++    elif weighting == "sigmoid":
++        if temperature <= 0:
++            raise ValueError(f"sigmoid deep supervision needs temperature > 0, got {temperature}")
++        c = (num_loops + 1) / 2 if center is None else float(center)
++        raw = [1.0 / (1.0 + math.exp(-(r - c) / temperature)) for r in range(1, num_loops + 1)]
 +    else:
 +        raise ValueError(f"unknown deep supervision weighting: {weighting!r}")
 +    scale = WEIGHT_SUM / sum(raw)
 +    return [w * scale for w in raw]
++
++
++def random_depth_exits(n: int, grad_loops: int | None) -> list[int]:
++    """Exits that carry a loss when a step runs ``n`` loops: all of 1..n, or the last ``grad_loops`` of them."""
++    return list(range(1 if grad_loops is None else max(1, n - grad_loops + 1), n + 1))
++
++
++def random_depth_exit_prob(r: int, n_min: int, n_max: int, grad_loops: int | None) -> float:
++    """P(exit r carries a loss) when N is uniform on n_min..n_max (see ``random_depth_exits``)."""
++    hi = n_max if grad_loops is None else min(n_max, r + grad_loops - 1)
++    return max(0, hi - max(r, n_min) + 1) / (n_max - n_min + 1)
++
++
++def random_depth_weights(n: int, n_min: int, n_max: int, target: Sequence[float],
++                         grad_loops: int | None = None) -> dict[int, float]:
++    """Per-step loss weights {r: w*(r) / P(exit r supervised)} for a step that drew N = n, so that the expected
++    weight of exit r over steps is exactly ``target[r - 1]`` (w*, e.g. ``deep_supervision_weights(n_max, ...)``)
++    whatever the sampler. With N fixed (n_min = n_max) and no truncation this is ``target`` itself."""
++    return {r: target[r - 1] / random_depth_exit_prob(r, n_min, n_max, grad_loops)
++            for r in random_depth_exits(n, grad_loops)}
 +
 +
 +def exclusive_self_attention(out: Tensor, v: Tensor) -> Tensor:
@@ -178,10 +217,13 @@ index 0000000..fe0989c
 +        seqlens: dict[str, Sequence[int]] | None = None,
 +        num_loops: int | None = None,
 +        exit_loops: Sequence[int] = (),
++        grad_loops: int | None = None,
 +        **kwargs: Tensor,
 +    ) -> dict[str, Any]:
 +        """As ``JointSingleSeq.forward``; ``num_loops`` overrides the loop depth and ``exit_loops`` lists
-+        intermediate depths r < num_loops to decode too, returned under ``out["exits"][r]`` (deep supervision)."""
++        intermediate depths r < num_loops to decode too, returned under ``out["exits"][r]`` (deep supervision).
++        ``grad_loops`` = k: truncated backprop, the first num_loops - k loops run without autograd (when they
++        do, the pre-loop stage gets no gradient from that forward; exits there carry none either)."""
 +        n = self.loop.num_loops if num_loops is None else int(num_loops)
 +        if n < 1:
 +            raise ValueError(f"num_loops must be >= 1, got {n}")
@@ -192,9 +234,11 @@ index 0000000..fe0989c
 +        pre = self.single_blocks[: self.n_pre_single]
 +        state = self._run_blocks(pre, state, st, pag_single_layers, pag_strength)
 +        saved = {}
++        no_grad_until = n - grad_loops if grad_loops is not None and grad_loops < n else 0
 +        for r in range(1, n + 1):
-+            state = self._run_blocks(self.core_blocks, state, st, pag_single_layers, pag_strength,
-+                                     offset=self.n_pre_single)
++            with torch.set_grad_enabled(torch.is_grad_enabled() and r > no_grad_until):
++                state = self._run_blocks(self.core_blocks, state, st, pag_single_layers, pag_strength,
++                                         offset=self.n_pre_single)
 +            if r in exits:
 +                saved[r] = state
 +        out: dict[str, Any] = self._decode(state, st, pag_single_layers, pag_strength)
@@ -587,7 +631,7 @@ index c698c40..28b6c1c 100644
 +    model.eval()
 +    return model
 diff --git a/src/flux_action/policy.py b/src/flux_action/policy.py
-index a7fbe7b..01e98d7 100644
+index a7fbe7b..8ded5c0 100644
 --- a/src/flux_action/policy.py
 +++ b/src/flux_action/policy.py
 @@ -20,6 +20,7 @@ training, EMA and training-state resume are not implemented here.
@@ -710,7 +754,7 @@ index a7fbe7b..01e98d7 100644
          if cfg.inference_profile == "history":
              video = history.pack_video(prepared.latents, cfg)
              action = history.pack_actions(prepared.state, prepared.actions, cfg)
-@@ -696,6 +732,94 @@ class FluxActionPolicy(nn.Module):
+@@ -696,6 +732,134 @@ class FluxActionPolicy(nn.Module):
              "n_valid_windows": n,
          }
  
@@ -783,7 +827,19 @@ index a7fbe7b..01e98d7 100644
 +                       f"{dump}/dit-inputs-rank{rank}-call{self._dump_index:04d}.pt")
 +        loop = getattr(self.dit, "loop", None)
 +        extra: dict[str, Any] = {}
-+        if loop is not None and cfg.deep_supervision and loop.num_loops > 1:
++        sampler = cfg.loop_sampler if loop is not None and self.training else None
++        if sampler is not None:  # random loop depth: N, the supervised exits and their weights for this micro-batch
++            n_loops, exits, exit_weights = self._random_depth(sampler, loop)
++            extra = {"num_loops": n_loops, "exit_loops": tuple(r for r in exits if r < n_loops)}
++            if sampler.get("grad_loops") is not None:
++                extra["grad_loops"] = int(sampler["grad_loops"])
++        elif loop is not None and cfg.deep_supervision and loop.num_loops > 1:
++            from .models.looped import deep_supervision_weights
++
++            n_loops, exits = loop.num_loops, list(range(1, loop.num_loops + 1))
++            weights = deep_supervision_weights(loop.num_loops, cfg.deep_supervision, cfg.deep_supervision_center,
++                                               cfg.deep_supervision_temperature)
++            exit_weights = dict(zip(exits, weights))
 +            extra["exit_loops"] = tuple(range(1, loop.num_loops))  # deep supervision: decode every loop exit
 +        pred = self.dit(**self._cast_inputs(packed), seqlens=seqlens, **extra)
 +        target_flat = packing.flatten_windows({"x": target})["x"]
@@ -791,16 +847,44 @@ index a7fbe7b..01e98d7 100644
 +        info = {"video_mse": losses["video_mse"], "action_mse": losses["action_mse"], "n_valid_windows": n}
 +        loss = losses["loss"]
 +        if extra:
-+            from .models.looped import deep_supervision_weights
-+
-+            weights = deep_supervision_weights(loop.num_loops, cfg.deep_supervision)
-+            loss = weights[-1] * loss
-+            for r, out_r in pred["exits"].items():
-+                loss_r = video_only.flow_loss(out_r["x_video"], target_flat)["loss"]
-+                loss = loss + weights[r - 1] * loss_r
-+                info[f"loss_exit{r}"] = loss_r.detach()
++            per_exit = {n_loops: losses["loss"]}
++            for r, out_r in pred.get("exits", {}).items():
++                per_exit[r] = video_only.flow_loss(out_r["x_video"], target_flat)["loss"]
++                info[f"loss_exit{r}"] = per_exit[r].detach()
++            loss = sum(exit_weights[r] * per_exit[r] for r in exits)
++            if cfg.monotone_beta:  # a later exit may not be worse than the one before it
++                loss = loss + cfg.monotone_beta * sum(F.relu(per_exit[b] - per_exit[a].detach())
++                                                      for a, b in zip(exits, exits[1:]))
 +            info["loss_final"] = losses["loss"].detach()
++            info["loops"] = n_loops
 +        return loss, info
++
++    def _random_depth(self, sampler: dict, loop: Any) -> tuple[int, list[int], dict[int, float]]:
++        """Draw this micro-batch's loop depth N ~ uniform(min..max) -> (N, supervised exits, {exit: weight}).
++
++        N comes from ``loop_draw`` = (update, micro-batch) set by the trainer, so every rank draws the same N
++        (FSDP: all ranks must run the same number of block calls) and a resumed run draws the same sequence."""
++        from .models.looped import deep_supervision_weights, random_depth_exits, random_depth_weights
++
++        cfg = self.config
++        n_min, n_max = int(sampler.get("min", 1)), int(sampler.get("max", loop.num_loops))
++        k = sampler.get("grad_loops")
++        k = None if k is None else int(k)
++        if not 1 <= n_min <= n_max or n_max < 2 or (k is not None and not n_min <= k):
++            # grad_loops < min would leave the first exits without any loss (never inside the gradient window)
++            raise ValueError(f"loop_sampler needs 1 <= min <= max, max >= 2, min <= grad_loops: {sampler}")
++        if not cfg.deep_supervision:
++            raise ValueError("loop_sampler needs deep_supervision (the target weight profile over exits 1..max)")
++        draw = getattr(self, "loop_draw", None)
++        if draw is None:  # outside the trainer: a call counter, the same on every rank if every rank calls alike
++            self._loop_calls = getattr(self, "_loop_calls", 0) + 1
++            draw = (self._loop_calls, 0)
++        step, micro = draw
++        g = torch.Generator().manual_seed(int(sampler.get("seed", 0)) * 1_000_003 + int(step) * 1_009 + int(micro))
++        n = int(torch.randint(n_min, n_max + 1, (), generator=g))
++        target = deep_supervision_weights(n_max, cfg.deep_supervision, cfg.deep_supervision_center,
++                                          cfg.deep_supervision_temperature)
++        return n, random_depth_exits(n, k), random_depth_weights(n, n_min, n_max, target, k)
 +
      @staticmethod
      def _drop_cameras(cams: Tensor, dropped: list[int]) -> Tensor:
@@ -1314,7 +1398,7 @@ index 0000000..5985066
 +def _clean(fqn: str) -> str:
 +    return fqn.replace("_checkpoint_wrapped_module.", "").replace("_orig_mod.", "")
 diff --git a/src/flux_action/training/trainer.py b/src/flux_action/training/trainer.py
-index fe829e8..b2d3b02 100644
+index fe829e8..eced06f 100644
 --- a/src/flux_action/training/trainer.py
 +++ b/src/flux_action/training/trainer.py
 @@ -37,7 +37,9 @@ from __future__ import annotations
@@ -1510,11 +1594,12 @@ index fe829e8..b2d3b02 100644
          accum = len(micro)
          # FP64 matches the previous Python-float accumulation without per-microbatch host waits.
          metrics = torch.zeros(3, device=self.device, dtype=torch.float64)
-@@ -627,17 +696,26 @@ class Trainer:
+@@ -627,17 +696,30 @@ class Trainer:
              and self.compute_dtype != self.param_dtype
              and self.device.type == "cuda",
          )
 +        self._micro_debug = []
++        loops: list[int] = []  # loop depth of each micro-batch (random-depth training)
 +        # FLUX_ANOMALY_STEP=N: autograd anomaly detection (names the op that produced a NaN) for update N only
 +        anomaly = os.environ.get("FLUX_ANOMALY_STEP") == str(self.step + 1)
 +        def anomaly_ctx():
@@ -1527,8 +1612,11 @@ index fe829e8..b2d3b02 100644
 -            with autocast:
 +            if anomaly and self.rank == 0:
 +                print(f"[anomaly] step {self.step + 1} micro {i} k={batch.get('context_frames')}", flush=True)
++            self.policy.loop_draw = (self.step + 1, i)  # random loop depth: the same draw on every rank
 +            with autocast, anomaly_ctx():
                  loss, info = self.policy(batch, prepared=prepared)
++            if "loops" in info:
++                loops.append(int(info["loops"]))
              following = micro[i + 1] if i + 1 < accum else next_batch
              if following is not None:  # its encoders overlap this micro-batch's backward pass
                  self._prepared = self._prepare(following)
@@ -1539,7 +1627,7 @@ index fe829e8..b2d3b02 100644
              metrics += (
                  torch.stack(
                      [
-@@ -651,6 +729,8 @@ class Trainer:
+@@ -651,6 +733,8 @@ class Trainer:
              windows += int(info["n_valid_windows"])
          if self.sharded:
              self.policy.dit.set_requires_gradient_sync(True)
@@ -1548,7 +1636,7 @@ index fe829e8..b2d3b02 100644
          if self.step == 0:
              self._check_gradients()
          # Abort on all ranks before anything is mutated: a non-finite update would poison the parameters,
-@@ -659,10 +739,27 @@ class Trainer:
+@@ -659,10 +743,27 @@ class Trainer:
          replicas = self.world_size // (self.config.shard_size or self.world_size) if self.sharded else 1
          grad_norm = global_grad_norm(self.policy, self.device, replicas)
          if not (math.isfinite(loss_mean) and math.isfinite(grad_norm)):
@@ -1576,7 +1664,11 @@ index fe829e8..b2d3b02 100644
          clipped = {}
          if self.config.max_grad_norm is not None:
              # clip_grad_norm_ semantics on the global norm: every rank scales its shards by the same factor
-@@ -695,6 +792,28 @@ class Trainer:
+@@ -692,9 +793,32 @@ class Trainer:
+             "lr_heads": consumed[1] if len(consumed) > 1 else None,
+             **{f"beta_{name}": beta for name, beta in betas.items()},
+             "step_time": time.perf_counter() - started,
++            **({"loops": loops} if loops else {}),
              **peak,
          }
  
@@ -1605,7 +1697,7 @@ index fe829e8..b2d3b02 100644
      def _check_gradients(self) -> None:
          """Every trainable parameter must take part in the loss; otherwise freeze it explicitly.
  
-@@ -712,6 +831,10 @@ class Trainer:
+@@ -712,6 +836,10 @@ class Trainer:
      # ------------------------------------------------------------------ side effects
      def _checkpoint(self) -> None:
          started = time.perf_counter()

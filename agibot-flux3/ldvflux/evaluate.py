@@ -6,7 +6,10 @@ Every ``eval_every`` updates, on all ranks (the DiT is FSDP-sharded, so every ra
   (a stratified grid) and fixed noise, so evals are comparable across steps; raw weights.
 * **8 fixed val samples** with the EMA weights swapped in (fixed windows, k = K_MAX, fixed seeds), saved as mp4
   grids: top row ground truth (context + future), bottom row context + generated future.
-* **early stop**: returns ``stop`` when the mean val loss rose at 3 consecutive evals.
+* **train reference** (``train_ref_windows`` > 0): the same loss on fixed *train* windows, so the train/val gap
+  (over- vs underfitting) is measurable; the per-update training loss is too noisy for that.
+* **early stop**: returns ``stop`` when the mean val loss rose at 3 consecutive evals (``stop_rule = "rising"``), or
+  when ``stop_metric`` has not reached a new best for ``patience`` evals (``stop_rule = "no_best"``).
 
 Settings come from ``trainer.config.dataset_kwargs["eval"]`` (see DEFAULTS).
 """
@@ -37,6 +40,9 @@ DEFAULTS = {
     "sample_cfg": 4.0,
     "sample_shift": 5.0,
     "patience": 3,
+    "stop_rule": "rising",  # rising | no_best
+    "stop_metric": "val_loss",  # any key of the result, e.g. val_loss_k9_mean_loops (looped: mean over eval depths)
+    "train_ref_windows": 0,  # fixed train windows for the train-reference loss (0 = off)
 }
 
 
@@ -72,6 +78,9 @@ class EvalState:
         self.loss_windows = _load_windows(loss_picks[rank::world], self.meta, hw)
         per_rank = math.ceil(len(sample_picks) / world)
         self.sample_windows = _load_windows(sample_picks[rank * per_rank : (rank + 1) * per_rank], self.meta, hw)
+        n_ref = self.opts["train_ref_windows"]
+        ref = fixed_windows("train", n_ref, seed=0, splits_path=cfg["splits"]) if n_ref else []
+        self.train_windows = _load_windows(ref[rank::world], self.meta, hw)
         self.history: list[float] = []
         self.out_dir = Path(trainer.output_dir) / "eval"
         self.out_dir.mkdir(parents=True, exist_ok=True)
@@ -159,6 +168,17 @@ def eval_hook(trainer) -> dict:
         sums_d = _all_sum(sums_d, policy.device)
         per_k.update({f"val_loss_k{k_top}_loops{d}": sums_d[2 * i] / max(sums_d[2 * i + 1], 1)
                       for i, d in enumerate(depths)})
+        per_k[f"val_loss_k{k_top}_mean_loops"] = float(np.mean(
+            [per_k[f"val_loss_k{k_top}"]] + [per_k[f"val_loss_k{k_top}_loops{d}"] for d in depths]))
+    if opts["train_ref_windows"]:  # same protocol on fixed train windows: trained k, inference depth as trained
+        sums_r = []
+        for k in [0, *train_ks]:
+            sums_r += list(val_loss(policy, st.train_windows, k, opts, t_values))
+        sums_r = _all_sum(sums_r, policy.device)
+        ref = {f"train_ref_loss_k{k}": sums_r[2 * i] / max(sums_r[2 * i + 1], 1) for i, k in enumerate([0, *train_ks])}
+        ref["train_ref_loss"] = float(np.mean(list(ref.values())))
+        ref["gap"] = mean - ref["train_ref_loss"]  # val - train on the same k/depth mix as the val_loss mean
+        per_k.update(ref)
 
     # Samples with the EMA weights (CPU EMA swapped into the shards on every rank).
     ema = next(iter(trainer.emas.values())) if trainer.emas else None
@@ -177,10 +197,14 @@ def eval_hook(trainer) -> dict:
         if stash is not None:
             ema.restore(policy, stash)
 
-    st.history.append(mean)
-    p = opts["patience"]
-    rising = len(st.history) > p and all(st.history[-i] > st.history[-i - 1] for i in range(1, p + 1))
-    result = {"val_loss": mean, **per_k, "ema_samples": stash is not None, "stop": bool(rising)}
+    result = {"val_loss": mean, **per_k, "ema_samples": stash is not None}
+    st.history.append(result[opts["stop_metric"]])
+    p, h = opts["patience"], st.history
+    if opts["stop_rule"] == "no_best":  # no new best in the last p evals (history starts at this launch)
+        stop = len(h) > p and min(h[-p:]) >= min(h[:-p])
+    else:
+        stop = len(h) > p and all(h[-i] > h[-i - 1] for i in range(1, p + 1))
+    result["stop"] = bool(stop)
     if rank == 0:
         with open(st.out_dir / "val.jsonl", "a") as f:
             f.write(json.dumps({"step": trainer.step, **result}) + "\n")
