@@ -3,6 +3,7 @@
 #   docs/index.html            models, headline numbers, how to run the two evaluations
 #   docs/loop-depth/           "Trained Loop Depth" (normal eval) page + strips videos_<tag>/
 #   docs/long-rollout/         "Long Rollout" page + strips videos/
+#   docs/seed-sweep/           "Random-Depth Seed Sweep" page (results/seedsweep/page, scripts/build_seed_sweep_page.py) + grid videos
 #   scripts/build_pages.sh [DOCS=/workspace/loop_dit_video/docs]     then GH_TOKEN=... scripts/push_all.sh "..."
 set -eu
 cd "$(dirname "$0")/.."
@@ -32,6 +33,11 @@ cp -n results/rollout/page/videos/*.mp4 "$DOCS/long-rollout/videos/" 2>/dev/null
 IFS=$'\n'; set -- $MODELS; unset IFS
 $PY scripts/build_rollout_page.py --models "$@" --out "$DOCS/long-rollout/index.html"
 $PY scripts/build_index_page.py --out "$DOCS/index.html"
+if [ -f results/seedsweep/page/index.html ]; then  # seed sweep: the published page; videos/ already in docs keep the ones only the artifact had
+  mkdir -p "$DOCS/seed-sweep/videos"; cp results/seedsweep/page/index.html "$DOCS/seed-sweep/index.html"
+  cp results/seedsweep/grids/*.mp4 "$DOCS/seed-sweep/videos/" 2>/dev/null || true
+  $PY scripts/wrap_html.py "$DOCS/seed-sweep/index.html"
+fi
 for f in "$DOCS/index.html" "$DOCS/loop-depth/index.html" "$DOCS/long-rollout/index.html"; do $PY scripts/wrap_html.py "$f"; done   # fragments -> full documents
 echo "pages built in $DOCS: normal eval [$TAGS], long rollout [$(printf '%s; ' "$@")]"
 du -sh "$DOCS" | cut -f1

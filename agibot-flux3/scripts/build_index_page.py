@@ -111,13 +111,15 @@ pre {{ font-family: var(--mono); font-size: 13px; background: var(--surface); bo
 <div class="wrap">
   <div class="eyebrow">AgiBot World Beta · FLUX 3 Action 7B · Looped-DiT retrofit · evaluation pages</div>
   <h1>Looped FLUX 3 Action on AgiBot</h1>
-  <p class="lede">A FLUX 3 Action video model fine-tuned on AgiBot World Beta head-camera clips (k past frames + task caption → 33 future frames, 15 fps, 384×512), then retrofitted as a Looped-DiT whose 9 core blocks run N times per denoising step. Two evaluations, each a page with videos, cover every looped checkpoint we trained. Code and notes: <a href="{REPO}">naomili0924/looped-dit-video</a>, folder <code>agibot-flux3/</code>.</p>
+  <p class="lede">A FLUX 3 Action video model fine-tuned on AgiBot World Beta head-camera clips (k past frames + task caption → 33 future frames, 15 fps, 384×512), then retrofitted as a Looped-DiT whose 9 core blocks run N times per denoising step. Two evaluations, each a page with videos, cover every looped checkpoint we trained; a third page sweeps noise seeds over the random-depth long run. Code and notes: <a href="{REPO}">naomili0924/looped-dit-video</a>, folder <code>agibot-flux3/</code>.</p>
 
   <div class="cards">
     <div class="card"><div class="say">say “normal eval”</div><h3><a href="loop-depth/">Trained Loop Depth</a></h3>
       <p>Test split, 100 windows, k = 1 and 9, the model sampled at loop depth N = 1, 2, 4, 8: PSNR / SSIM / LPIPS, FVD (300 windows), a VLM judge, validation curves, the training recipe, and 8 fixed test windows as strips <i>GT | base | fine-tuned | N = 1 | 2 | 4 | 8</i>.</p></div>
     <div class="card"><div class="say">say “long-rollout eval”</div><h3><a href="long-rollout/">Long Rollout</a></h3>
       <p>Zero-shot: one real frame and one prompt, four 33-frame windows chained autoregressively to 8.8 s. 8 test cases × 3 prompts (the real caption and two alternatives) × loop depths 1, 2, 4, 8, 16 next to the ground truth, the base model and the Phase-3 fine-tune.</p></div>
+    <div class="card"><div class="say">say “seed sweep”</div><h3><a href="seed-sweep/">Random-Depth Seed Sweep</a></h3>
+      <p>The long rollout of the random-depth (N 1–8) long run, repeated over 5 noise seeds at every checkpoint (steps 3000–9500): 5 × 5 seed-by-depth grid videos per case and prompt, and per depth the distance to the ground truth, its spread over seeds, motion and the LPIPS diversity between seeds.</p></div>
   </div>
 
   <h2>Models</h2>
