@@ -13,3 +13,10 @@ __pycache__/
 # checkpoints (never on GitHub; mirrored to the private Hub repo)
 runs/
 ckpt_backup/
+# seed sweep: clips (~1 GB per step), the GT cache and grids stay local (grids are in docs/seed-sweep/videos)
+results/seedsweep/*/clips/
+results/seedsweep/gt_cache/
+results/seedsweep/grids/
+results/seedsweep/page/index.html
+results/seedsweep/page/pending.json
+results/seedsweep/page/published.json

@@ -82,11 +82,13 @@ The claude.ai artifact versions of the pages (private, strips stored as artifact
 
 The "Random-Depth Seed Sweep" artifact page (https://claude.ai/artifact/PN27FAM1mM5UsLdamGzzFK): the long rollout of the
 `random_depth_n1-8_long` EMAs with 5 noise seeds per prompt (seed s of case ci: noise 10000·s + ci, so seed 0 is the
-single-seed Long Rollout noise), N = 1 2 4 8 16, one 5 × 5 seed-by-depth grid video per case and prompt.
+single-seed Long Rollout noise), N = 1 2 4 8 16, one 5 × 5 seed-by-depth grid video per case and prompt. Done for steps
+3000, 4000, 5000, 6000, 7000, 8000, 9500 (9000 skipped); also on GitHub Pages (`docs/seed-sweep`, copied by
+`scripts/build_pages.sh`). Findings: [`results/seedsweep/README.md`](results/seedsweep/README.md); tables: `results/RESULTS.md`.
 
 ```bash
-HF_TOKEN=... scripts/run_seed_sweep.sh "9500 4000 5000 9000 7000 6000 8000" cuda:0    # ~5.5 h per step on one H100
-python scripts/build_seed_sweep_page.py --steps 3000 4000 5000 6000 7000 8000 9000 9500 --running <step>
+HF_TOKEN=... scripts/run_seed_sweep.sh "9500 4000 5000 7000 6000 8000" cuda:0    # ~5.5 h rollouts + 20 min metrics per step, one H100
+python scripts/build_seed_sweep_page.py --steps 3000 4000 5000 6000 7000 8000 9500 [--running <step>]
 ```
 
 - `ldvflux/seed_sweep.py` → `results/seedsweep/rlong<step>/clips/<case>/p<i>_N<d>_s<seed>.mp4`; `ldvflux/seed_metrics.py`

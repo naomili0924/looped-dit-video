@@ -119,7 +119,7 @@ pre {{ font-family: var(--mono); font-size: 13px; background: var(--surface); bo
     <div class="card"><div class="say">say “long-rollout eval”</div><h3><a href="long-rollout/">Long Rollout</a></h3>
       <p>Zero-shot: one real frame and one prompt, four 33-frame windows chained autoregressively to 8.8 s. 8 test cases × 3 prompts (the real caption and two alternatives) × loop depths 1, 2, 4, 8, 16 next to the ground truth, the base model and the Phase-3 fine-tune.</p></div>
     <div class="card"><div class="say">say “seed sweep”</div><h3><a href="seed-sweep/">Random-Depth Seed Sweep</a></h3>
-      <p>The long rollout of the random-depth (N 1–8) long run, repeated over 5 noise seeds at every checkpoint (steps 3000–9500): 5 × 5 seed-by-depth grid videos per case and prompt, and per depth the distance to the ground truth, its spread over seeds, motion and the LPIPS diversity between seeds.</p></div>
+      <p>The long rollout of the random-depth (N 1–8) long run, repeated over 5 noise seeds at every checkpoint (steps 3000–9500): 5 × 5 seed-by-depth grid videos per case and prompt, and per depth the distance to the ground truth, its spread over seeds, motion and the LPIPS diversity between seeds. What it learns and fails to learn: <a href="{REPO}/blob/main/agibot-flux3/results/seedsweep/README.md">findings</a>.</p></div>
   </div>
 
   <h2>Models</h2>

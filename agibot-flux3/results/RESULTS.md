@@ -72,3 +72,54 @@ caption minus yes-rate with a swapped caption (Qwen3-VL).
 | ft_step6000 | 5 | 21.49 | 0.832 | 0.126 | - | - | 50 |
 | ft_step6000 | 9 | 21.56 | 0.840 | 0.122 | - | - | 50 |
 | ft_step6000 | 17 | 21.59 | 0.844 | 0.119 | - | - | 50 |
+
+## seed sweep (random-depth long run)
+
+Long rollout (k = 1, four chained 33-frame windows = 8.9 s) of the `random_depth_n1-8_long` EMAs, 8 gallery cases × 3
+prompts × 5 noise seeds × loop depth N 1 2 4 8 16; ground-truth metrics on the real prompt only, frames inside the
+episode; mean over cases per seed, then over the 5 seeds. Page with the 5 × 5 seed-by-depth grids:
+https://naomili0924.github.io/looped-dit-video/seed-sweep/ (definitions: `ldvflux/seed_metrics.py`; numbers:
+`results/seedsweep/rlong<step>/summary.json`, per clip `raw.json`; step 3000 comes from the first runner, see EVAL.md).
+Findings (learned / not learned, overlap with training): [`seedsweep/README.md`](seedsweep/README.md).
+
+N = 1 by window (w1 … w4):
+
+| step | LPIPS to GT | PSNR to GT | LPIPS between seeds | motion |
+|---:|---|---|---|---|
+| 3000 | 0.185 / 0.284 / 0.344 / 0.395 | 18.62 / 15.80 / 14.92 / 13.97 | 0.187 / 0.272 / 0.326 / 0.376 | 2.46 / 2.12 / 2.44 / 2.39 |
+| 4000 | 0.177 / 0.276 / 0.336 / 0.389 | 18.82 / 16.02 / 15.24 / 14.14 | 0.177 / 0.264 / 0.319 / 0.360 | 2.41 / 2.14 / 2.37 / 2.23 |
+| 5000 | 0.169 / 0.269 / 0.331 / 0.388 | 19.13 / 16.16 / 15.25 / 14.04 | 0.167 / 0.249 / 0.297 / 0.350 | 2.24 / 1.99 / 2.16 / 2.14 |
+| 6000 | 0.167 / 0.253 / 0.318 / 0.381 | 19.06 / 16.66 / 15.43 / 14.29 | 0.166 / 0.245 / 0.296 / 0.343 | 2.27 / 1.98 / 2.19 / 1.95 |
+| 7000 | 0.170 / 0.255 / 0.320 / 0.379 | 18.87 / 16.58 / 15.30 / 14.22 | 0.173 / 0.257 / 0.299 / 0.347 | 2.33 / 2.06 / 2.21 / 2.08 |
+| 8000 | 0.167 / 0.254 / 0.314 / 0.381 | 18.85 / 16.42 / 15.62 / 14.35 | 0.167 / 0.244 / 0.286 / 0.326 | 2.32 / 1.96 / 2.19 / 2.04 |
+| 9500 | 0.169 / 0.248 / 0.305 / 0.387 | 18.79 / 16.57 / 15.76 / 14.15 | 0.168 / 0.236 / 0.274 / 0.314 | 2.41 / 1.95 / 1.95 / 1.89 |
+
+Last window (w4) by loop depth, LPIPS to GT (± std over seeds); best per step in bold:
+
+| step | N 1 | N 2 | N 4 | N 8 | N 16 |
+|---:|---:|---:|---:|---:|---:|
+| 3000 | **0.395** ± 0.031 | 0.418 ± 0.011 | 0.429 ± 0.015 | 0.423 ± 0.040 | 0.454 ± 0.033 |
+| 4000 | **0.389** ± 0.025 | 0.395 ± 0.008 | 0.417 ± 0.020 | 0.397 ± 0.015 | 0.402 ± 0.019 |
+| 5000 | **0.388** ± 0.016 | 0.393 ± 0.018 | 0.388 ± 0.010 | 0.396 ± 0.009 | 0.409 ± 0.026 |
+| 6000 | 0.381 ± 0.022 | 0.391 ± 0.019 | **0.373** ± 0.008 | 0.383 ± 0.015 | 0.402 ± 0.013 |
+| 7000 | **0.379** ± 0.026 | 0.392 ± 0.016 | 0.402 ± 0.012 | 0.395 ± 0.011 | 0.407 ± 0.005 |
+| 8000 | 0.381 ± 0.018 | **0.379** ± 0.006 | 0.395 ± 0.019 | 0.387 ± 0.011 | 0.401 ± 0.017 |
+| 9500 | 0.387 ± 0.021 | **0.382** ± 0.014 | 0.403 ± 0.019 | 0.389 ± 0.013 | 0.387 ± 0.010 |
+
+Last window (w4) by loop depth, LPIPS between seeds:
+
+| step | N 1 | N 2 | N 4 | N 8 | N 16 |
+|---:|---:|---:|---:|---:|---:|
+| 3000 | 0.376 | 0.370 | 0.403 | 0.405 | 0.450 |
+| 4000 | 0.360 | 0.364 | 0.389 | 0.370 | 0.399 |
+| 5000 | 0.350 | 0.343 | 0.354 | 0.345 | 0.363 |
+| 6000 | 0.343 | 0.344 | 0.331 | 0.339 | 0.362 |
+| 7000 | 0.347 | 0.369 | 0.390 | 0.379 | 0.388 |
+| 8000 | 0.326 | 0.337 | 0.344 | 0.335 | 0.345 |
+| 9500 | 0.314 | 0.327 | 0.340 | 0.318 | 0.321 |
+
+- Training steps mostly help the middle windows: N 1 LPIPS to GT in w2/w3 falls from 0.284/0.344 (3000) to 0.248/0.305
+  (9500); w4 settles near 0.38 from step 6000 on.
+- The seeds agree more as training goes on: w4 LPIPS between seeds 0.376 (3000) → 0.314 (9500).
+- Deeper loops do not help: N 1–2 match or beat N 8–16 at every step; the best w4 depth other than N 1–2 is N 4 at step
+  6000, by 0.007, within the seed spread.

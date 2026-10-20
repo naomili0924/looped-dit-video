@@ -1,0 +1,42 @@
+{
+ "test01_toilet": [
+  "Wipe the toilet with the held cloth.",
+  "Put the held cloth down on the toilet lid.",
+  "Lift the held cloth up and away from the toilet."
+ ],
+ "test02_cap": [
+  "Pick up the baseball cap on the sofa.",
+  "Push the baseball cap further back onto the sofa.",
+  "Leave the baseball cap on the sofa and pull the hand back."
+ ],
+ "test03_chips_bag": [
+  "Place the large bucket of potato chips held in the left arm into the gray felt bag on the left side of the cash register.",
+  "Lift the large bucket of potato chips held in the left arm straight up.",
+  "Put the large bucket of potato chips down on the counter with the left arm."
+ ],
+ "test04_vacuum": [
+  "Use pink vacuum cleaner to vacuum the garbage on the floor with right arm.",
+  "Lift the pink vacuum cleaner up off the floor with the right arm.",
+  "Use pink vacuum cleaner to vacuum the garbage on the floor with left arm."
+ ],
+ "test05_doorknob": [
+  "Turn the doorknob to open the door with left arm.",
+  "Release the doorknob and pull the left arm back.",
+  "Turn the doorknob to open the door with right arm."
+ ],
+ "test06_marker": [
+  "Pick up the uncapped whiteboard marker on the table with left arm.",
+  "Slide the uncapped whiteboard marker across the table with the left arm.",
+  "Pick up the uncapped whiteboard marker on the table with right arm."
+ ],
+ "test07_shorts": [
+  "Slide the dark shorts on the desktop upward with the left arm.",
+  "Slide the dark shorts on the desktop downward with the left arm.",
+  "Slide the dark shorts on the desktop upward with the right arm."
+ ],
+ "test08_taro_chips": [
+  "Pick up the purple taro chips from the restocking box with the right arm.",
+  "Push the purple taro chips down into the restocking box with the right arm.",
+  "Pick up the purple taro chips from the restocking box with the left arm."
+ ]
+}

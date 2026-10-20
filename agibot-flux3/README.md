@@ -13,6 +13,10 @@ model. Task: *k* past frames + caption → 33 future frames at 15 fps, 384×512.
 
 **Evaluation pages (videos): https://naomili0924.github.io/looped-dit-video/** — "normal eval" (Trained Loop Depth) and "long-rollout eval" (Long Rollout); how to run either for a new checkpoint: [`EVAL.md`](EVAL.md). Models: [`configs/models.json`](configs/models.json).
 
+**Random-Depth Seed Sweep** (the random-depth N 1–8 long run, steps 3000–9500, 5 seeds × 5 depths per case and prompt):
+[page](https://naomili0924.github.io/looped-dit-video/seed-sweep/) ([claude.ai artifact](https://claude.ai/artifact/PN27FAM1mM5UsLdamGzzFK));
+what the model learns and fails to learn, and what the eval cases share with training: [`results/seedsweep/README.md`](results/seedsweep/README.md).
+
 **Evaluating the models on another machine (motion-aware evaluation, loop depth: background vs motion):**
 see [`EVAL_MOTION.md`](EVAL_MOTION.md) — inputs (k past frames + task prompt), weights to download, the fixed
 evaluation cases (`configs/eval_cases_gallery8.json`), the commands and how to read the numbers.
