@@ -1,0 +1,127 @@
+{
+ "clap": {
+  "real": "Clap hands.",
+  "alt1": "Bring both hands together to clap.",
+  "alt2": "Wave one hand at the TV."
+ },
+ "scoop_tapioca": {
+  "real": "Scoop a spoonful of black pearl tapioca pearls from the container holding black pearl tapioca pearls with the right arm using the picked-up spoon.",
+  "alt1": "Use the spoon to scoop up some black tapioca pearls from the container.",
+  "alt2": "Pour the tapioca pearls from the spoon back into the container."
+ },
+ "pour_dressing": {
+  "real": "Pour the picked-up salad dressing onto the meat slice with the left arm.",
+  "alt1": "Pour the salad dressing over the slice of meat.",
+  "alt2": "Squeeze the salad dressing bottle over the slice of meat."
+ },
+ "twist_cap": {
+  "real": "Tighten the bottle cap of the held water bottle with both arms.",
+  "alt1": "Screw the cap tightly onto the water bottle.",
+  "alt2": "Unscrew the cap and take it off the water bottle."
+ },
+ "turn_faucet": {
+  "real": "Turn off the faucet with the right arm.",
+  "alt1": "Rotate the faucet handle to shut off the water.",
+  "alt2": "Turn on the faucet."
+ },
+ "stamp_form": {
+  "real": "Stamp the document on the table with the stamp in hand using the right arm.",
+  "alt1": "Press the stamp down onto the paper to stamp it.",
+  "alt2": "Stamp the paper twice, in two different places."
+ },
+ "scan_juice": {
+  "real": "Aim the barcode scanner at the barcode of the held orange juice with the right arm.",
+  "alt1": "Scan the barcode on the orange juice bottle with the scanner.",
+  "alt2": "Scan the yellow bottle on the counter with the barcode scanner."
+ },
+ "press_ricecooker": {
+  "real": "Press the left arm on the rice cooker.",
+  "alt1": "Press down on the lid of the rice cooker to close it.",
+  "alt2": "Press the button on the front of the rice cooker."
+ },
+ "press_oven": {
+  "real": "Press the oven start button with the right arm.",
+  "alt1": "Push the start button on the oven.",
+  "alt2": "Press the oven start button twice."
+ },
+ "base_turn": {
+  "real": "Turn to face the curtains with right.",
+  "alt1": "Rotate the robot's body to face the curtains.",
+  "alt2": "Turn to the left, away from the curtains."
+ },
+ "base_forward": {
+  "real": "Move forward to approach the guest.",
+  "alt1": "Drive forward toward the person sitting at the table.",
+  "alt2": "Move backward away from the table."
+ },
+ "move_guard": {
+  "real": "Move the held hand guard above the vegetable cutter with the right arm.",
+  "alt1": "Bring the hand guard over the vegetable slicer.",
+  "alt2": "Move the hand guard to the side of the counter, away from the slicer."
+ },
+ "carry_bag": {
+  "real": "Carry the garbage bag towards the large trash bin with the right arm.",
+  "alt1": "Carry the bag over to the trash bin.",
+  "alt2": "Carry the bag toward the wooden table."
+ },
+ "wave": {
+  "real": "Lower the left arm while waving the right arm (three times).",
+  "alt1": "Wave goodbye to the person.",
+  "alt2": "Clap hands."
+ },
+ "cut_dough": {
+  "real": "Cut the dough into small pieces with a knife using both hands.",
+  "alt1": "Slice the dough into small pieces with the knife.",
+  "alt2": "Cut the dough into two halves."
+ },
+ "knead_dough": {
+  "real": "Knead the dough with both hands.",
+  "alt1": "Squeeze and press the dough ball with both hands.",
+  "alt2": "Roll the dough into a long rope."
+ },
+ "stir_coffee": {
+  "real": "Stir the coffee in the cup with the spoon held in the right hand.",
+  "alt1": "Stir the drink in the cup with the spoon.",
+  "alt2": "Shake the cup gently to mix the coffee."
+ },
+ "shake_decanter": {
+  "real": "Shake the held decanter with the right arm.",
+  "alt1": "Swirl the wine around in the decanter.",
+  "alt2": "Pour the wine from the decanter into the glass."
+ },
+ "untie_curtain": {
+  "real": "Cooperatively untie the curtain ties with both hands.",
+  "alt1": "Undo the tie holding the curtain together.",
+  "alt2": "Tie the curtain tie tighter."
+ },
+ "tie_tieback": {
+  "real": "Tie the velcro curtain tiebacks with both hands.",
+  "alt1": "Wrap the tieback around the curtain and fasten the velcro.",
+  "alt2": "Untie the curtain tieback and let the curtain hang."
+ },
+ "heldout_toast": {
+  "real": "Lift a piece of plain toast from the basket with the left arm.",
+  "alt1": "Pick up a slice of bread from the basket.",
+  "alt2": "Put a slice of bread into the toaster."
+ },
+ "heldout_supermarket": {
+  "real": "Retrieve the small bottle of milk from the cold storage cabinet.",
+  "alt1": "Take a small milk bottle out of the fridge shelf.",
+  "alt2": "Put the milk bottle into the shopping cart."
+ },
+ "heldout_water": {
+  "real": "Pick up the bottled water with left arm.",
+  "alt1": "Take one water bottle out of the carton.",
+  "alt2": "Place a water bottle upright on the table next to the carton."
+ },
+ "heldout_curtains": {
+  "real": "Pull the curtain to the level of the windowsill with the right arm.",
+  "alt1": "Pull the curtain down to the windowsill.",
+  "alt2": "Pull the curtain back up to open it."
+ },
+ "heldout_menu": {
+  "real": "Carry the held red menu to the table where the guests are seated.",
+  "alt1": "Bring the menu over to the guest at the table.",
+  "alt2": "Hand the menu to the guest."
+ }
+}

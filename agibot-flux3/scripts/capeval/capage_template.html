@@ -1,0 +1,310 @@
+<title>Unseen Action Probe</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: lab-report column; verdict scoreboard first, then one card per case with a 4-up synced video grid. */
+:root {
+  --bg: #f3f4f2;
+  --panel: #ffffff;
+  --ink: #17201d;
+  --ink-2: #4b5752;
+  --ink-3: #7b8682;
+  --rule: #d9ddd9;
+  --accent: #0b6e69;
+  --accent-soft: #d7ecea;
+  --yes: #2f7d3b;
+  --yes-bg: #dcefdc;
+  --part: #9a6a00;
+  --part-bg: #f6e8c3;
+  --no: #b03a2e;
+  --no-bg: #f6dcd8;
+  --gen: #6a4fb3;
+  --f-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #111615; --panel: #1a201f; --ink: #e5ebe8; --ink-2: #a9b4b0; --ink-3: #78837f; --rule: #2c3533;
+    --accent: #5cc3bb; --accent-soft: #163634;
+    --yes: #7dcb85; --yes-bg: #1c3320; --part: #e2b54a; --part-bg: #3a2f12; --no: #f08a7e; --no-bg: #3d1e1a; --gen: #b39cf2;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #111615; --panel: #1a201f; --ink: #e5ebe8; --ink-2: #a9b4b0; --ink-3: #78837f; --rule: #2c3533;
+  --accent: #5cc3bb; --accent-soft: #163634;
+  --yes: #7dcb85; --yes-bg: #1c3320; --part: #e2b54a; --part-bg: #3a2f12; --no: #f08a7e; --no-bg: #3d1e1a; --gen: #b39cf2;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.55 var(--f-body); }
+.wrap { max-width: 1240px; margin: 0 auto; padding-block: 40px 80px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex; flex-direction: column; gap: 40px; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(30px, 5vw, 46px); font-stretch: 78%; font-weight: 800; letter-spacing: -0.01em; line-height: 1.05; }
+h2 { font-size: 22px; font-stretch: 85%; font-weight: 700; }
+h3 { font-size: 17px; font-weight: 700; }
+p { margin: 0; max-width: 72ch; }
+.eyebrow { font: 500 12px/1.2 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.mono { font-family: var(--f-mono); font-size: 12.5px; }
+.muted { color: var(--ink-2); }
+.num { font-variant-numeric: tabular-nums; }
+header { display: flex; flex-direction: column; gap: 14px; }
+.setup { display: flex; flex-wrap: wrap; gap: 6px 18px; color: var(--ink-2); }
+.setup b { color: var(--ink); font-weight: 500; }
+section { display: flex; flex-direction: column; gap: 16px; }
+
+/* headline numbers */
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+.tile { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; }
+.tile .k { font: 500 11.5px/1.3 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+.tile .v { font: 700 30px/1.1 var(--f-display); font-stretch: 80%; font-variant-numeric: tabular-nums; }
+.tile .s { font-size: 13px; color: var(--ink-2); }
+.tile.trust { border-style: dashed; }
+
+/* scoreboard */
+.tablewrap { overflow-x: auto; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+th, td { padding: 7px 10px; text-align: left; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+th { font: 500 11px/1.2 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); position: sticky; top: 0; background: var(--panel); }
+tr.fam td { background: var(--bg); font: 600 12px/1.2 var(--f-mono); letter-spacing: .05em; text-transform: uppercase; color: var(--ink-2); padding-top: 12px; }
+tr.row { cursor: pointer; }
+tr.row.unver td { color: var(--ink-3); }
+tr.row:hover td { background: var(--accent-soft); }
+tr.row:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+td.r { text-align: right; font-variant-numeric: tabular-nums; }
+.dots { display: inline-flex; gap: 3px; vertical-align: middle; margin-right: 6px; }
+.dot { width: 14px; height: 14px; border-radius: 50%; display: inline-grid; place-items: center; font: 700 9px/1 var(--f-mono); }
+.dot.yes { background: var(--yes); color: var(--panel); }
+.dot.partial { background: var(--part-bg); color: var(--part); box-shadow: inset 0 0 0 2px var(--part); }
+.dot.no { background: transparent; color: var(--no); box-shadow: inset 0 0 0 1.5px var(--no); }
+.dot.na { background: var(--rule); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--ink-2); align-items: center; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+
+.badge { display: inline-flex; align-items: center; gap: 5px; font: 500 11px/1 var(--f-mono); letter-spacing: .04em; padding: 4px 7px; border-radius: 3px; border: 1px solid currentColor; white-space: nowrap; }
+.badge.unseen { color: var(--accent); }
+.badge.held { color: var(--part); }
+.badge.gen { color: var(--gen); }
+.badge.soft { color: var(--ink-3); }
+
+/* filters */
+.filters { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 500 12.5px/1 var(--f-body); padding: 7px 11px; border-radius: 99px; border: 1px solid var(--rule); background: var(--panel); color: var(--ink-2); cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.chip:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* case cards */
+.cases { display: flex; flex-direction: column; gap: 22px; }
+.case { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding: 18px; display: flex; flex-direction: column; gap: 14px; scroll-margin-top: 16px; }
+.case-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 20px; align-items: flex-start; }
+.case-title { display: flex; flex-direction: column; gap: 6px; }
+.case-title .meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.case-actions { display: flex; gap: 8px; align-items: center; }
+button.play { font: 600 13px/1 var(--f-body); padding: 9px 14px; border-radius: 5px; border: 1px solid var(--accent); background: var(--accent); color: var(--panel); cursor: pointer; }
+button.play.on { background: transparent; color: var(--accent); }
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 3fr); gap: 14px; }
+.gtcol { display: flex; flex-direction: column; gap: 8px; }
+.rows { display: flex; flex-direction: column; gap: 12px; }
+.prow { display: flex; flex-direction: column; gap: 6px; }
+.prow-head { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.pk { font: 600 11px/1 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; padding: 3px 6px; border-radius: 3px; background: var(--accent-soft); color: var(--accent); }
+.ptext { font-size: 14px; }
+.vids { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+figure { margin: 0; display: flex; flex-direction: column; gap: 5px; }
+video { width: 100%; aspect-ratio: 4 / 3; display: block; background: var(--rule); border-radius: 4px; max-width: 100%; }
+figcaption { display: flex; flex-direction: column; gap: 3px; font-size: 12.5px; color: var(--ink-2); }
+.verdict { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.v-chip { font: 600 11px/1 var(--f-mono); padding: 3px 6px; border-radius: 3px; }
+.v-chip.yes { background: var(--yes-bg); color: var(--yes); }
+.v-chip.partial { background: var(--part-bg); color: var(--part); }
+.v-chip.no { background: var(--no-bg); color: var(--no); }
+.flag { font: 500 10.5px/1 var(--f-mono); color: var(--ink-3); }
+.flag.bad { color: var(--no); }
+.reason { color: var(--ink-2); font-size: 12.5px; line-height: 1.4; }
+details.calib { font-size: 13px; color: var(--ink-2); border-top: 1px solid var(--rule); padding-top: 10px; }
+details.calib summary { cursor: pointer; color: var(--ink); font-weight: 600; font-size: 13px; }
+details.calib .cl { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; margin-top: 8px; align-items: baseline; }
+.notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px 28px; font-size: 14px; color: var(--ink-2); }
+.notes h3 { color: var(--ink); margin-bottom: 4px; font-size: 15px; }
+@media (max-width: 760px) {
+  .grid { grid-template-columns: 1fr; }
+  .gtcol { max-width: 340px; }
+}
+@media (max-width: 460px) { .vids { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">AgiBot World Beta · looped DiT · capability eval</div>
+    <h1>Unseen Action Probe</h1>
+    <p class="muted">25 cases the model never trained on: 20 episodes from AgiBot tasks that were in no training split, covering ten action families the training mix barely touches, plus one test episode from each of the 5 held-out tasks. Each case starts from one real frame and is asked three things: the episode's own caption (real), a rewording without arm hints (alt1), and a different action in the same scene (alt2). Three noise seeds each, scored by a VLM judge.</p>
+    <div class="setup mono">
+      <span>checkpoint <b>random_depth_n1-8_long · EMA step 9500</b></span>
+      <span>loop depth <b>N = 1</b></span>
+      <span>context <b>k = 1 frame</b></span>
+      <span>rollout <b>4 × 33 frames = 8.9 s @ 15 fps</b></span>
+      <span>sampler <b>30 steps · cfg 4 · shift 5</b></span>
+      <span>seeds <b>0 · 1 · 2</b></span>
+      <span>judge <b>Qwen3-VL-32B-Instruct, 16 frames</b></span>
+    </div>
+  </header>
+
+  <section aria-labelledby="h-head">
+    <h2 id="h-head">Headline</h2>
+    <div class="tiles" id="tiles"></div>
+    <div class="legend" id="legend"></div>
+    <div class="notes">
+      <div><h3>The judge misses half of real successes</h3><p>Shown the real footage and its true caption, Qwen3-VL-32B said completed for 13 of 25 episodes. It misses small or slow motions such as a button press, a cap twist or a slow approach. It almost never accepts a wrong caption. Read a ✓ as reliable and a ✕ as weak evidence, and use the videos for the 12 grey cases.</p></div>
+      <div><h3>The scene drives the action more than the words</h3><p>On the 13 cases the judge can verify, real and reworded prompts score 0.87 and 0.85. A different action in the same scene (alt2) scores 0.59. The real-prompt clips still pass the alt2 instruction 0.67 of the time, so the model mostly does what the scene suggests, and alt2 moves it only part of the way.</p></div>
+      <div><h3>Off-script requests fall back to the usual action</h3><p>Three verifiable alt2 prompts scored 0 on all seeds: turn left away from the curtains, squeeze the dressing bottle, and move the guard away from the slicer. Judged against the original caption, those same alt2 clips pass 1.0, 1.0 and 0.67, so the robot did the episode's own action instead. The five held-out tasks (pick, carry, pull) score highest: real 0.93 over 15 clips.</p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-board">
+    <h2 id="h-board">Scoreboard</h2>
+    <p class="muted">Dots are the three seeds; the number is the mean judge score (yes = 1, partial = ½, no = 0). <em>GT</em> is the judge's verdict on the real footage with its true caption. Where that is not ✓ (grey rows), the judge cannot see this action, and a ✕ for the model says little. <em>Cross</em> is the real-prompt clips judged against the alt2 instruction: if the model follows its prompt and the judge can tell, it should sit well below the real score. PSNR and LPIPS compare the real-prompt rollout with what the robot actually did. Motion is mean frame-to-frame change relative to the ground truth. Click a row to jump to its videos.</p>
+    <div class="tablewrap"><table id="board"></table></div>
+  </section>
+
+  <section aria-labelledby="h-cases">
+    <h2 id="h-cases">Cases</h2>
+    <div class="filters" id="filters" role="group" aria-label="Filter by family"></div>
+    <div class="cases" id="cases"></div>
+  </section>
+
+  <section aria-labelledby="h-notes">
+    <h2 id="h-notes">How the cases were chosen</h2>
+    <div class="notes">
+      <div><h3>Why these actions</h3><p>Pick and place make up 46% of the 160,120 training windows, and fold another 8.6%. The ten families here are the long tail: each is 0.5–5.4% of training windows (tie 0.52%, mix 0.57%, gesture 0.79%, cut/knead 1.2%, up to pour 5.4%), 21.7% together. The 5 held-out tasks are the only tasks the model never saw. Their actions (pick, carry, pull) are common ones, so they test new scenes rather than new actions.</p></div>
+      <div><h3>Never in training</h3><p>Every episode was checked against the train, val and test splits. The 20 family cases are rare actions from tasks that were trained: training took up to 40 episodes from every trainable task, so no unseen task has these actions. These particular episodes were never sampled, fetched or seen. The 5 held-out cases come from the test_unseen split of tasks excluded from training entirely.</p></div>
+      <div><h3>Which words it has seen</h3><p>The real prompt is AgiBot's own caption, and for the family cases that exact sentence appears in the training captions (other episodes of the same task). alt1 and alt2 were written for this eval after looking at the frames and never appear in training, except for two alt2 prompts noted on their cards. For held-out tasks, 3 of 5 captions are new text too.</p></div>
+      <div><h3>Context frame</h3><p>The rollout starts from the first frame of the labelled segment, so the action has not started yet. One tie case has a 13 s segment, longer than the 8.9 s rollout, so partial is the best it can reach.</p></div>
+      <div><h3>Generated scenes</h3><p>No edited images were needed: every family had real never-trained episodes. The pipeline accepts edited context images labelled as generated, and they would show a purple badge here.</p></div>
+    </div>
+  </section>
+</div>
+
+<script>
+const DATA = /*__DATA__*/null;
+const PK = ["real", "alt1", "alt2"];
+const PK_LABEL = { real: "real", alt1: "alt1", alt2: "alt2" };
+const fmt = (x, d = 2) => x == null ? "–" : x.toFixed(d);
+const pct = x => x == null ? "–" : Math.round(x * 100) + "%";
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const vclass = v => ({ yes: "yes", partial: "partial", no: "no" }[v] || "na");
+const vglyph = v => ({ yes: "✓", partial: "½", no: "✕" }[v] || "");
+const mean = a => { const b = a.filter(x => x != null); return b.length ? b.reduce((s, x) => s + x, 0) / b.length : null; };
+const score = c => c.score ?? (c.completed ? 0 : null);
+
+function dots(list) {
+  return `<span class="dots">${list.map(c => `<span class="dot ${vclass(c.completed)}" title="seed ${c.seed ?? ""}: ${esc(c.completed)}" aria-label="${esc(c.completed)}">${vglyph(c.completed)}</span>`).join("")}</span>`;
+}
+function provBadge(k) {
+  if (k.provenance.held_out_task) return `<span class="badge held">held-out task</span>`;
+  if (k.source === "generated") return `<span class="badge gen">generated scene</span>`;
+  return `<span class="badge unseen">never-trained episode</span>`;
+}
+
+// headline tiles: all 25 cases, and the cases where the judge confirms the real footage (only there is a "no" informative)
+const verified = k => k.calib.real && k.calib.real.completed === "yes";
+(function () {
+  const V = DATA.cases.filter(verified);
+  const sc = (ks, pk) => mean(ks.flatMap(k => k.clips[pk]).map(score));
+  const cr = ks => mean(ks.flatMap(k => (k.cross.real || []).map(score)));
+  const cal = DATA.calibration;
+  const t = [
+    ...PK.map(pk => ({ k: `${pk} prompt · completed`, v: fmt(sc(V, pk)), s: `${V.length} judge-verifiable cases · all 25: ${fmt(sc(DATA.cases, pk))}` })),
+    { k: "real clips vs alt2 text", v: fmt(cr(V)), s: `same clips, opposite instruction · all 25: ${fmt(cr(DATA.cases))}` },
+    { k: "judge on real footage", v: pct(cal.gt_real_caption_yes_rate), s: `says completed for the true caption (${Math.round(cal.gt_real_caption_yes_rate * cal.n)} of ${cal.n})`, trust: true },
+    { k: "judge on wrong caption", v: pct(cal.gt_foreign_caption_no_rate), s: `says no to another family's caption (${Math.round(cal.gt_foreign_caption_no_rate * cal.n)} of ${cal.n})`, trust: true },
+  ];
+  document.getElementById("tiles").innerHTML = t.map(x => `<div class="tile${x.trust ? " trust" : ""}"><span class="k">${x.k}</span><span class="v">${x.v}</span><span class="s">${x.s}</span></div>`).join("");
+  document.getElementById("legend").innerHTML = `<span><span class="dot yes">✓</span> completed</span><span><span class="dot partial">½</span> partial</span><span><span class="dot no">✕</span> not done</span><span>Dashed tiles measure the judge itself, not the model.</span>`;
+})();
+
+// scoreboard
+(function () {
+  const fams = [...new Set(DATA.cases.map(k => k.family))];
+  let h = `<thead><tr><th>Case</th><th>Source</th><th>GT</th>${PK.map(p => `<th>${PK_LABEL[p]}</th>`).join("")}<th>Cross</th><th class="r">PSNR</th><th class="r">LPIPS</th><th class="r">Motion ÷ GT</th></tr></thead><tbody>`;
+  for (const f of fams) {
+    const ks = DATA.cases.filter(k => k.family === f);
+    h += `<tr class="fam"><td colspan="10">${esc(ks[0].familyLabel)}</td></tr>`;
+    for (const k of ks) {
+      const cell = pk => `<td>${dots(k.clips[pk])}<span class="num">${fmt(mean(k.clips[pk].map(score)))}</span></td>`;
+      const cr = k.cross.real || [];
+      const m = mean(k.clips.real.map(c => c.motion));
+      h += `<tr class="row${verified(k) ? "" : " unver"}" tabindex="0" data-id="${k.id}"><td>${esc(k.id.replace(/_/g, " "))}</td><td>${k.provenance.held_out_task ? "held-out" : "unseen ep."}</td><td>${k.calib.real ? `<span class="v-chip ${vclass(k.calib.real.completed)}">${vglyph(k.calib.real.completed)}</span>` : "–"}</td>${PK.map(cell).join("")}<td>${cr.length ? dots(cr) + `<span class="num">${fmt(mean(cr.map(score)))}</span>` : "–"}</td><td class="r">${fmt(mean(k.clips.real.map(c => c.psnr)), 1)}</td><td class="r">${fmt(mean(k.clips.real.map(c => c.lpips)), 3)}</td><td class="r">${m != null && k.gtMotion ? fmt(m / k.gtMotion) : "–"}</td></tr>`;
+    }
+  }
+  const board = document.getElementById("board");
+  board.innerHTML = h + "</tbody>";
+  const go = id => { const el = document.getElementById("case-" + id); if (el) { el.hidden = false; el.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); } };
+  board.addEventListener("click", e => { const r = e.target.closest("tr.row"); if (r) go(r.dataset.id); });
+  board.addEventListener("keydown", e => { const r = e.target.closest("tr.row"); if (r && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); go(r.dataset.id); } });
+})();
+
+// cases
+(function () {
+  const root = document.getElementById("cases");
+  const fig = (c, poster) => `<figure><video muted loop playsinline preload="none" poster="${poster}" data-src="${c.file}" aria-label="seed ${c.seed}"></video><figcaption><span class="verdict"><span class="v-chip ${vclass(c.completed)}">${vglyph(c.completed)} ${esc(c.completed || "?")}</span><span class="flag">seed ${c.seed}</span>${c.attempted === "no" ? `<span class="flag bad">not attempted</span>` : ""}${c.plausible === "no" ? `<span class="flag bad">implausible</span>` : ""}</span><span class="reason">${esc(c.reason)}</span></figcaption></figure>`;
+  root.innerHTML = DATA.cases.map(k => {
+    const poster = `poster/${k.id}.jpg`;
+    const pv = k.provenance;
+    const seenNote = pk => (pk === "real" ? pv.real_caption_in_training : pv[pk + "_in_training"]) ? `<span class="badge soft">text seen in training</span>` : "";
+    const rows = PK.map(pk => `<div class="prow"><div class="prow-head"><span class="pk">${pk}</span><span class="ptext">${esc(k.prompts[pk])}</span>${seenNote(pk)}</div><div class="vids">${k.clips[pk].map(c => fig(c, poster)).join("")}</div></div>`).join("");
+    const cal = k.calib || {};
+    const calRow = (lab, a) => a ? `<span>${lab}</span><span><span class="v-chip ${vclass(a.completed)}">${esc(a.completed)}</span> “${esc(a.prompt)}” — ${esc(a.reason)}</span>` : "";
+    const crl = l => (l || []).map(a => `<span><span class="v-chip ${vclass(a.completed)}">${esc(a.completed)}</span> ${esc(a.reason)}</span>`).join("<br>");
+    const cr = crl(k.cross.real), cr2 = crl(k.cross.alt2);
+    return `<article class="case" id="case-${k.id}" data-family="${k.family}">
+      <div class="case-head">
+        <div class="case-title">
+          <h3>${esc(k.id.replace(/_/g, " "))}</h3>
+          <div class="meta">${provBadge(k)}<span class="badge soft">${esc(k.familyLabel)}</span><span class="mono muted">task ${k.task}${k.taskName ? " · " + esc(k.taskName) : ""} · episode ${k.episode} · segment ${k.segSec} s</span></div>
+        </div>
+        <div class="case-actions"><button class="play" type="button" id="play-${k.id}" aria-pressed="false">Play all</button></div>
+      </div>
+      <div class="grid">
+        <div class="gtcol">
+          <span class="pk">ground truth</span>
+          <figure><video muted loop playsinline preload="none" poster="${poster}" data-src="gt/${k.id}.mp4" aria-label="ground truth"></video>
+          <figcaption><span class="reason">What the robot did${k.gtFull ? "" : ` (episode ends at ${(k.gtFrames / 15).toFixed(1)} s)`}. Caption: “${esc(k.caption)}”</span></figcaption></figure>
+        </div>
+        <div class="rows">${rows}</div>
+      </div>
+      <details class="calib"><summary>Judge checks on this case</summary><div class="cl">${calRow("real footage + true caption", cal.real)}${calRow("real footage + wrong caption", cal.foreign)}${cr ? `<span>real clips vs alt2 text</span><span>${cr}</span>` : ""}${cr2 ? `<span>alt2 clips vs real text</span><span>${cr2}</span>` : ""}</div></details>
+    </article>`;
+  }).join("");
+
+  root.addEventListener("click", e => {
+    const b = e.target.closest("button.play");
+    if (b) {
+      const card = b.closest(".case");
+      const vids = [...card.querySelectorAll("video")];
+      const on = b.getAttribute("aria-pressed") !== "true";
+      vids.forEach(v => { if (!v.src) v.src = v.dataset.src; });
+      if (on) { vids.forEach(v => { v.currentTime = 0; v.play().catch(() => {}); }); }
+      else vids.forEach(v => v.pause());
+      b.setAttribute("aria-pressed", on); b.classList.toggle("on", on); b.textContent = on ? "Pause" : "Play all";
+      return;
+    }
+    const v = e.target.closest("video");
+    if (v) { if (!v.src) v.src = v.dataset.src; v.paused ? v.play().catch(() => {}) : v.pause(); }
+  });
+
+  // family filter
+  const fams = [...new Map(DATA.cases.map(k => [k.family, k.familyLabel])).entries()];
+  const fl = document.getElementById("filters");
+  fl.innerHTML = `<button class="chip" type="button" id="f-all" data-f="" aria-pressed="true">All 25</button>` + fams.map(([f, l]) => `<button class="chip" type="button" id="f-${f}" data-f="${f}" aria-pressed="false">${esc(l)}</button>`).join("");
+  fl.addEventListener("click", e => {
+    const b = e.target.closest(".chip"); if (!b) return;
+    fl.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c === b));
+    root.querySelectorAll(".case").forEach(c => c.hidden = !!b.dataset.f && c.dataset.family !== b.dataset.f);
+  });
+})();
+</script>
