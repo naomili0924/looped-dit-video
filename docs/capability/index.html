@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Changed Prompts</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Same tokens as the other evaluation pages (graphite neutrals, verdigris accent). */
+:root {
+  color-scheme: light;
+  --bg: #f4f5f2; --surface: #ffffff; --surface-2: #e9ebe6; --ink: #1c1f1e; --ink-2: #4d5553; --ink-3: #828b88;
+  --line: #d6d9d3; --accent: #1f6f69; --accent-soft: #d9ebe8; --ref: #efe9e0; --miss: #9a4b3c; --miss-soft: #f4e3de;
+  --display: "Newsreader", Georgia, "Times New Roman", serif; --body: "Source Sans 3", "Helvetica Neue", Arial, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { color-scheme: dark;
+  --bg: #161918; --surface: #1e2220; --surface-2: #272c2a; --ink: #e8eae6; --ink-2: #b4bab6; --ink-3: #7f8884;
+  --line: #353b38; --accent: #5fbfb4; --accent-soft: #1f3b38; --ref: #2b2823; --miss: #e0907f; --miss-soft: #3a2622; } }
+:root[data-theme="dark"] { color-scheme: dark;
+  --bg: #161918; --surface: #1e2220; --surface-2: #272c2a; --ink: #e8eae6; --ink-2: #b4bab6; --ink-3: #7f8884;
+  --line: #353b38; --accent: #5fbfb4; --accent-soft: #1f3b38; --ref: #2b2823; --miss: #e0907f; --miss-soft: #3a2622; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 1180px; margin: 0 auto; padding-block: 32px 72px; }
+h1 { font-family: var(--display); font-weight: 500; font-size: clamp(30px, 4.5vw, 44px); margin: 0 0 8px; line-height: 1.1; text-wrap: balance; }
+h2 { font-family: var(--display); font-weight: 500; font-size: 26px; margin: 48px 0 10px; text-wrap: balance; }
+h3 { font-family: var(--display); font-weight: 500; font-size: 22px; margin: 0 0 4px; }
+p { margin: 0 0 12px; max-width: 76ch; }
+a { color: var(--accent); }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 10px; }
+.lede { color: var(--ink-2); font-size: 18px; max-width: 80ch; }
+.back { font-size: 14px; margin-bottom: 18px; display: inline-block; }
+.ex { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 18px 18px 14px; margin: 18px 0; }
+.ex.works { border-color: var(--accent); }
+.tag { font-family: var(--mono); font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; padding: 2px 7px; border-radius: 3px; display: inline-block; margin-bottom: 8px; }
+.tag.fail { background: var(--miss-soft); color: var(--miss); }
+.tag.ok { background: var(--accent-soft); color: var(--accent); }
+.prompts { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; margin: 8px 0 14px; font-size: 15.5px; }
+.prompts dt { font-family: var(--mono); font-size: 12px; color: var(--ink-3); letter-spacing: .04em; text-transform: uppercase; padding-top: 3px; }
+.prompts dd { margin: 0; }
+.prompts dd.changed { font-weight: 600; }
+.vids { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 860px) { .vids { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+figure { margin: 0; }
+video { width: 100%; aspect-ratio: 4 / 3; display: block; border-radius: 4px; background: var(--surface-2) center / cover no-repeat; }
+figcaption { font-size: 13.5px; color: var(--ink-2); margin-top: 5px; line-height: 1.35; }
+figcaption b { color: var(--ink); font-weight: 600; }
+figure.changed figcaption b { color: var(--miss); }
+.ex.works figure.changed figcaption b { color: var(--accent); }
+.what { margin: 14px 0 6px; font-size: 15.5px; max-width: 92ch; }
+.row { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; margin-top: 8px; }
+button { font: 500 13px var(--body); color: var(--accent); background: transparent; border: 1px solid var(--line); border-radius: 4px; padding: 4px 10px; cursor: pointer; }
+button:hover { border-color: var(--accent); }
+.tbl { overflow-x: auto; }
+table { border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
+th, td { text-align: right; padding: 5px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { color: var(--ink-2); font-weight: 500; font-size: 12px; font-family: var(--mono); letter-spacing: .04em; }
+td:first-child, th:first-child { text-align: left; }
+table.big { width: 100%; font-size: 14.5px; }
+.note { font-size: 14px; color: var(--ink-3); max-width: 90ch; }
+.foot { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 13.5px; color: var(--ink-3); max-width: 90ch; }
+code { font-family: var(--mono); font-size: 13px; background: var(--surface-2); padding: 1px 5px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../">← all evaluation pages</a>
+  <div class="eyebrow">Capability eval · random-depth N 1–8 long run, EMA step 9500 · one real frame → 8.9 s</div>
+  <h1>Changed Prompts</h1>
+  <p class="lede">Start from a real frame of an unseen episode and ask for a <b>different action</b> in the same scene. The rollout mostly does the action the episode really contains, not the one in the prompt. Looping the core blocks more times (N = 1 to 8) does not change this.</p>
+  <p>This is expected from how the model was trained: each clip is paired with its own caption, and nothing in the objective makes the model act on a verb the scene does not already suggest. The examples below are the clearest cases. Each one plays the real episode, the rollout with the original caption, and the rollout with the changed prompt at N = 1 and N = 8, all from the same first frame and noise seed 0.</p>
+
+  <h2>The model does the original action</h2>
+
+  <div class="ex">
+    <span class="tag fail">ignores the change</span>
+    <h3>Turn away from the curtains</h3>
+    <dl class="prompts"><dt>original</dt><dd>Turn to face the curtains with right.</dd><dt>changed</dt><dd class="changed">Turn to the left, away from the curtains.</dd></dl>
+    <div class="vids">
+      <figure><video muted loop playsinline preload="metadata" poster="videos/base_turn_gt.jpg" src="videos/base_turn_gt.mp4"></video><figcaption><b>Real episode</b><br>turns right, toward the curtains</figcaption></figure>
+      <figure><video muted loop playsinline preload="metadata" poster="videos/base_turn_gt.jpg" src="videos/base_turn_real_N1.mp4"></video><figcaption><b>Original caption · N = 1</b><br>moves toward the curtains</figcaption></figure>
+      <figure class="changed"><video muted loop playsinline preload="metadata" poster="videos/base_turn_gt.jpg" src="videos/base_turn_alt2_N1.mp4"></video><figcaption><b>Changed prompt · N = 1</b><br>still ends facing the curtains</figcaption></figure>
+      <figure class="changed"><video muted loop playsinline preload="metadata" poster="videos/base_turn_gt.jpg" src="videos/base_turn_alt2_N8.mp4"></video><figcaption><b>Changed prompt · N = 8</b><br>stays on the curtains, then turns left late</figcaption></figure>
+    </div>
+    <p class="what">Asked to turn left and away, the robot heads into the curtains the way the real episode does. The judge gives the changed prompt 0 on all three seeds at N = 1, 2 and 4, while the same clips pass the original caption every time. N = 8 is the one depth where this case partly follows: the seed shown turns left in its last few seconds, after the arms have already gone to the curtains.</p>
+    <div class="row">
+      <button type="button" data-sync>Play row from the start</button>
+      <div class="tbl"><table><thead><tr><th>judge, mean of 3 seeds</th><th>N = 1</th><th>2</th><th>4</th><th>8</th></tr></thead>
+      <tbody><tr><td>changed-prompt clips vs changed prompt</td><td>0.00</td><td>0.00</td><td>0.00</td><td>0.33</td></tr>
+      <tr><td>changed-prompt clips vs original caption</td><td>1.00</td><td>1.00</td><td>1.00</td><td>1.00</td></tr></tbody></table></div>
+    </div>
+  </div>
+
+  <div class="ex">
+    <span class="tag fail">ignores the change</span>
+    <h3>Put the hand guard aside</h3>
+    <dl class="prompts"><dt>original</dt><dd>Move the held hand guard above the vegetable cutter with the right arm.</dd><dt>changed</dt><dd class="changed">Move the hand guard to the side of the counter, away from the slicer.</dd></dl>
+    <div class="vids">
+      <figure><video muted loop playsinline preload="metadata" poster="videos/move_guard_gt.jpg" src="videos/move_guard_gt.mp4"></video><figcaption><b>Real episode</b><br>guard goes onto the cutter</figcaption></figure>
+      <figure><video muted loop playsinline preload="metadata" poster="videos/move_guard_gt.jpg" src="videos/move_guard_real_N1.mp4"></video><figcaption><b>Original caption · N = 1</b><br>guard goes onto the cutter</figcaption></figure>
+      <figure class="changed"><video muted loop playsinline preload="metadata" poster="videos/move_guard_gt.jpg" src="videos/move_guard_alt2_N1.mp4"></video><figcaption><b>Changed prompt · N = 1</b><br>guard stays by the cutter</figcaption></figure>
+      <figure class="changed"><video muted loop playsinline preload="metadata" poster="videos/move_guard_gt.jpg" src="videos/move_guard_alt2_N8.mp4"></video><figcaption><b>Changed prompt · N = 8</b><br>guard goes onto the cutter again</figcaption></figure>
+    </div>
+    <p class="what">Nothing is moved to the side of the counter at any depth. At N = 8 the arm places the guard over the cutter exactly as the original caption asks.</p>
+    <div class="row">
+      <button type="button" data-sync>Play row from the start</button>
+      <div class="tbl"><table><thead><tr><th>judge, mean of 3 seeds</th><th>N = 1</th><th>2</th><th>4</th><th>8</th></tr></thead>
+      <tbody><tr><td>changed-prompt clips vs changed prompt</td><td>0.00</td><td>0.00</td><td>0.00</td><td>0.33</td></tr>
+      <tr><td>changed-prompt clips vs original caption</td><td>0.67</td><td>0.00</td><td>0.33</td><td>0.67</td></tr></tbody></table></div>
+    </div>
+  </div>
+
+  <div class="ex">
+    <span class="tag fail">ignores the change</span>
+    <h3>Shake the cup instead of stirring</h3>
+    <dl class="prompts"><dt>original</dt><dd>Stir the coffee in the cup with the spoon held in the right hand.</dd><dt>changed</dt><dd class="changed">Shake the cup gently to mix the coffee.</dd></dl>
+    <div class="vids">
+      <figure><video muted loop playsinline preload="metadata" poster="videos/stir_coffee_gt.jpg" src="videos/stir_coffee_gt.mp4"></video><figcaption><b>Real episode</b><br>stirs with the spoon</figcaption></figure>
+      <figure><video muted loop playsinline preload="metadata" poster="videos/stir_coffee_gt.jpg" src="videos/stir_coffee_real_N1.mp4"></video><figcaption><b>Original caption · N = 1</b><br>stirs with the spoon</figcaption></figure>
+      <figure class="changed"><video muted loop playsinline preload="metadata" poster="videos/stir_coffee_gt.jpg" src="videos/stir_coffee_alt2_N1.mp4"></video><figcaption><b>Changed prompt · N = 1</b><br>stirs with the spoon</figcaption></figure>
+      <figure class="changed"><video muted loop playsinline preload="metadata" poster="videos/stir_coffee_gt.jpg" src="videos/stir_coffee_alt2_N8.mp4"></video><figcaption><b>Changed prompt · N = 8</b><br>stirs with the spoon</figcaption></figure>
+    </div>
+    <p class="what">All four look the same: the spoon circles in the cup and the cup never shakes. The judge often passes the changed prompt here (0.67–1.0) because the coffee does get mixed, so this one is from watching the videos, not from the score.</p>
+    <div class="row">
+      <button type="button" data-sync>Play row from the start</button>
+      <div class="tbl"><table><thead><tr><th>judge, mean of 3 seeds</th><th>N = 1</th><th>2</th><th>4</th><th>8</th></tr></thead>
+      <tbody><tr><td>changed-prompt clips vs changed prompt</td><td>0.67</td><td>0.67</td><td>1.00</td><td>0.67</td></tr>
+      <tr><td>changed-prompt clips vs original caption</td><td>0.67</td><td>1.00</td><td>0.67</td><td>1.00</td></tr></tbody></table></div>
+    </div>
+  </div>
+
+  <h2>When a changed prompt does work</h2>
+  <div class="ex works">
+    <span class="tag ok">follows the change</span>
+    <h3>Back away from the table</h3>
+    <dl class="prompts"><dt>original</dt><dd>Move forward to approach the guest.</dd><dt>changed</dt><dd class="changed">Move backward away from the table.</dd></dl>
+    <div class="vids">
+      <figure><video muted loop playsinline preload="metadata" poster="videos/base_forward_gt.jpg" src="videos/base_forward_gt.mp4"></video><figcaption><b>Real episode</b><br>drives toward the guest</figcaption></figure>
+      <figure><video muted loop playsinline preload="metadata" poster="videos/base_forward_gt.jpg" src="videos/base_forward_real_N1.mp4"></video><figcaption><b>Original caption · N = 1</b><br>drives toward the guest</figcaption></figure>
+      <figure class="changed"><video muted loop playsinline preload="metadata" poster="videos/base_forward_gt.jpg" src="videos/base_forward_alt2_N1.mp4"></video><figcaption><b>Changed prompt · N = 1</b><br>drifts slightly back</figcaption></figure>
+      <figure class="changed"><video muted loop playsinline preload="metadata" poster="videos/base_forward_gt.jpg" src="videos/base_forward_alt2_N8.mp4"></video><figcaption><b>Changed prompt · N = 8</b><br>pulls clearly away from the table</figcaption></figure>
+    </div>
+    <p class="what">This changed prompt is one of only two that appear word for word in the training captions, and here the robot does back away. That fits the reading above: the model follows instructions it has seen paired with motion, and otherwise falls back on what the scene suggests. The judge cannot tell forward from backward in this scene (it passes these clips against both prompts), so the evidence is the video.</p>
+    <div class="row"><button type="button" data-sync>Play row from the start</button></div>
+  </div>
+
+  <h2>Across all 25 cases</h2>
+  <p>Qwen3-VL-32B judges each clip against the prompt it was made with and, as a cross check, against the other prompt. A model that follows its prompt gives changed-prompt clips a clearly higher score against the changed prompt than against the original caption. That gap stays at or below zero at every depth.</p>
+  <div class="tbl"><table class="big"><thead><tr><th>loop depth</th><th>original-caption clips vs original</th><th>original-caption clips vs changed</th><th>changed-prompt clips vs changed</th><th>changed-prompt clips vs original</th><th>gap</th></tr></thead>
+  <tbody>
+    <tr><td>N = 1</td><td>0.87</td><td>0.67</td><td>0.59</td><td>0.67</td><td>−0.08</td></tr>
+    <tr><td>N = 2</td><td>0.95</td><td>0.59</td><td>0.62</td><td>0.64</td><td>−0.03</td></tr>
+    <tr><td>N = 4</td><td>0.82</td><td>0.64</td><td>0.64</td><td>0.69</td><td>−0.05</td></tr>
+    <tr><td>N = 8</td><td>0.77</td><td>0.46</td><td>0.54</td><td>0.64</td><td>−0.10</td></tr>
+  </tbody></table></div>
+  <p class="note">Mean judge score (yes = 1, partial = 0.5, no = 0) over 3 seeds, on the 13 cases where the judge passes the real footage with its own caption. gap = changed-prompt clips vs changed prompt minus vs original caption. Rewording the original caption without changing the action scores about the same as the original (0.85 at N = 1).</p>
+
+  <div class="foot">
+    Cases, prompts and judge answers: <a href="https://github.com/naomili0924/looped-dit-video/blob/main/agibot-flux3/results/capeval/README.md">results/capeval/README.md</a>
+    (<code>judge.json</code>, keys <code>&lt;case&gt;/alt2_N&lt;d&gt;_s&lt;seed&gt;</code> and <code>cross/…</code>). The rollouts use 4 chained 33-frame windows at 15 fps from one real context frame of an episode that was never trained on; Euler 30 steps, CFG 4, shift 5.
+  </div>
+</div>
+<script>
+// Each row restarts its four videos together so the motions line up; videos play when on screen.
+document.querySelectorAll("[data-sync]").forEach(b => b.addEventListener("click", () => {
+  b.closest(".ex").querySelectorAll("video").forEach(v => { v.currentTime = 0; v.play().catch(() => {}); });
+}));
+const io = new IntersectionObserver(es => es.forEach(e => {
+  e.target.querySelectorAll("video").forEach(v => {
+    if (e.isIntersecting) { v.currentTime = 0; v.play().catch(() => {}); } else v.pause();
+  });
+}), { threshold: 0.35 });
+document.querySelectorAll(".ex").forEach(x => io.observe(x));
+</script>
+</body>
+</html>
