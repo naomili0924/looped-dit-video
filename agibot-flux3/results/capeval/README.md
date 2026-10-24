@@ -140,6 +140,52 @@ ground truth over all 25 cases. Time is per clip on one A100.
 In summary.json the keys are `<case>/<prompt>/N<d>` (per_case, with `cross` = the same clips judged against the
 other prompt) and `<family>/<prompt>/N<d>` (per_family).
 
+## Loop depth: prompt understanding, motion and video quality
+
+Each dimension on its own, 900 clips (25 cases × 3 prompts × 3 seeds × N = 1, 2, 4, 8). "real" is the same metric
+on the ground-truth frames. ★ = the paired difference to N = 1 (same case, prompt and seed) is outside a 95 %
+bootstrap interval over the 25 cases. Metrics: `ldvflux/cap_quality.py` (definitions in its docstring), files
+`rlong9500/quality_*.json`, `rating_*.json`, `quality_summary.json`.
+
+**Answer: depth N does not meaningfully improve any of the three.** The weaknesses that matter, visible jumps where
+the chained windows join and blur that grows along the chain, are the same at every N.
+
+1. Prompt understanding: no. Judge scores are flat for N = 1–4 and lower at N = 8 (table above). A changed
+   instruction (alt2) is ignored at every depth: changed-prompt clips pass the original caption as often as their
+   own prompt (gap −0.03 to −0.10). This is expected from the training objective and not a target.
+
+2. Dynamics: no.
+
+| | real | N = 1 | N = 2 | N = 4 | N = 8 |
+|---|---:|---:|---:|---:|---:|
+| jerk (flow change / motion, lower = smoother) | 0.59 | 0.51 | 0.52 | 0.52 | 0.52 |
+| warp error (change not explained by motion) | 1.76 | 1.25 | 1.21 | 1.23 | 1.19 ★ |
+| seam (warp error at window joins / around them) | 1.0 | 3.9 | 4.0 | 3.9 | 4.0 |
+| motion (camera-compensated flow, px/frame) | 0.46 | 0.53 | 0.51 | 0.54 | 0.52 |
+| direction vs the real motion (cosine) | – | 0.03 | −0.01 | 0.01 | 0.04 |
+| VLM object dynamics (1–5) | 5.0 | 4.61 | 4.65 | 4.71 ★ | 4.62 |
+| VLM arm motion (1–5) | 5.0 | 4.63 | 4.64 | 4.71 ★ | 4.63 |
+
+   Within a window motion is smooth at every N. The joins between the 4 chained windows jump about 4× more than
+   the frames around them (real footage 1.0), at every depth. Motion amount is flat and its direction is unrelated
+   to the real episode. N = 4 rates +0.09 higher on the VLM, but ratings are saturated (about 73 % of clips get 5)
+   and N = 8 returns to the N = 1 level.
+
+3. Video quality: no. Output resolution is 512 × 384 at every N, so detail is measured instead.
+
+| | real | N = 1 | N = 2 | N = 4 | N = 8 |
+|---|---:|---:|---:|---:|---:|
+| sharpness (Laplacian variance / context frame) | 0.96 | 0.55 | 0.56 ★ | 0.56 | 0.56 |
+| sharpness, last window | 0.94 | 0.41 | 0.43 ★ | 0.43 | 0.42 |
+| high-frequency share / context frame | 0.96 | 0.61 | 0.61 | 0.61 | 0.61 |
+| VLM visual quality (1–5) | 5.0 | 4.72 | 4.75 | 4.78 ★ | 4.74 |
+
+   Rollouts keep about 55 % of the real frame's sharpness, falling to about 42 % by the last window. Depth moves
+   this by about 2 %.
+
+N = 1 stays the default. What to work on is the chaining (seams) and the blur build-up, not the loop depth.
+Open questions are in `agibot-flux3/TODO.md`.
+
 ## Files and reproduction
 
 - `configs/eval_cases_capability.json` lists the cases, with provenance and a leak check: no episode is in
@@ -161,6 +207,10 @@ cd flux-action && PYTHONPATH=.. .venv/bin/python -m ldvflux.cap_eval --config ..
     --mirror /dev/shm/capeval/mirror --shard 0/2 --device cuda:0      # and --shard 1/2 on cuda:1
 PYTHONPATH=.. .venv/bin/python -m ldvflux.cap_judge --run ../results/capeval/rlong9500 \
     --cases ../configs/eval_cases_capability.json --judge /dev/shm/w/qwen3vl32b --device cuda:0
+PYTHONPATH=.. .venv/bin/python -m ldvflux.cap_quality --run ../results/capeval/rlong9500 --device cuda:0 --shard 0/2
+PYTHONPATH=.. .venv/bin/python -m ldvflux.cap_quality --run ../results/capeval/rlong9500 --device cuda:0 --shard 0/2 \
+    --rate --judge /dev/shm/w/qwen3vl32b                # and --shard 1/2 on cuda:1 for both
+PYTHONPATH=.. .venv/bin/python -m ldvflux.cap_quality --run ../results/capeval/rlong9500 --summary
 ```
 
 The rollouts take 31, 39, 54 and 84 s per clip on an A100 at N = 1, 2, 4 and 8, so about 7.5 h for all four depths
