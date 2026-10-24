@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Changed Prompts</title>
+<title>Capability Eval</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
 /* Same tokens as the other evaluation pages (graphite neutrals, verdigris accent). */
@@ -68,7 +68,7 @@ code { font-family: var(--mono); font-size: 13px; background: var(--surface-2); 
 <div class="wrap">
   <a class="back" href="../">← all evaluation pages</a>
   <div class="eyebrow">Capability eval · random-depth N 1–8 long run, EMA step 9500 · one real frame → 8.9 s</div>
-  <h1>Changed Prompts</h1>
+  <h1>Changed Prompts and Loop Depth</h1>
   <p class="lede">Start from a real frame of an unseen episode and ask for a <b>different action</b> in the same scene. The rollout mostly does the action the episode really contains, not the one in the prompt. Looping the core blocks more times (N = 1 to 8) does not change this.</p>
   <p>This is expected from how the model was trained: each clip is paired with its own caption, and nothing in the objective makes the model act on a verb the scene does not already suggest. The examples below are the clearest cases. Each one plays the real episode, the rollout with the original caption, and the rollout with the changed prompt at N = 1 and N = 8, all from the same first frame and noise seed 0.</p>
 
@@ -156,6 +156,48 @@ code { font-family: var(--mono); font-size: 13px; background: var(--surface-2); 
     <tr><td>N = 8</td><td>0.77</td><td>0.46</td><td>0.54</td><td>0.64</td><td>−0.10</td></tr>
   </tbody></table></div>
   <p class="note">Mean judge score (yes = 1, partial = 0.5, no = 0) over 3 seeds, on the 13 cases where the judge passes the real footage with its own caption. gap = changed-prompt clips vs changed prompt minus vs original caption. Rewording the original caption without changing the action scores about the same as the original (0.85 at N = 1).</p>
+
+  <h2>Does loop depth improve anything?</h2>
+  <p>Each dimension on its own, over all 900 clips (25 cases × 3 prompts × 3 seeds × N = 1, 2, 4, 8). “real” is the same measure on the real episode. ★ marks a difference from N = 1 (same case, prompt and seed) outside a 95 % bootstrap interval over the 25 cases. <b>Short answer: no dimension improves meaningfully.</b> The two big weaknesses, jumps where the four chained windows meet and blur that grows along the chain, are the same at every depth.</p>
+  <div class="tbl"><table class="big"><thead><tr><th>dimension · measure</th><th>real</th><th>N = 1</th><th>N = 2</th><th>N = 4</th><th>N = 8</th></tr></thead>
+  <tbody>
+    <tr><td><b>Prompt</b> · judge, original caption (13 verifiable cases)</td><td>–</td><td>0.87</td><td>0.95</td><td>0.82</td><td>0.77</td></tr>
+    <tr><td><b>Prompt</b> · changed-prompt clips, own minus original text</td><td>–</td><td>−0.08</td><td>−0.03</td><td>−0.05</td><td>−0.10</td></tr>
+    <tr><td><b>Dynamics</b> · jerk, flow change per unit motion (lower = smoother)</td><td>0.59</td><td>0.51</td><td>0.52</td><td>0.52</td><td>0.52</td></tr>
+    <tr><td><b>Dynamics</b> · warp error, change motion does not explain</td><td>1.76</td><td>1.25</td><td>1.21</td><td>1.23</td><td>1.19 ★</td></tr>
+    <tr><td><b>Dynamics</b> · jump at window joins (1 = invisible)</td><td>1.0</td><td>3.9</td><td>4.0</td><td>3.9</td><td>4.0</td></tr>
+    <tr><td><b>Dynamics</b> · motion direction vs the real episode (cosine)</td><td>–</td><td>0.03</td><td>−0.01</td><td>0.01</td><td>0.04</td></tr>
+    <tr><td><b>Dynamics</b> · VLM object dynamics, 1–5</td><td>5.0</td><td>4.61</td><td>4.65</td><td>4.71 ★</td><td>4.62</td></tr>
+    <tr><td><b>Quality</b> · sharpness vs the real first frame</td><td>0.96</td><td>0.55</td><td>0.56 ★</td><td>0.56</td><td>0.56</td></tr>
+    <tr><td><b>Quality</b> · sharpness in the last window</td><td>0.94</td><td>0.41</td><td>0.43 ★</td><td>0.43</td><td>0.42</td></tr>
+    <tr><td><b>Quality</b> · VLM visual quality, 1–5</td><td>5.0</td><td>4.72</td><td>4.75</td><td>4.78 ★</td><td>4.74</td></tr>
+    <tr><td>Seconds per clip, one A100</td><td>–</td><td>31</td><td>39</td><td>54</td><td>84</td></tr>
+  </tbody></table></div>
+  <p class="note">Output resolution is 512 × 384 at every depth, so “quality” is measured as sharpness (Laplacian variance) relative to the real context frame. Flow from RAFT with camera motion removed. VLM = Qwen3-VL-32B on 16 frames without the instruction; its ratings are saturated (about 73 % of clips get 5), so the N = 4 gains of +0.06 to +0.09 are small. Code: <code>ldvflux/cap_quality.py</code>.</p>
+
+  <h2>Where depth helps and where it hurts</h2>
+  <p>Per case, every deeper clip is compared with the N = 1 clip of the same prompt and seed (judge score; wins–losses). The grouping was found by looking at the per-case numbers, so the first row is a lead, not a result.</p>
+  <div class="tbl"><table class="big"><thead><tr><th>group</th><th>N = 1 → 2</th><th>N = 1 → 4</th><th>N = 1 → 8</th></tr></thead>
+  <tbody>
+    <tr><td>small contact actions on trained tasks (press, rotate, pour; 6 cases)</td><td>0.44 → 0.56 · 8–2 · p = 0.11</td><td>0.44 → 0.52 · 8–4</td><td>0.44 → 0.50 · 8–5</td></tr>
+    <tr><td>unseen tasks (5 held-out cases)</td><td>0.89 → 0.80 · 2–6</td><td>0.89 → 0.80 · 3–7</td><td><b>0.89 → 0.58 · 1–15 · p &lt; 0.001</b></td></tr>
+    <tr><td>other rare actions (14 cases)</td><td>0.50 → 0.50 · 11–11</td><td>0.50 → 0.47 · 7–11</td><td>0.50 → 0.48 · 7–10</td></tr>
+  </tbody></table></div>
+  <p>The one robust effect is that <b>N = 8 hurts the unseen tasks</b>. In the supermarket case deeper loops move the arm less (motion 0.29 at N = 1, 0.15–0.17 at N ≥ 2; real 0.21), and at N = 8 the arm stays by the cart instead of reaching into the cabinet. Small contact actions (an oven button, a faucet handle, pouring) score a little higher at N = 2, but the N = 1 and deeper clips look alike in the frames and the judge is weak on button presses, so that needs more seeds before it counts.</p>
+
+  <div class="ex">
+    <span class="tag fail">deeper is worse</span>
+    <h3>Retrieve the milk from the cold cabinet (unseen task)</h3>
+    <dl class="prompts"><dt>prompt</dt><dd>Retrieve the small bottle of milk from the cold storage cabinet.</dd></dl>
+    <div class="vids">
+      <figure><video muted loop playsinline preload="metadata" poster="videos/supermarket_gt.jpg" src="videos/supermarket_gt.mp4"></video><figcaption><b>Real episode</b></figcaption></figure>
+      <figure><video muted loop playsinline preload="metadata" poster="videos/supermarket_gt.jpg" src="videos/supermarket_real_N1.mp4"></video><figcaption><b>N = 1</b><br>reaches into the cabinet · judge yes</figcaption></figure>
+      <figure><video muted loop playsinline preload="metadata" poster="videos/supermarket_gt.jpg" src="videos/supermarket_real_N4.mp4"></video><figcaption><b>N = 4</b><br>judge yes</figcaption></figure>
+      <figure class="changed"><video muted loop playsinline preload="metadata" poster="videos/supermarket_gt.jpg" src="videos/supermarket_real_N8.mp4"></video><figcaption><b>N = 8</b><br>arm stays by the cart · judge no</figcaption></figure>
+    </div>
+    <p class="what">Seed 0. Over all 9 clips of this case the judge score falls from 0.89 at N = 1 to 0.56, 0.56 and 0.22 at N = 2, 4 and 8.</p>
+    <div class="row"><button type="button" data-sync>Play row from the start</button></div>
+  </div>
 
   <div class="foot">
     Cases, prompts and judge answers: <a href="https://github.com/naomili0924/looped-dit-video/blob/main/agibot-flux3/results/capeval/README.md">results/capeval/README.md</a>

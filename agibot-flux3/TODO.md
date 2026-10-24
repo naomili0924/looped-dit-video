@@ -12,7 +12,7 @@ video quality), with evidence, from the three sources below plus the numbers in 
 | Seed sweep, https://naomili0924.github.io/looped-dit-video/seed-sweep/ | 8 test-split cases × 3 prompts × 5 seeds × N = 1, 2, 4, 8, 16, at steps 3000–9500: grid videos, LPIPS/PSNR to GT, spread over seeds, motion, between-seed diversity | public GitHub Pages; findings in `results/seedsweep/README.md`, numbers in `results/seedsweep/rlong<step>/summary.json` |
 | Caption Atlas, https://claude.ai/artifact/4EQ5Qwet6vPpWvr4roGAxf | caption statistics of the 160,120 training windows: action families (pick+place 46 %, fold 8.6 %, long tail), which captions occur in training | private claude.ai artifact, Artifact tool `read`. Use it to tell "trained wording" from "new wording" when reading the other two |
 
-Also on GitHub Pages: https://naomili0924.github.io/looped-dit-video/capability/ (Changed Prompts examples) and
+Also on GitHub Pages: https://naomili0924.github.io/looped-dit-video/capability/ (Changed Prompts and Loop Depth: prompt examples, per-depth dynamics / quality tables, where depth helps or hurts) and
 https://naomili0924.github.io/looped-dit-video/loop-depth/ (test-split PSNR / SSIM / LPIPS / FVD per depth for the
 earlier fixed-depth runs).
 
@@ -32,6 +32,13 @@ and video quality".
 - Cost: 31 / 39 / 54 / 84 s per clip at N = 1 / 2 / 4 / 8 on an A100. N = 1 is the default.
 
 ## Open items
+
+0. Depth-sensitive patterns (per-case analysis, README "Where depth helps and where it hurts"): N = 8 clearly hurts
+   the unseen tasks (1-15 matched wins/losses vs N = 1; the supermarket arm under-reaches). N = 2 may help small
+   contact actions (press / rotate / pour, 8-2, p = 0.11) but it is not visible in the frames and the judge is weak
+   on presses. Confirm with more seeds (e.g. 10 seeds × N = 1, 2 on press_oven, turn_faucet, pour_dressing, and on
+   new press/rotate episodes from the rare-action pool, `scripts/capeval/select.py`), and judge with a closer look
+   (more frames around the contact, or crops), before claiming that depth helps fine contact.
 
 1. Cross-check the capability conclusions against the seed sweep: does any metric there (LPIPS to GT, spread over
    seeds, between-seed diversity, motion) change with N at any training step, and is the step-9500 picture the same

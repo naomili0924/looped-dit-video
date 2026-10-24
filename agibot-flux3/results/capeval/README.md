@@ -183,6 +183,29 @@ the chained windows join and blur that grows along the chain, are the same at ev
    Rollouts keep about 55 % of the real frame's sharpness, falling to about 42 % by the last window. Depth moves
    this by about 2 %.
 
+### Where depth helps and where it hurts (per case)
+
+Averages hide case-level differences, so each case was compared at N = 2, 4, 8 against N = 1 on matched clips
+(same prompt and seed, 9 pairs per case; wins-losses of the judge score, two-sided sign test over the pooled pairs).
+The grouping below was found by looking at the per-case table, so treat the first row as a hypothesis.
+
+| group | N = 1 → 2 | N = 1 → 4 | N = 1 → 8 |
+|---|---|---|---|
+| small-contact actions on trained tasks (press, rotate, pour: 6 cases) | 0.44 → 0.56, 8-2, p = 0.11 | 0.44 → 0.52, 8-4 | 0.44 → 0.50, 8-5 |
+| unseen tasks (5 held-out cases) | 0.89 → 0.80, 2-6 | 0.89 → 0.80, 3-7 | **0.89 → 0.58, 1-15, p < 0.001** |
+| other rare actions (14 cases) | 0.50 → 0.50, 11-11 | 0.50 → 0.47, 7-11 | 0.50 → 0.48, 7-10 |
+
+- **N = 8 hurts unseen tasks** (the one robust effect). heldout_supermarket 0.89 → 0.22 (0-6), heldout_menu and
+  heldout_water 0-3 each. In the supermarket clips deeper loops move the arm less (camera-compensated motion 0.29 at
+  N = 1, 0.15–0.17 at N ≥ 2, real 0.21): at N = 8 the arm stays by the cart instead of reaching into the cabinet.
+- **Shallow-but-deeper (N = 2) may help small contact actions**: press_oven 0 → 0.11–0.22 (seed 2 fails at N = 1 and
+  passes at N ≥ 2 / ≥ 4), turn_faucet 0.67 → 1.0 at N = 8 (3-0), pour_dressing 0.33 → 0.56 at N = 2 (3-1). In the
+  contact sheets the N = 1 and deeper clips look alike (the arm reaches the button / handle in both), and the judge
+  fails press_oven's real footage, so this is not visually confirmed. It needs more seeds before it counts.
+- Cases best at N = 4: heldout_toast, stir_coffee, scan_juice (judge), and the VLM ratings overall (+0.06–0.09).
+  Cases best at N = 8: turn_faucet, untie_curtain, base_turn (one N = 8 seed turns left as the changed prompt asks).
+  Each of these is 1–2 clips out of 9, within seed noise.
+
 N = 1 stays the default. What to work on is the chaining (seams) and the blur build-up, not the loop depth.
 Open questions are in `agibot-flux3/TODO.md`.
 
