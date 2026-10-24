@@ -4,8 +4,9 @@ The seed sweep (`results/seedsweep`, `docs/seed-sweep`) measures the model on he
 mix as training. This eval asks a different question: what does the model do on actions it has barely trained on,
 on tasks it has never trained on, and when the instruction is reworded or changed?
 
-Checkpoint `random_depth_n1-8_long` EMA step 9500, loop depth N = 1, k = 1 context frame, 4 chained windows
-(1 + 4 × 33 frames = 8.9 s at 15 fps), Euler 30 steps, CFG 4, shift 5. 25 cases × 3 prompts × 3 seeds = 225 clips.
+Checkpoint `random_depth_n1-8_long` EMA step 9500, k = 1 context frame, 4 chained windows (1 + 4 × 33 frames =
+8.9 s at 15 fps), Euler 30 steps, CFG 4, shift 5. 25 cases × 3 prompts × 3 seeds = 225 clips per loop depth, at
+N = 1, 2, 4 and 8 (900 clips). The sections up to the per-case table are at N = 1; see Loop depth for the others.
 Results page (private claude.ai artifact): https://claude.ai/artifact/4Nh7eAyynXM677TkTqCwwY
 
 ## Why these actions
@@ -64,7 +65,7 @@ model follows its prompt and the judge can tell, "real clips vs alt2 text" shoul
 
 ## Results
 
-Mean judge score (yes = 1, partial = 0.5, no = 0) over 3 seeds:
+Mean judge score (yes = 1, partial = 0.5, no = 0) over 3 seeds, at N = 1:
 
 | | real | alt1 | alt2 | real clips vs alt2 text |
 |---|---:|---:|---:|---:|
@@ -81,7 +82,7 @@ Mean judge score (yes = 1, partial = 0.5, no = 0) over 3 seeds:
 - twist_cap, press_oven, knead_dough, wave and carry_bag score 0 for every prompt. The judge also fails their
   real footage, so this is unresolved; watch the videos.
 
-Per case (GT = the judge's verdict on the real footage with its true caption):
+Per case at N = 1 (GT = the judge's verdict on the real footage with its true caption):
 
 | case | family | GT judged ✓ | real | alt1 | alt2 | real clips vs alt2 text | alt2 clips vs real text |
 |---|---|:-:|---:|---:|---:|---:|---:|
@@ -111,6 +112,34 @@ Per case (GT = the judge's verdict on the real footage with its true caption):
 | heldout_curtains | heldout | no | 0.67 | 0.67 | 1.00 | 0.33 | 1.00 |
 | heldout_menu | heldout | ✓ | 1.00 | 1.00 | 1.00 | 0.67 | 0.33 |
 
+## Loop depth
+
+The checkpoint was trained with the core blocks looped N = 1–8 times, picked at random per step. Every case,
+prompt and seed was rolled out again at N = 2, 4 and 8 with the same noise, and judged the same way.
+
+| N | real | alt1 | alt2 | real clips vs alt2 text | real, all 25 | held-out real | PSNR | LPIPS | s / clip |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 0.87 | 0.85 | 0.59 | 0.67 | 0.60 | 0.93 | 15.6 | 0.323 | 31 |
+| 2 | 0.95 | 0.74 | 0.62 | 0.59 | 0.61 | 0.87 | 15.7 | 0.312 | 39 |
+| 4 | 0.82 | 0.79 | 0.64 | 0.64 | 0.56 | 0.80 | 15.8 | 0.308 | 54 |
+| 8 | 0.77 | 0.74 | 0.54 | 0.46 | 0.52 | 0.67 | 15.8 | 0.308 | 84 |
+
+real / alt1 / alt2 / cross are on the 13 judge-verifiable cases. PSNR / LPIPS are real-prompt rollouts vs the
+ground truth over all 25 cases. Time is per clip on one A100.
+
+- Deeper loops do not add capability. Each case has 3 seeds, so one clip shifts a case by 0.33, and 0.1 on the
+  verifiable set is about 4 clips. N = 2 and N = 4 are within that noise of N = 1. Only the N = 8 drop is consistent
+  across prompts.
+- N = 8 is worst on the held-out tasks: real falls from 14 to 10 of 15 clips, mostly heldout_supermarket
+  (1.0 → 0.33).
+- Pixel fidelity barely moves (PSNR +0.2 dB, LPIPS −0.015), and no clip at any depth is judged implausible
+  except one at N = 8.
+- The off-script fallback stays: the alt2 prompts of base_turn and move_guard score 0–0.33 at every depth.
+- N = 8 costs 2.7× the time of N = 1. N = 1 stays the default, as in the seed sweep.
+
+In summary.json the keys are `<case>/<prompt>/N<d>` (per_case, with `cross` = the same clips judged against the
+other prompt) and `<family>/<prompt>/N<d>` (per_family).
+
 ## Files and reproduction
 
 - `configs/eval_cases_capability.json` lists the cases, with provenance and a leak check: no episode is in
@@ -120,18 +149,19 @@ Per case (GT = the judge's verdict on the real footage with its true caption):
 - `scripts/capeval/`: case mining. mine.py takes the full Beta task_info and the splits and writes segs.json.
   select.py builds the candidate pool. fetch_eps.py does HTTP Range downloads of the head-camera mp4 of
   never-sampled episodes, with HF_TOKEN in the environment. frames.py makes contact sheets and build_cases.py
-  writes the cases file. setup_env.sh / get_weights.sh set up the environment, and build_capage.py +
-  capage_template.html build the page. Paths for the episode mirror (/dev/shm/capeval) and task_info are
+  writes the cases file. setup_env.sh / get_weights.sh set up the environment. make_strips.py encodes the
+  page videos (one 3-seed strip per case × prompt × depth), and build_capage.py + capage_template.html build the page. Paths for the episode mirror (/dev/shm/capeval) and task_info are
   hard-coded at the top of the scripts.
 - Clips and GT videos are not in git (`*.mp4`). Rerun with:
 
 ```
 cd flux-action && PYTHONPATH=.. .venv/bin/python -m ldvflux.cap_eval --config ../configs/looped_ft_384_random_n1-8.json \
     --ema /dev/shm/w/looped/random_depth_n1-8_long/ema_step-9500.safetensors --cases ../configs/eval_cases_capability.json \
-    --out ../results/capeval/rlong9500 --seeds 0 1 2 --depths 1 --text-encoder outputs/weights/text_encoder \
+    --out ../results/capeval/rlong9500 --seeds 0 1 2 --depths 1 2 4 8 --text-encoder outputs/weights/text_encoder \
     --mirror /dev/shm/capeval/mirror --shard 0/2 --device cuda:0      # and --shard 1/2 on cuda:1
 PYTHONPATH=.. .venv/bin/python -m ldvflux.cap_judge --run ../results/capeval/rlong9500 \
     --cases ../configs/eval_cases_capability.json --judge /dev/shm/w/qwen3vl32b --device cuda:0
 ```
 
-The rollouts take about 31 s per clip on an A100, so about 1 h on two GPUs. The judge takes about 4 s per clip.
+The rollouts take 31, 39, 54 and 84 s per clip on an A100 at N = 1, 2, 4 and 8, so about 7.5 h for all four depths
+on two GPUs. The judge takes about 4 s per call (about 1,550 calls with the cross checks).

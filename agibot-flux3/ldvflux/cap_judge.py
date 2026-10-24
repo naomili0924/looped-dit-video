@@ -143,16 +143,16 @@ def main() -> None:
         if key.startswith(("gt/", "cross/")):
             continue
         cid, name = key.split("/")
-        pk = name.split("_")[0]
-        r = rows.setdefault((cid, pk), {"score": [], "attempted": [], "plausible": []})
+        pk, d = name.split("_")[:2]  # prompt, loop depth ("N1")
+        r = rows.setdefault((cid, pk, d), {"score": [], "attempted": [], "plausible": []})
         r["score"].append(ans["score"] if ans["score"] is not None else 0.0)
         r["attempted"].append(ans["attempted"] == "yes")
         r["plausible"].append(ans["plausible"] == "yes")
     mean = lambda x: float(np.mean(x)) if len(x) else None
-    per_case = {f"{c}/{pk}": {k: mean(v) for k, v in r.items()} | {"n": len(r["score"])} for (c, pk), r in rows.items()}
+    per_case = {f"{c}/{pk}/{d}": {k: mean(v) for k, v in r.items()} | {"n": len(r["score"])} for (c, pk, d), r in rows.items()}
     fam = {}
-    for (c, pk), r in rows.items():
-        f = fam.setdefault(f"{cases[c]['family']}/{pk}", {"score": [], "attempted": [], "plausible": []})
+    for (c, pk, d), r in rows.items():
+        f = fam.setdefault(f"{cases[c]['family']}/{pk}/{d}", {"score": [], "attempted": [], "plausible": []})
         for k in f:
             f[k] += r[k]
     calib = {k: [a_["completed"] == ("yes" if k == "real" else "no") for key, a_ in answers.items()
@@ -161,8 +161,8 @@ def main() -> None:
     for key, ans in answers.items():
         if key.startswith("cross/"):
             _, cid, name = key.split("/")
-            cross.setdefault(f"{cid}/{name.split('_')[0]}", []).append(ans["score"] if ans["score"] is not None else 0.0)
-    for k, v in cross.items():  # per_case[case/real]["cross"] = the real clips judged against alt2, and vice versa
+            cross.setdefault(f"{cid}/{'/'.join(name.split('_')[:2])}", []).append(ans["score"] if ans["score"] is not None else 0.0)
+    for k, v in cross.items():  # per_case[case/real/N<d>]["cross"] = the real clips judged against alt2, and vice versa
         if k in per_case:
             per_case[k]["cross"] = mean(v)
     summary = {"per_case": per_case, "per_family": {k: {kk: mean(vv) for kk, vv in v.items()} for k, v in fam.items()},

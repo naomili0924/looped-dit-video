@@ -31,20 +31,27 @@ def main():
     summary = json.loads((run / "summary.json").read_text())
     gt_meta = json.loads((run / "gt" / "meta.json").read_text())
     pick = lambda a: {k: a.get(k) for k in ("completed", "attempted", "plausible", "reason", "score")}
+    depths = sorted({int(p.stem.split("_N")[1].split("_")[0]) for p in (run / "clips").glob("*/*.mp4")})
+    times = {}
+    for f in run.glob("times_*.json"):
+        times.update(json.loads(f.read_text()))
+    sec = {f"N{d}": nanmean([v for k, v in times.items() if f"_N{d}_" in k]) for d in depths}
     out = []
     for c in cases:
         cid = c["id"]
-        clips, cross = {}, {}
-        for pk in ("real", "alt1", "alt2"):
-            clips[pk] = []
-            for s in (0, 1, 2):
-                name = f"{pk}_N1_s{s}"
-                m = metrics.get(f"{cid}/{name}", {})
-                clips[pk].append({"seed": s, "file": f"clips/{cid}/{name}.mp4", **pick(judge.get(f"{cid}/{name}", {})),
-                                  "motion": nanmean(m.get("motion", [])),
-                                  "psnr": nanmean(m.get("gt_psnr", [])), "lpips": nanmean(m.get("gt_lpips", []))})
-                if f"cross/{cid}/{name}" in judge:
-                    cross.setdefault(pk, []).append(pick(judge[f"cross/{cid}/{name}"]))
+        clips, cross = {}, {}  # {"N<d>": {prompt: [per seed]}}
+        for d in depths:
+            cd, xd = clips.setdefault(f"N{d}", {}), cross.setdefault(f"N{d}", {})
+            for pk in ("real", "alt1", "alt2"):
+                cd[pk] = []
+                for s in (0, 1, 2):
+                    name = f"{pk}_N{d}_s{s}"
+                    m = metrics.get(f"{cid}/{name}", {})
+                    cd[pk].append({"seed": s, "file": f"clips/{cid}/{name}.mp4", **pick(judge.get(f"{cid}/{name}", {})),
+                                   "motion": nanmean(m.get("motion", [])),
+                                   "psnr": nanmean(m.get("gt_psnr", [])), "lpips": nanmean(m.get("gt_lpips", []))})
+                    if f"cross/{cid}/{name}" in judge:
+                        xd.setdefault(pk, []).append(pick(judge[f"cross/{cid}/{name}"]))
         out.append({
             "id": cid, "family": c["family"], "familyLabel": FAMILY[c["family"]], "split": c["split"],
             "task": c["task"], "taskName": task_name(c["task"]), "episode": c["episode"], "segFrames": c["segment_frames"],
@@ -54,7 +61,7 @@ def main():
             "calib": {k: {**pick(judge[f"gt/{cid}/{k}"]), "prompt": judge[f"gt/{cid}/{k}"]["prompt"]}
                       for k in ("real", "foreign") if f"gt/{cid}/{k}" in judge},
             "clips": clips, "cross": cross})
-    data = {"cases": out, "calibration": summary["calibration"]}
+    data = {"cases": out, "calibration": summary["calibration"], "depths": [f"N{d}" for d in depths], "secPerClip": sec}
     tpl = (Path(__file__).parent / "capage_template.html").read_text()
     (web / "index.html").write_text(tpl.replace("/*__DATA__*/null", json.dumps(data, separators=(",", ":"))))
     print("wrote", web / "index.html", len(out), "cases")

@@ -115,6 +115,7 @@ button.play.on { background: transparent; color: var(--accent); }
 .ptext { font-size: 14px; }
 .vids { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 figure { margin: 0; display: flex; flex-direction: column; gap: 5px; }
+.strip video { aspect-ratio: 4 / 1; }
 video { width: 100%; aspect-ratio: 4 / 3; display: block; background: var(--rule); border-radius: 4px; max-width: 100%; }
 figcaption { display: flex; flex-direction: column; gap: 3px; font-size: 12.5px; color: var(--ink-2); }
 .verdict { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
@@ -130,6 +131,9 @@ details.calib summary { cursor: pointer; color: var(--ink); font-weight: 600; fo
 details.calib .cl { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; margin-top: 8px; align-items: baseline; }
 .notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px 28px; font-size: 14px; color: var(--ink-2); }
 .notes h3 { color: var(--ink); margin-bottom: 4px; font-size: 15px; }
+.notes:empty { display: none; }
+h2 .muted { font-weight: 500; font-size: 15px; }
+#depthtable tr.cur td { background: var(--accent-soft); }
 @media (max-width: 760px) {
   .grid { grid-template-columns: 1fr; }
   .gtcol { max-width: 340px; }
@@ -145,7 +149,7 @@ details.calib .cl { display: grid; grid-template-columns: auto 1fr; gap: 6px 12p
     <p class="muted">25 cases the model never trained on: 20 episodes from AgiBot tasks that were in no training split, covering ten action families the training mix barely touches, plus one test episode from each of the 5 held-out tasks. Each case starts from one real frame and is asked three things: the episode's own caption (real), a rewording without arm hints (alt1), and a different action in the same scene (alt2). Three noise seeds each, scored by a VLM judge.</p>
     <div class="setup mono">
       <span>checkpoint <b>random_depth_n1-8_long · EMA step 9500</b></span>
-      <span>loop depth <b>N = 1</b></span>
+      <span>loop depth <b id="setup-depths">N = 1</b></span>
       <span>context <b>k = 1 frame</b></span>
       <span>rollout <b>4 × 33 frames = 8.9 s @ 15 fps</b></span>
       <span>sampler <b>30 steps · cfg 4 · shift 5</b></span>
@@ -154,25 +158,37 @@ details.calib .cl { display: grid; grid-template-columns: auto 1fr; gap: 6px 12p
     </div>
   </header>
 
+  <section aria-labelledby="h-depth">
+    <h2 id="h-depth">Loop depth</h2>
+    <p class="muted">The model was trained with the core blocks looped N = 1–8 times, picked at random per step. Every case, prompt and seed is rolled out at each depth below with the same noise. Pick a depth to switch the headline, the scoreboard and the videos.</p>
+    <div class="filters depthbar" id="depthbar" role="group" aria-label="Loop depth"></div>
+    <div class="tablewrap"><table id="depthtable"></table></div>
+    <div class="notes" id="depthnotes">
+      <div><h3>Deeper loops do not add capability</h3><p>On the 13 verifiable cases the real prompt scores 0.87, 0.95, 0.82 and 0.77 at N = 1, 2, 4 and 8. Over all 25 cases it scores 0.60, 0.61, 0.56 and 0.52. Pixel fidelity to the ground truth barely moves (PSNR 15.6 to 15.8, LPIPS 0.32 to 0.31). Each case has 3 seeds, so one clip shifts a case by 0.33, and 0.1 on the verifiable set is about 4 clips. Only the drop at N = 8 holds across prompts.</p></div>
+      <div><h3>N = 8 is worst on the held-out tasks</h3><p>Real-prompt scores on the five unseen tasks fall from 0.93 to 0.87, 0.80 and 0.67 (14 to 10 of 15 clips), mostly in the supermarket case (1.0 to 0.33). The off-script fallback does not go away with depth: the alt2 prompts for base_turn and move_guard stay at 0 to 0.33 at every N.</p></div>
+      <div><h3>Depth costs time for nothing</h3><p>A clip takes 31, 39, 54 and 84 s at N = 1, 2, 4 and 8 on an A100, so N = 8 is 2.7× the cost of N = 1 for a slightly worse result. N = 1 stays the default, in line with the seed sweep.</p></div>
+</div>
+  </section>
+
   <section aria-labelledby="h-head">
-    <h2 id="h-head">Headline</h2>
+    <h2 id="h-head">Headline <span class="muted" id="head-depth"></span></h2>
     <div class="tiles" id="tiles"></div>
     <div class="legend" id="legend"></div>
     <div class="notes">
       <div><h3>The judge misses half of real successes</h3><p>Shown the real footage and its true caption, Qwen3-VL-32B said completed for 13 of 25 episodes. It misses small or slow motions such as a button press, a cap twist or a slow approach. It almost never accepts a wrong caption. Read a ✓ as reliable and a ✕ as weak evidence, and use the videos for the 12 grey cases.</p></div>
-      <div><h3>The scene drives the action more than the words</h3><p>On the 13 cases the judge can verify, real and reworded prompts score 0.87 and 0.85. A different action in the same scene (alt2) scores 0.59. The real-prompt clips still pass the alt2 instruction 0.67 of the time, so the model mostly does what the scene suggests, and alt2 moves it only part of the way.</p></div>
-      <div><h3>Off-script requests fall back to the usual action</h3><p>Three verifiable alt2 prompts scored 0 on all seeds: turn left away from the curtains, squeeze the dressing bottle, and move the guard away from the slicer. Judged against the original caption, those same alt2 clips pass 1.0, 1.0 and 0.67, so the robot did the episode's own action instead. The five held-out tasks (pick, carry, pull) score highest: real 0.93 over 15 clips.</p></div>
+      <div><h3>The scene drives the action more than the words</h3><p>At N = 1, on the 13 cases the judge can verify, real and reworded prompts score 0.87 and 0.85. A different action in the same scene (alt2) scores 0.59. The real-prompt clips still pass the alt2 instruction 0.67 of the time, so the model mostly does what the scene suggests, and alt2 moves it only part of the way.</p></div>
+      <div><h3>Off-script requests fall back to the usual action</h3><p>At N = 1, three verifiable alt2 prompts scored 0 on all seeds: turn left away from the curtains, squeeze the dressing bottle, and move the guard away from the slicer. Judged against the original caption, those same alt2 clips pass 1.0, 1.0 and 0.67, so the robot did the episode's own action instead. The five held-out tasks (pick, carry, pull) score highest: real 0.93 over 15 clips.</p></div>
     </div>
   </section>
 
   <section aria-labelledby="h-board">
-    <h2 id="h-board">Scoreboard</h2>
+    <h2 id="h-board">Scoreboard <span class="muted" id="board-depth"></span></h2>
     <p class="muted">Dots are the three seeds; the number is the mean judge score (yes = 1, partial = ½, no = 0). <em>GT</em> is the judge's verdict on the real footage with its true caption. Where that is not ✓ (grey rows), the judge cannot see this action, and a ✕ for the model says little. <em>Cross</em> is the real-prompt clips judged against the alt2 instruction: if the model follows its prompt and the judge can tell, it should sit well below the real score. PSNR and LPIPS compare the real-prompt rollout with what the robot actually did. Motion is mean frame-to-frame change relative to the ground truth. Click a row to jump to its videos.</p>
     <div class="tablewrap"><table id="board"></table></div>
   </section>
 
   <section aria-labelledby="h-cases">
-    <h2 id="h-cases">Cases</h2>
+    <h2 id="h-cases">Cases <span class="muted" id="cases-depth"></span></h2>
     <div class="filters" id="filters" role="group" aria-label="Filter by family"></div>
     <div class="cases" id="cases"></div>
   </section>
@@ -210,12 +226,32 @@ function provBadge(k) {
   return `<span class="badge unseen">never-trained episode</span>`;
 }
 
-// headline tiles: all 25 cases, and the cases where the judge confirms the real footage (only there is a "no" informative)
+// depth state: k.clips / k.cross point at the selected depth
 const verified = k => k.calib.real && k.calib.real.completed === "yes";
-(function () {
-  const V = DATA.cases.filter(verified);
-  const sc = (ks, pk) => mean(ks.flatMap(k => k.clips[pk]).map(score));
-  const cr = ks => mean(ks.flatMap(k => (k.cross.real || []).map(score)));
+let DEPTH = DATA.depths[0];
+const setDepth = d => { DEPTH = d; DATA.cases.forEach(k => { k.clips = k.clipsBy[d]; k.cross = k.crossBy[d] || {}; }); };
+DATA.cases.forEach(k => { k.clipsBy = k.clips; k.crossBy = k.cross; });
+const dlabel = d => "N = " + d.slice(1);
+const V = DATA.cases.filter(verified);
+const sc = (ks, pk) => mean(ks.flatMap(k => k.clips[pk]).map(score));
+const cr = ks => mean(ks.flatMap(k => (k.cross.real || []).map(score)));
+const allClips = ks => ks.flatMap(k => PK.flatMap(pk => k.clips[pk]));
+
+function renderDepthTable() {
+  const cur = DEPTH;
+  let h = `<thead><tr><th>Depth</th><th class="r">real</th><th class="r">alt1</th><th class="r">alt2</th><th class="r">real vs alt2 text</th><th class="r">real · all 25</th><th class="r">implausible</th><th class="r">PSNR</th><th class="r">LPIPS</th><th class="r">s / clip</th></tr></thead><tbody>`;
+  for (const d of DATA.depths) {
+    setDepth(d);
+    const cl = allClips(DATA.cases).filter(c => c.plausible);
+    const imp = cl.length ? cl.filter(c => c.plausible === "no").length / cl.length : null;
+    const real = DATA.cases.flatMap(k => k.clips.real);
+    h += `<tr${d === cur ? ' class="cur"' : ""}><td>${dlabel(d)}</td>${PK.map(pk => `<td class="r">${fmt(sc(V, pk))}</td>`).join("")}<td class="r">${fmt(cr(V))}</td><td class="r">${fmt(sc(DATA.cases, "real"))}</td><td class="r">${pct(imp)}</td><td class="r">${fmt(mean(real.map(c => c.psnr)), 1)}</td><td class="r">${fmt(mean(real.map(c => c.lpips)), 3)}</td><td class="r">${fmt(DATA.secPerClip[d], 0)}</td></tr>`;
+  }
+  setDepth(cur);
+  document.getElementById("depthtable").innerHTML = h + `</tbody><caption class="muted" style="caption-side:bottom;text-align:left;padding:8px 10px;font-size:12.5px">Judge scores on the ${V.length} cases where the judge verifies the real footage, unless marked all 25. PSNR / LPIPS: real-prompt rollouts vs the ground truth, all 25 cases. Seconds per clip on one A100.</caption>`;
+}
+
+function renderTiles() {
   const cal = DATA.calibration;
   const t = [
     ...PK.map(pk => ({ k: `${pk} prompt · completed`, v: fmt(sc(V, pk)), s: `${V.length} judge-verifiable cases · all 25: ${fmt(sc(DATA.cases, pk))}` })),
@@ -224,11 +260,11 @@ const verified = k => k.calib.real && k.calib.real.completed === "yes";
     { k: "judge on wrong caption", v: pct(cal.gt_foreign_caption_no_rate), s: `says no to another family's caption (${Math.round(cal.gt_foreign_caption_no_rate * cal.n)} of ${cal.n})`, trust: true },
   ];
   document.getElementById("tiles").innerHTML = t.map(x => `<div class="tile${x.trust ? " trust" : ""}"><span class="k">${x.k}</span><span class="v">${x.v}</span><span class="s">${x.s}</span></div>`).join("");
-  document.getElementById("legend").innerHTML = `<span><span class="dot yes">✓</span> completed</span><span><span class="dot partial">½</span> partial</span><span><span class="dot no">✕</span> not done</span><span>Dashed tiles measure the judge itself, not the model.</span>`;
-})();
+}
+document.getElementById("legend").innerHTML = `<span><span class="dot yes">✓</span> completed</span><span><span class="dot partial">½</span> partial</span><span><span class="dot no">✕</span> not done</span><span>Dashed tiles measure the judge itself, not the model.</span>`;
 
-// scoreboard
-(function () {
+const board = document.getElementById("board");
+function renderBoard() {
   const fams = [...new Set(DATA.cases.map(k => k.family))];
   let h = `<thead><tr><th>Case</th><th>Source</th><th>GT</th>${PK.map(p => `<th>${PK_LABEL[p]}</th>`).join("")}<th>Cross</th><th class="r">PSNR</th><th class="r">LPIPS</th><th class="r">Motion ÷ GT</th></tr></thead><tbody>`;
   for (const f of fams) {
@@ -236,36 +272,35 @@ const verified = k => k.calib.real && k.calib.real.completed === "yes";
     h += `<tr class="fam"><td colspan="10">${esc(ks[0].familyLabel)}</td></tr>`;
     for (const k of ks) {
       const cell = pk => `<td>${dots(k.clips[pk])}<span class="num">${fmt(mean(k.clips[pk].map(score)))}</span></td>`;
-      const cr = k.cross.real || [];
+      const crs = k.cross.real || [];
       const m = mean(k.clips.real.map(c => c.motion));
-      h += `<tr class="row${verified(k) ? "" : " unver"}" tabindex="0" data-id="${k.id}"><td>${esc(k.id.replace(/_/g, " "))}</td><td>${k.provenance.held_out_task ? "held-out" : "unseen ep."}</td><td>${k.calib.real ? `<span class="v-chip ${vclass(k.calib.real.completed)}">${vglyph(k.calib.real.completed)}</span>` : "–"}</td>${PK.map(cell).join("")}<td>${cr.length ? dots(cr) + `<span class="num">${fmt(mean(cr.map(score)))}</span>` : "–"}</td><td class="r">${fmt(mean(k.clips.real.map(c => c.psnr)), 1)}</td><td class="r">${fmt(mean(k.clips.real.map(c => c.lpips)), 3)}</td><td class="r">${m != null && k.gtMotion ? fmt(m / k.gtMotion) : "–"}</td></tr>`;
+      h += `<tr class="row${verified(k) ? "" : " unver"}" tabindex="0" data-id="${k.id}"><td>${esc(k.id.replace(/_/g, " "))}</td><td>${k.provenance.held_out_task ? "held-out" : "unseen ep."}</td><td>${k.calib.real ? `<span class="v-chip ${vclass(k.calib.real.completed)}">${vglyph(k.calib.real.completed)}</span>` : "–"}</td>${PK.map(cell).join("")}<td>${crs.length ? dots(crs) + `<span class="num">${fmt(mean(crs.map(score)))}</span>` : "–"}</td><td class="r">${fmt(mean(k.clips.real.map(c => c.psnr)), 1)}</td><td class="r">${fmt(mean(k.clips.real.map(c => c.lpips)), 3)}</td><td class="r">${m != null && k.gtMotion ? fmt(m / k.gtMotion) : "–"}</td></tr>`;
     }
   }
-  const board = document.getElementById("board");
   board.innerHTML = h + "</tbody>";
-  const go = id => { const el = document.getElementById("case-" + id); if (el) { el.hidden = false; el.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); } };
-  board.addEventListener("click", e => { const r = e.target.closest("tr.row"); if (r) go(r.dataset.id); });
-  board.addEventListener("keydown", e => { const r = e.target.closest("tr.row"); if (r && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); go(r.dataset.id); } });
-})();
+}
+const go = id => { const el = document.getElementById("case-" + id); if (el) { el.hidden = false; el.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); } };
+board.addEventListener("click", e => { const r = e.target.closest("tr.row"); if (r) go(r.dataset.id); });
+board.addEventListener("keydown", e => { const r = e.target.closest("tr.row"); if (r && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); go(r.dataset.id); } });
 
-// cases
-(function () {
-  const root = document.getElementById("cases");
-  const fig = (c, poster) => `<figure><video muted loop playsinline preload="none" poster="${poster}" data-src="${c.file}" aria-label="seed ${c.seed}"></video><figcaption><span class="verdict"><span class="v-chip ${vclass(c.completed)}">${vglyph(c.completed)} ${esc(c.completed || "?")}</span><span class="flag">seed ${c.seed}</span>${c.attempted === "no" ? `<span class="flag bad">not attempted</span>` : ""}${c.plausible === "no" ? `<span class="flag bad">implausible</span>` : ""}</span><span class="reason">${esc(c.reason)}</span></figcaption></figure>`;
+const root = document.getElementById("cases");
+let FAMILY = "";
+function renderCases() {
+  const cap = c => `<figcaption><span class="verdict"><span class="v-chip ${vclass(c.completed)}">${vglyph(c.completed)} ${esc(c.completed || "?")}</span><span class="flag">seed ${c.seed}</span>${c.attempted === "no" ? `<span class="flag bad">not attempted</span>` : ""}${c.plausible === "no" ? `<span class="flag bad">implausible</span>` : ""}</span><span class="reason">${esc(c.reason)}</span></figcaption>`;
   root.innerHTML = DATA.cases.map(k => {
     const poster = `poster/${k.id}.jpg`;
     const pv = k.provenance;
     const seenNote = pk => (pk === "real" ? pv.real_caption_in_training : pv[pk + "_in_training"]) ? `<span class="badge soft">text seen in training</span>` : "";
-    const rows = PK.map(pk => `<div class="prow"><div class="prow-head"><span class="pk">${pk}</span><span class="ptext">${esc(k.prompts[pk])}</span>${seenNote(pk)}</div><div class="vids">${k.clips[pk].map(c => fig(c, poster)).join("")}</div></div>`).join("");
+    const rows = PK.map(pk => `<div class="prow"><div class="prow-head"><span class="pk">${pk}</span><span class="ptext">${esc(k.prompts[pk])}</span>${seenNote(pk)}</div><figure class="strip"><video muted loop playsinline preload="none" style="background: url(${poster}) 0 0 / 33.334% 100% repeat-x" data-src="strips/${k.id}/${pk}_${DEPTH}.mp4" aria-label="${pk} prompt, seeds 0, 1, 2 left to right"></video><div class="vids">${k.clips[pk].map(cap).join("")}</div></figure></div>`).join("");
     const cal = k.calib || {};
     const calRow = (lab, a) => a ? `<span>${lab}</span><span><span class="v-chip ${vclass(a.completed)}">${esc(a.completed)}</span> “${esc(a.prompt)}” — ${esc(a.reason)}</span>` : "";
     const crl = l => (l || []).map(a => `<span><span class="v-chip ${vclass(a.completed)}">${esc(a.completed)}</span> ${esc(a.reason)}</span>`).join("<br>");
-    const cr = crl(k.cross.real), cr2 = crl(k.cross.alt2);
-    return `<article class="case" id="case-${k.id}" data-family="${k.family}">
+    const c1 = crl(k.cross.real), c2 = crl(k.cross.alt2);
+    return `<article class="case" id="case-${k.id}" data-family="${k.family}"${FAMILY && k.family !== FAMILY ? " hidden" : ""}>
       <div class="case-head">
         <div class="case-title">
           <h3>${esc(k.id.replace(/_/g, " "))}</h3>
-          <div class="meta">${provBadge(k)}<span class="badge soft">${esc(k.familyLabel)}</span><span class="mono muted">task ${k.task}${k.taskName ? " · " + esc(k.taskName) : ""} · episode ${k.episode} · segment ${k.segSec} s</span></div>
+          <div class="meta">${provBadge(k)}<span class="badge soft">${esc(k.familyLabel)}</span><span class="badge soft">${dlabel(DEPTH)}</span><span class="mono muted">task ${k.task}${k.taskName ? " · " + esc(k.taskName) : ""} · episode ${k.episode} · segment ${k.segSec} s</span></div>
         </div>
         <div class="case-actions"><button class="play" type="button" id="play-${k.id}" aria-pressed="false">Play all</button></div>
       </div>
@@ -277,34 +312,49 @@ const verified = k => k.calib.real && k.calib.real.completed === "yes";
         </div>
         <div class="rows">${rows}</div>
       </div>
-      <details class="calib"><summary>Judge checks on this case</summary><div class="cl">${calRow("real footage + true caption", cal.real)}${calRow("real footage + wrong caption", cal.foreign)}${cr ? `<span>real clips vs alt2 text</span><span>${cr}</span>` : ""}${cr2 ? `<span>alt2 clips vs real text</span><span>${cr2}</span>` : ""}</div></details>
+      <details class="calib"><summary>Judge checks on this case</summary><div class="cl">${calRow("real footage + true caption", cal.real)}${calRow("real footage + wrong caption", cal.foreign)}${c1 ? `<span>real clips vs alt2 text</span><span>${c1}</span>` : ""}${c2 ? `<span>alt2 clips vs real text</span><span>${c2}</span>` : ""}</div></details>
     </article>`;
   }).join("");
+}
+root.addEventListener("click", e => {
+  const b = e.target.closest("button.play");
+  if (b) {
+    const card = b.closest(".case");
+    const vids = [...card.querySelectorAll("video")];
+    const on = b.getAttribute("aria-pressed") !== "true";
+    vids.forEach(v => { if (!v.src) v.src = v.dataset.src; });
+    if (on) { vids.forEach(v => { v.currentTime = 0; v.play().catch(() => {}); }); }
+    else vids.forEach(v => v.pause());
+    b.setAttribute("aria-pressed", on); b.classList.toggle("on", on); b.textContent = on ? "Pause" : "Play all";
+    return;
+  }
+  const v = e.target.closest("video");
+  if (v) { if (!v.src) v.src = v.dataset.src; v.paused ? v.play().catch(() => {}) : v.pause(); }
+});
 
-  root.addEventListener("click", e => {
-    const b = e.target.closest("button.play");
-    if (b) {
-      const card = b.closest(".case");
-      const vids = [...card.querySelectorAll("video")];
-      const on = b.getAttribute("aria-pressed") !== "true";
-      vids.forEach(v => { if (!v.src) v.src = v.dataset.src; });
-      if (on) { vids.forEach(v => { v.currentTime = 0; v.play().catch(() => {}); }); }
-      else vids.forEach(v => v.pause());
-      b.setAttribute("aria-pressed", on); b.classList.toggle("on", on); b.textContent = on ? "Pause" : "Play all";
-      return;
-    }
-    const v = e.target.closest("video");
-    if (v) { if (!v.src) v.src = v.dataset.src; v.paused ? v.play().catch(() => {}) : v.pause(); }
-  });
+// family filter
+const fams = [...new Map(DATA.cases.map(k => [k.family, k.familyLabel])).entries()];
+const fl = document.getElementById("filters");
+fl.innerHTML = `<button class="chip" type="button" id="f-all" data-f="" aria-pressed="true">All 25</button>` + fams.map(([f, l]) => `<button class="chip" type="button" id="f-${f}" data-f="${f}" aria-pressed="false">${esc(l)}</button>`).join("");
+fl.addEventListener("click", e => {
+  const b = e.target.closest(".chip"); if (!b) return;
+  FAMILY = b.dataset.f;
+  fl.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c === b));
+  root.querySelectorAll(".case").forEach(c => c.hidden = !!FAMILY && c.dataset.family !== FAMILY);
+});
 
-  // family filter
-  const fams = [...new Map(DATA.cases.map(k => [k.family, k.familyLabel])).entries()];
-  const fl = document.getElementById("filters");
-  fl.innerHTML = `<button class="chip" type="button" id="f-all" data-f="" aria-pressed="true">All 25</button>` + fams.map(([f, l]) => `<button class="chip" type="button" id="f-${f}" data-f="${f}" aria-pressed="false">${esc(l)}</button>`).join("");
-  fl.addEventListener("click", e => {
-    const b = e.target.closest(".chip"); if (!b) return;
-    fl.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c === b));
-    root.querySelectorAll(".case").forEach(c => c.hidden = !!b.dataset.f && c.dataset.family !== b.dataset.f);
-  });
-})();
+// depth selector
+const db = document.getElementById("depthbar");
+db.innerHTML = DATA.depths.map((d, i) => `<button class="chip" type="button" id="d-${d}" data-d="${d}" aria-pressed="${i === 0}">${dlabel(d)}</button>`).join("");
+document.getElementById("setup-depths").textContent = DATA.depths.map(d => d.slice(1)).join(" · ");
+function renderAll() {
+  renderDepthTable(); renderTiles(); renderBoard(); renderCases();
+  ["head-depth", "board-depth", "cases-depth"].forEach(id => document.getElementById(id).textContent = "· " + dlabel(DEPTH));
+}
+db.addEventListener("click", e => {
+  const b = e.target.closest(".chip"); if (!b) return;
+  db.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c === b));
+  setDepth(b.dataset.d); renderAll();
+});
+setDepth(DEPTH); renderAll();
 </script>
