@@ -97,11 +97,11 @@ def main() -> None:
             other = next(cases[o] for o in real_ids[i + 1:] + real_ids[:i] if cases[o]["family"] != cases[cid]["family"])
             jobs += [(f"gt/{cid}/real", gts[cid], cases[cid]["prompts"]["real"]),
                      (f"gt/{cid}/foreign", gts[cid], other["prompts"]["real"])]
-        for p_ in clips:  # cross: real clip vs the alt2 instruction, alt2 clip vs the real one
-            pk = p_.stem.split("_")[0]
-            if pk in ("real", "alt2"):
-                other_pk = "alt2" if pk == "real" else "real"
-                jobs.append((f"cross/{p_.parent.name}/{p_.stem}", p_, cases[p_.parent.name]["prompts"][other_pk]))
+        for p_ in clips:  # cross: every non-real clip vs the real caption (fallback); a real clip vs alt2 (v1 cases)
+            pk, prompts = p_.stem.split("_")[0], cases[p_.parent.name]["prompts"]
+            other_pk = "real" if pk != "real" else "alt2" if "alt2" in prompts else None
+            if other_pk:
+                jobs.append((f"cross/{p_.parent.name}/{p_.stem}", p_, prompts[other_pk]))
         for key, path, prompt in jobs:
             if key in answers:
                 continue

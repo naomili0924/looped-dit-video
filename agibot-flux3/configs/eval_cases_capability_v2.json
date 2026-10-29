@@ -1,0 +1,843 @@
+{
+ "note": "v2 prompts (capability eval redesign, 2026-10-29): real = AgiBot's caption; object / action / direction = alternatives written from the context frame that use only verbs and direction words that occur in training: object = a trained verb on another object visible in the frame, action = another trained verb that the scene allows, direction = a trained verb moved in another direction. No prompt names an arm. Exposure per prompt: results/capeval/prompt_ladder_v2.json (scripts/capeval/tag_prompts.py). Capability eval cases. Every case is a REAL AgiBot World Beta episode that training never saw: either in no split of Jinyan0924/agibot-flux3-eval-splits (never sampled, never fetched; split 'unsampled') or a test_unseen episode of one of the 5 held-out tasks. anchor = segment start + 2, so the k = 1 context frame is the segment's first frame. real = AgiBot's annotation (verbatim, may name an arm); alt1 = same action reworded, no arm; alt2 = a different action in the same scene (no ground truth). Prompts written by Claude (LLM) from the segment's frames. A case with \"source\": \"generated\" would carry an edited context_image instead (none so far).",
+ "families": {
+  "pour": "Pour / scoop / squeeze",
+  "rotate": "Turn / twist / rotate",
+  "tool_use": "Tool use (scan, stamp, iron, …)",
+  "press": "Press / click",
+  "locomotion": "Base: turn / move / face",
+  "transport": "Carry / move",
+  "gesture": "Gesture (wave, clap)",
+  "cut_shape": "Cut / peel / knead / roll",
+  "mix": "Stir / whisk / shake",
+  "tie": "Tie / untie",
+  "heldout": "Held-out task (test_unseen)"
+ },
+ "cases": [
+  {
+   "id": "pour_dressing",
+   "family": "pour",
+   "source": "real",
+   "split": "unsampled",
+   "task": "480",
+   "task_name": "Make sandwiches with salad dressing 1213 edition",
+   "episode": "728347",
+   "seg": 5,
+   "anchor": 1067,
+   "segment_frames": 235,
+   "caption": "Pour the picked-up salad dressing onto the meat slice with the left arm.",
+   "prompts": {
+    "real": "Pour the picked-up salad dressing onto the meat slice with the left arm.",
+    "object": "Pour the salad dressing onto the lettuce.",
+    "action": "Place the salad dressing bottle on the counter.",
+    "direction": "Lift the salad dressing bottle up."
+   },
+   "alt2_family": "pour",
+   "provenance": {
+    "episode_in_any_split": false,
+    "held_out_task": false,
+    "real_caption_in_training": true,
+    "alt1_in_training": false,
+    "alt2_in_training": false,
+    "skill": "Pour"
+   },
+   "prompts_v1": {
+    "real": "Pour the picked-up salad dressing onto the meat slice with the left arm.",
+    "alt1": "Pour the salad dressing over the slice of meat.",
+    "alt2": "Squeeze the salad dressing bottle over the slice of meat."
+   }
+  },
+  {
+   "id": "scoop_tapioca",
+   "family": "pour",
+   "source": "real",
+   "split": "unsampled",
+   "task": "498",
+   "task_name": "Make milk tea",
+   "episode": "791259",
+   "seg": 3,
+   "anchor": 648,
+   "segment_frames": 155,
+   "caption": "Scoop a spoonful of black pearl tapioca pearls from the container holding black pearl tapioca pearls with the right arm using the picked-up spoon.",
+   "prompts": {
+    "real": "Scoop a spoonful of black pearl tapioca pearls from the container holding black pearl tapioca pearls with the right arm using the picked-up spoon.",
+    "object": "Pour the tapioca pearls from the spoon into the plastic cup.",
+    "action": "Place the spoon on the counter.",
+    "direction": "Lift the spoon up out of the container."
+   },
+   "alt2_family": "pour",
+   "provenance": {
+    "episode_in_any_split": false,
+    "held_out_task": false,
+    "real_caption_in_training": true,
+    "alt1_in_training": false,
+    "alt2_in_training": false,
+    "skill": "Scoop"
+   },
+   "prompts_v1": {
+    "real": "Scoop a spoonful of black pearl tapioca pearls from the container holding black pearl tapioca pearls with the right arm using the picked-up spoon.",
+    "alt1": "Use the spoon to scoop up some black tapioca pearls from the container.",
+    "alt2": "Pour the tapioca pearls from the spoon back into the container."
+   }
+  },
+  {
+   "id": "twist_cap",
+   "family": "rotate",
+   "source": "real",
+   "split": "unsampled",
+   "task": "722",
+   "task_name": "Tighten the bottle cap",
+   "episode": "899308",
+   "seg": 2,
+   "anchor": 723,
+   "segment_frames": 266,
+   "caption": "Tighten the bottle cap of the held water bottle with both arms.",
+   "prompts": {
+    "real": "Tighten the bottle cap of the held water bottle with both arms.",
+    "object": "Pick up the cup on the far side of the table.",
+    "action": "Place the water bottle on the table.",
+    "direction": "Move the water bottle to the left."
+   },
+   "alt2_family": "rotate",
+   "provenance": {
+    "episode_in_any_split": false,
+    "held_out_task": false,
+    "real_caption_in_training": true,
+    "alt1_in_training": false,
+    "alt2_in_training": false,
+    "skill": "Screw"
+   },
+   "prompts_v1": {
+    "real": "Tighten the bottle cap of the held water bottle with both arms.",
+    "alt1": "Screw the cap tightly onto the water bottle.",
+    "alt2": "Unscrew the cap and take it off the water bottle."
+   }
+  },
+  {
+   "id": "turn_faucet",
+   "family": "rotate",
+   "source": "real",
+   "split": "unsampled",
+   "task": "392",
+   "task_name": "Brush water bottle",
+   "episode": "681627",
+   "seg": 11,
+   "anchor": 2029,
+   "segment_frames": 178,
+   "caption": "Turn off the faucet with the right arm.",
+   "prompts": {
+    "real": "Turn off the faucet with the right arm.",
+    "object": "Pick up the blue soap bottle.",
+    "action": "Place the cup into the orange basket.",
+    "direction": "Turn on the faucet."
+   },
+   "alt2_family": "rotate",
+   "provenance": {
+    "episode_in_any_split": false,
+    "held_out_task": false,
+    "real_caption_in_training": true,
+    "alt1_in_training": false,
+    "alt2_in_training": false,
+    "skill": "Push"
+   },
+   "prompts_v1": {
+    "real": "Turn off the faucet with the right arm.",
+    "alt1": "Rotate the faucet handle to shut off the water.",
+    "alt2": "Turn on the faucet."
+   }
+  },
+  {
+   "id": "scan_juice",
+   "family": "tool_use",
+   "source": "real",
+   "split": "unsampled",
+   "task": "390",
+   "task_name": "Checkout and scan barcode in the supermarket",
+   "episode": "706508",
+   "seg": 2,
+   "anchor": 592,
+   "segment_frames": 199,
+   "caption": "Aim the barcode scanner at the barcode of the held orange juice with the right arm.",
+   "prompts": {
+    "real": "Aim the barcode scanner at the barcode of the held orange juice with the right arm.",
+    "object": "Aim the barcode scanner at the red bag of snacks.",
+    "action": "Place the orange juice on the table.",
+    "direction": "Move the orange juice bottle to the right, toward the scanner."
+   },
+   "alt2_family": "tool_use",
+   "provenance": {
+    "episode_in_any_split": false,
+    "held_out_task": false,
+    "real_caption_in_training": true,
+    "alt1_in_training": false,
+    "alt2_in_training": false,
+    "skill": "Scan"
+   },
+   "prompts_v1": {
+    "real": "Aim the barcode scanner at the barcode of the held orange juice with the right arm.",
+    "alt1": "Scan the barcode on the orange juice bottle with the scanner.",
+    "alt2": "Scan the yellow bottle on the counter with the barcode scanner."
+   }
+  },
+  {
+   "id": "stamp_form",
+   "family": "tool_use",
+   "source": "real",
+   "split": "unsampled",
+   "task": "779",
+   "task_name": "Stamp the seal",
+   "episode": "900248",
+   "seg": 1,
+   "anchor": 290,
+   "segment_frames": 151,
+   "caption": "Stamp the document on the table with the stamp in hand using the right arm.",
+   "prompts": {
+    "real": "Stamp the document on the table with the stamp in hand using the right arm.",
+    "object": "Pick up the clipboard with the document.",
+    "action": "Place the red stamp on the table.",
+    "direction": "Slide the clipboard to the left."
+   },
+   "alt2_family": "tool_use",
+   "provenance": {
+    "episode_in_any_split": false,
+    "held_out_task": false,
+    "real_caption_in_training": true,
+    "alt1_in_training": false,
+    "alt2_in_training": false,
+    "skill": "stamp"
+   },
+   "prompts_v1": {
+    "real": "Stamp the document on the table with the stamp in hand using the right arm.",
+    "alt1": "Press the stamp down onto the paper to stamp it.",
+    "alt2": "Stamp the paper twice, in two different places."
+   }
+  },
+  {
+   "id": "press_oven",
+   "family": "press",
+   "source": "real",
+   "split": "unsampled",
+   "task": "368",
+   "task_name": "Cook vegetables with oven",
+   "episode": "677826",
+   "seg": 11,
+   "anchor": 2869,
+   "segment_frames": 219,
+   "caption": "Press the oven start button with the right arm.",
+   "prompts": {
+    "real": "Press the oven start button with the right arm.",
+    "object": "Pick up the ketchup bottle.",
+    "action": "Open the oven door.",
+    "direction": "Push the oven back toward the wall."
+   },
+   "alt2_family": "press",
+   "provenance": {
+    "episode_in_any_split": false,
+    "held_out_task": false,
+    "real_caption_in_training": true,
+    "alt1_in_training": false,
+    "alt2_in_training": false,
+    "skill": "PressButton"
+   },
+   "prompts_v1": {
+    "real": "Press the oven start button with the right arm.",
+    "alt1": "Push the start button on the oven.",
+    "alt2": "Press the oven start button twice."
+   }
+  },
+  {
+   "id": "press_ricecooker",
+   "family": "press",
+   "source": "real",
+   "split": "unsampled",
+   "task": "596",
+   "task_name": "Place the inner pot with rice into the rice cooker to cook.",
+   "episode": "810754",
+   "seg": 4,
+   "anchor": 1539,
+   "segment_frames": 185,
+   "caption": "Press the left arm on the rice cooker.",
+   "prompts": {
+    "real": "Press the left arm on the rice cooker.",
+    "object": "Press the button on the front of the rice cooker.",
+    "action": "Open the lid of the rice cooker.",
+    "direction": "Push the rice cooker to the left."
+   },
+   "alt2_family": "press",
+   "provenance": {
+    "episode_in_any_split": false,
+    "held_out_task": false,
+    "real_caption_in_training": true,
+    "alt1_in_training": false,
+    "alt2_in_training": false,
+    "skill": "Press"
+   },
+   "prompts_v1": {
+    "real": "Press the left arm on the rice cooker.",
+    "alt1": "Press down on the lid of the rice cooker to close it.",
+    "alt2": "Press the button on the front of the rice cooker."
+   }
+  },
+  {
+   "id": "base_forward",
+   "family": "locomotion",
+   "source": "real",
+   "split": "unsampled",
+   "task": "740",
+   "task_name": "Receive the menu",
+   "episode": "886770",
+   "seg": 0,
+   "anchor": 57,
+   "segment_frames": 250,
+   "caption": "Move forward to approach the guest.",
+   "prompts": {
+    "real": "Move forward to approach the guest.",
+    "object": "Turn to the left, toward the shelves.",
+    "action": "Move backward away from the table.",
+    "direction": "Turn to the right."
+   },
+   "alt2_family": "locomotion",
+   "provenance": {
+    "episode_in_any_split": false,
+    "held_out_task": false,
+    "real_caption_in_training": true,
+    "alt1_in_training": false,
+    "alt2_in_training": true,
+    "skill": "Move"
+   },
+   "prompts_v1": {
+    "real": "Move forward to approach the guest.",
+    "alt1": "Drive forward toward the person sitting at the table.",
+    "alt2": "Move backward away from the table."
+   }
+  },
+  {
+   "id": "base_turn",
+   "family": "locomotion",
+   "source": "real",
+   "split": "unsampled",
+   "task": "591",
+   "task_name": "Untie the curtain ties and draw the curtains.",
+   "episode": "864794",
+   "seg": 6,
+   "anchor": 1202,
+   "segment_frames": 185,
+   "caption": "Turn to face the curtains with right.",
+   "prompts": {
+    "real": "Turn to face the curtains with right.",
+    "object": "Grasp the curtain.",
+    "action": "Move backward away from the window.",
+    "direction": "Turn to the left, away from the curtains."
+   },
+   "alt2_family": "locomotion",
+   "provenance": {
+    "episode_in_any_split": false,
+    "held_out_task": false,
+    "real_caption_in_training": true,
+    "alt1_in_training": false,
+    "alt2_in_training": false,
+    "skill": "TurnWheel"
+   },
+   "prompts_v1": {
+    "real": "Turn to face the curtains with right.",
+    "alt1": "Rotate the robot's body to face the curtains.",
+    "alt2": "Turn to the left, away from the curtains."
+   }
+  },
+  {
+   "id": "carry_bag",
+   "family": "transport",
+   "source": "real",
+   "split": "unsampled",
+   "task": "462",
+   "task_name": "Discard the trash bag into the large bin.",
+   "episode": "876183",
+   "seg": 4,
+   "anchor": 1031,
+   "segment_frames": 193,
+   "caption": "Carry the garbage bag towards the large trash bin with the right arm.",
+   "prompts": {
+    "real": "Carry the garbage bag towards the large trash bin with the right arm.",
+    "object": "Place the garbage bag on the bench.",
+    "action": "Lift the garbage bag out of the bin.",
+    "direction": "Carry the garbage bag to the left."
+   },
+   "alt2_family": "transport",
+   "provenance": {
+    "episode_in_any_split": false,
+    "held_out_task": false,
+    "real_caption_in_training": true,
+    "alt1_in_training": false,
+    "alt2_in_training": false,
+    "skill": "Carry"
+   },
+   "prompts_v1": {
+    "real": "Carry the garbage bag towards the large trash bin with the right arm.",
+    "alt1": "Carry the bag over to the trash bin.",
+    "alt2": "Carry the bag toward the wooden table."
+   }
+  },
+  {
+   "id": "move_guard",
+   "family": "transport",
+   "source": "real",
+   "split": "unsampled",
+   "task": "589",
+   "task_name": "Shred vegetables with a slicer.",
+   "episode": "840253",
+   "seg": 4,
+   "anchor": 442,
+   "segment_frames": 139,
+   "caption": "Move the held hand guard above the vegetable cutter with the right arm.",
+   "prompts": {
+    "real": "Move the held hand guard above the vegetable cutter with the right arm.",
+    "object": "Pick up the vegetable cutter.",
+    "action": "Place the hand guard on the plate.",
+    "direction": "Move the hand guard to the left, away from the slicer."
+   },
+   "alt2_family": "transport",
+   "provenance": {
+    "episode_in_any_split": false,
+    "held_out_task": false,
+    "real_caption_in_training": true,
+    "alt1_in_training": false,
+    "alt2_in_training": false,
+    "skill": "Hold"
+   },
+   "prompts_v1": {
+    "real": "Move the held hand guard above the vegetable cutter with the right arm.",
+    "alt1": "Bring the hand guard over the vegetable slicer.",
+    "alt2": "Move the hand guard to the side of the counter, away from the slicer."
+   }
+  },
+  {
+   "id": "clap",
+   "family": "gesture",
+   "source": "real",
+   "split": "unsampled",
+   "task": "730",
+   "task_name": "Clap hands",
+   "episode": "870019",
+   "seg": 0,
+   "anchor": 28,
+   "segment_frames": 208,
+   "caption": "Clap hands.",
+   "prompts": {
+    "real": "Clap hands.",
+    "object": "Move forward toward the TV.",
+    "action": "Wave one hand at the TV.",
+    "direction": "Lower both arms."
+   },
+   "alt2_family": "gesture",
+   "provenance": {
+    "episode_in_any_split": false,
+    "held_out_task": false,
+    "real_caption_in_training": true,
+    "alt1_in_training": false,
+    "alt2_in_training": false,
+    "skill": "Clap"
+   },
+   "prompts_v1": {
+    "real": "Clap hands.",
+    "alt1": "Bring both hands together to clap.",
+    "alt2": "Wave one hand at the TV."
+   }
+  },
+  {
+   "id": "wave",
+   "family": "gesture",
+   "source": "real",
+   "split": "unsampled",
+   "task": "731",
+   "task_name": "Wave goodbye",
+   "episode": "885609",
+   "seg": 1,
+   "anchor": 99,
+   "segment_frames": 294,
+   "caption": "Lower the left arm while waving the right arm (three times).",
+   "prompts": {
+    "real": "Lower the left arm while waving the right arm (three times).",
+    "object": "Take the yellow bag from the person.",
+    "action": "Clap hands.",
+    "direction": "Lower the right arm."
+   },
+   "alt2_family": "gesture",
+   "provenance": {
+    "episode_in_any_split": false,
+    "held_out_task": false,
+    "real_caption_in_training": true,
+    "alt1_in_training": false,
+    "alt2_in_training": true,
+    "skill": "Wave"
+   },
+   "prompts_v1": {
+    "real": "Lower the left arm while waving the right arm (three times).",
+    "alt1": "Wave goodbye to the person.",
+    "alt2": "Clap hands."
+   }
+  },
+  {
+   "id": "cut_dough",
+   "family": "cut_shape",
+   "source": "real",
+   "split": "unsampled",
+   "task": "751",
+   "task_name": "Slice the noodles",
+   "episode": "901777",
+   "seg": 3,
+   "anchor": 728,
+   "segment_frames": 161,
+   "caption": "Cut the dough into small pieces with a knife using both hands.",
+   "prompts": {
+    "real": "Cut the dough into small pieces with a knife using both hands.",
+    "object": "Pick up the bowl.",
+    "action": "Place the knife on the cutting board.",
+    "direction": "Push the dough pieces to the left."
+   },
+   "alt2_family": "cut_shape",
+   "provenance": {
+    "episode_in_any_split": false,
+    "held_out_task": false,
+    "real_caption_in_training": true,
+    "alt1_in_training": false,
+    "alt2_in_training": false,
+    "skill": "Cut"
+   },
+   "prompts_v1": {
+    "real": "Cut the dough into small pieces with a knife using both hands.",
+    "alt1": "Slice the dough into small pieces with the knife.",
+    "alt2": "Cut the dough into two halves."
+   }
+  },
+  {
+   "id": "knead_dough",
+   "family": "cut_shape",
+   "source": "real",
+   "split": "unsampled",
+   "task": "753",
+   "task_name": "Knead dough",
+   "episode": "911223",
+   "seg": 0,
+   "anchor": 2,
+   "segment_frames": 181,
+   "caption": "Knead the dough with both hands.",
+   "prompts": {
+    "real": "Knead the dough with both hands.",
+    "object": "Pick up an egg.",
+    "action": "Place the dough on the cutting board.",
+    "direction": "Roll the dough from left to right."
+   },
+   "alt2_family": "cut_shape",
+   "provenance": {
+    "episode_in_any_split": false,
+    "held_out_task": false,
+    "real_caption_in_training": true,
+    "alt1_in_training": false,
+    "alt2_in_training": false,
+    "skill": "RollDough"
+   },
+   "prompts_v1": {
+    "real": "Knead the dough with both hands.",
+    "alt1": "Squeeze and press the dough ball with both hands.",
+    "alt2": "Roll the dough into a long rope."
+   }
+  },
+  {
+   "id": "stir_coffee",
+   "family": "mix",
+   "source": "real",
+   "split": "unsampled",
+   "task": "433",
+   "task_name": "Make instant coffee",
+   "episode": "722051",
+   "seg": 11,
+   "anchor": 2873,
+   "segment_frames": 260,
+   "caption": "Stir the coffee in the cup with the spoon held in the right hand.",
+   "prompts": {
+    "real": "Stir the coffee in the cup with the spoon held in the right hand.",
+    "object": "Pick up the kettle.",
+    "action": "Place the spoon on the table.",
+    "direction": "Lift the spoon up out of the cup."
+   },
+   "alt2_family": "mix",
+   "provenance": {
+    "episode_in_any_split": false,
+    "held_out_task": false,
+    "real_caption_in_training": true,
+    "alt1_in_training": false,
+    "alt2_in_training": false,
+    "skill": "Stir"
+   },
+   "prompts_v1": {
+    "real": "Stir the coffee in the cup with the spoon held in the right hand.",
+    "alt1": "Stir the drink in the cup with the spoon.",
+    "alt2": "Shake the cup gently to mix the coffee."
+   }
+  },
+  {
+   "id": "shake_decanter",
+   "family": "mix",
+   "source": "real",
+   "split": "unsampled",
+   "task": "710",
+   "task_name": "Open the red wine",
+   "episode": "901598",
+   "seg": 4,
+   "anchor": 2235,
+   "segment_frames": 202,
+   "caption": "Shake the held decanter with the right arm.",
+   "prompts": {
+    "real": "Shake the held decanter with the right arm.",
+    "object": "Pick up the wine bottle.",
+    "action": "Pour the wine from the decanter into the glass.",
+    "direction": "Move the decanter to the left, toward the bottle."
+   },
+   "alt2_family": "pour",
+   "provenance": {
+    "episode_in_any_split": false,
+    "held_out_task": false,
+    "real_caption_in_training": true,
+    "alt1_in_training": false,
+    "alt2_in_training": false,
+    "skill": "Shake"
+   },
+   "prompts_v1": {
+    "real": "Shake the held decanter with the right arm.",
+    "alt1": "Swirl the wine around in the decanter.",
+    "alt2": "Pour the wine from the decanter into the glass."
+   }
+  },
+  {
+   "id": "untie_curtain",
+   "family": "tie",
+   "source": "real",
+   "split": "unsampled",
+   "task": "591",
+   "task_name": "Untie the curtain ties and draw the curtains.",
+   "episode": "858022",
+   "seg": 2,
+   "anchor": 483,
+   "segment_frames": 184,
+   "caption": "Cooperatively untie the curtain ties with both hands.",
+   "prompts": {
+    "real": "Cooperatively untie the curtain ties with both hands.",
+    "object": "Release the curtain tie.",
+    "action": "Tie the curtain tie tighter.",
+    "direction": "Pull the curtain to the right."
+   },
+   "alt2_family": "tie",
+   "provenance": {
+    "episode_in_any_split": false,
+    "held_out_task": false,
+    "real_caption_in_training": true,
+    "alt1_in_training": false,
+    "alt2_in_training": false,
+    "skill": "Untie"
+   },
+   "prompts_v1": {
+    "real": "Cooperatively untie the curtain ties with both hands.",
+    "alt1": "Undo the tie holding the curtain together.",
+    "alt2": "Tie the curtain tie tighter."
+   }
+  },
+  {
+   "id": "tie_tieback",
+   "family": "tie",
+   "source": "real",
+   "split": "unsampled",
+   "task": "734",
+   "task_name": "Tie the curtain sash",
+   "episode": "886835",
+   "seg": 0,
+   "anchor": 2,
+   "segment_frames": 394,
+   "caption": "Tie the velcro curtain tiebacks with both hands.",
+   "prompts": {
+    "real": "Tie the velcro curtain tiebacks with both hands.",
+    "object": "Release the tieback.",
+    "action": "Untie the curtain tieback.",
+    "direction": "Pull the curtain to the left."
+   },
+   "alt2_family": "tie",
+   "provenance": {
+    "episode_in_any_split": false,
+    "held_out_task": false,
+    "real_caption_in_training": true,
+    "alt1_in_training": false,
+    "alt2_in_training": false,
+    "skill": "Tie"
+   },
+   "prompts_v1": {
+    "real": "Tie the velcro curtain tiebacks with both hands.",
+    "alt1": "Wrap the tieback around the curtain and fasten the velcro.",
+    "alt2": "Untie the curtain tieback and let the curtain hang."
+   }
+  },
+  {
+   "id": "heldout_toast",
+   "family": "heldout",
+   "source": "real",
+   "split": "test_unseen",
+   "task": "358",
+   "task_name": "Toast bread",
+   "episode": "688266",
+   "seg": 0,
+   "anchor": 6,
+   "segment_frames": 212,
+   "caption": "Lift a piece of plain toast from the basket with the left arm.",
+   "prompts": {
+    "real": "Lift a piece of plain toast from the basket with the left arm.",
+    "object": "Pick up the ketchup bottle.",
+    "action": "Put a slice of bread into the toaster.",
+    "direction": "Push the toaster to the right."
+   },
+   "alt2_family": "place",
+   "provenance": {
+    "episode_in_any_split": false,
+    "held_out_task": true,
+    "real_caption_in_training": false,
+    "alt1_in_training": false,
+    "alt2_in_training": false,
+    "skill": "Pick"
+   },
+   "prompts_v1": {
+    "real": "Lift a piece of plain toast from the basket with the left arm.",
+    "alt1": "Pick up a slice of bread from the basket.",
+    "alt2": "Put a slice of bread into the toaster."
+   }
+  },
+  {
+   "id": "heldout_supermarket",
+   "family": "heldout",
+   "source": "real",
+   "split": "test_unseen",
+   "task": "389",
+   "task_name": "Pickup in the supermarket",
+   "episode": "655512",
+   "seg": 2,
+   "anchor": 464,
+   "segment_frames": 208,
+   "caption": "Retrieve the small bottle of milk from the cold storage cabinet.",
+   "prompts": {
+    "real": "Retrieve the small bottle of milk from the cold storage cabinet.",
+    "object": "Retrieve a bottle of yogurt from the lower shelf.",
+    "action": "Put the milk bottle into the shopping cart.",
+    "direction": "Push the shopping cart forward."
+   },
+   "alt2_family": "place",
+   "provenance": {
+    "episode_in_any_split": false,
+    "held_out_task": true,
+    "real_caption_in_training": false,
+    "alt1_in_training": false,
+    "alt2_in_training": false,
+    "skill": "Pick"
+   },
+   "prompts_v1": {
+    "real": "Retrieve the small bottle of milk from the cold storage cabinet.",
+    "alt1": "Take a small milk bottle out of the fridge shelf.",
+    "alt2": "Put the milk bottle into the shopping cart."
+   }
+  },
+  {
+   "id": "heldout_water",
+   "family": "heldout",
+   "source": "real",
+   "split": "test_unseen",
+   "task": "487",
+   "task_name": "Remove bottled water from the carton and arrange neatly on the table.",
+   "episode": "716307",
+   "seg": 8,
+   "anchor": 2472,
+   "segment_frames": 252,
+   "caption": "Pick up the bottled water with left arm.",
+   "prompts": {
+    "real": "Pick up the bottled water with left arm.",
+    "object": "Pick up the carton.",
+    "action": "Place a water bottle upright on the table next to the carton.",
+    "direction": "Push the carton to the right."
+   },
+   "alt2_family": "place",
+   "provenance": {
+    "episode_in_any_split": false,
+    "held_out_task": true,
+    "real_caption_in_training": true,
+    "alt1_in_training": false,
+    "alt2_in_training": false,
+    "skill": "Pick"
+   },
+   "prompts_v1": {
+    "real": "Pick up the bottled water with left arm.",
+    "alt1": "Take one water bottle out of the carton.",
+    "alt2": "Place a water bottle upright on the table next to the carton."
+   }
+  },
+  {
+   "id": "heldout_curtains",
+   "family": "heldout",
+   "source": "real",
+   "split": "test_unseen",
+   "task": "688",
+   "task_name": "Close the curtains",
+   "episode": "861620",
+   "seg": 4,
+   "anchor": 653,
+   "segment_frames": 221,
+   "caption": "Pull the curtain to the level of the windowsill with the right arm.",
+   "prompts": {
+    "real": "Pull the curtain to the level of the windowsill with the right arm.",
+    "object": "Release the curtain.",
+    "action": "Pull the curtain back up to open it.",
+    "direction": "Pull the curtain to the left."
+   },
+   "alt2_family": "push_pull",
+   "provenance": {
+    "episode_in_any_split": false,
+    "held_out_task": true,
+    "real_caption_in_training": true,
+    "alt1_in_training": false,
+    "alt2_in_training": false,
+    "skill": "Pull"
+   },
+   "prompts_v1": {
+    "real": "Pull the curtain to the level of the windowsill with the right arm.",
+    "alt1": "Pull the curtain down to the windowsill.",
+    "alt2": "Pull the curtain back up to open it."
+   }
+  },
+  {
+   "id": "heldout_menu",
+   "family": "heldout",
+   "source": "real",
+   "split": "test_unseen",
+   "task": "739",
+   "task_name": "Hand the menu",
+   "episode": "889403",
+   "seg": 0,
+   "anchor": 2,
+   "segment_frames": 210,
+   "caption": "Carry the held red menu to the table where the guests are seated.",
+   "prompts": {
+    "real": "Carry the held red menu to the table where the guests are seated.",
+    "object": "Place the menu on the table.",
+    "action": "Hand the menu to the guest.",
+    "direction": "Turn to the left, away from the guest."
+   },
+   "alt2_family": "handover",
+   "provenance": {
+    "episode_in_any_split": false,
+    "held_out_task": true,
+    "real_caption_in_training": false,
+    "alt1_in_training": false,
+    "alt2_in_training": false,
+    "skill": "Carry"
+   },
+   "prompts_v1": {
+    "real": "Carry the held red menu to the table where the guests are seated.",
+    "alt1": "Bring the menu over to the guest at the table.",
+    "alt2": "Hand the menu to the guest."
+   }
+  }
+ ]
+}

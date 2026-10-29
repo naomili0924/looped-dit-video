@@ -1,0 +1,152 @@
+{
+ "scoop_tapioca": {
+  "real": "Scoop a spoonful of black pearl tapioca pearls from the container holding black pearl tapioca pearls with the right arm using the picked-up spoon.",
+  "object": "Pour the tapioca pearls from the spoon into the plastic cup.",
+  "action": "Place the spoon on the counter.",
+  "direction": "Lift the spoon up out of the container."
+ },
+ "turn_faucet": {
+  "real": "Turn off the faucet with the right arm.",
+  "object": "Pick up the blue soap bottle.",
+  "action": "Place the cup into the orange basket.",
+  "direction": "Turn on the faucet."
+ },
+ "stamp_form": {
+  "real": "Stamp the document on the table with the stamp in hand using the right arm.",
+  "object": "Pick up the clipboard with the document.",
+  "action": "Place the red stamp on the table.",
+  "direction": "Slide the clipboard to the left."
+ },
+ "press_ricecooker": {
+  "real": "Press the left arm on the rice cooker.",
+  "object": "Press the button on the front of the rice cooker.",
+  "action": "Open the lid of the rice cooker.",
+  "direction": "Push the rice cooker to the left."
+ },
+ "base_turn": {
+  "real": "Turn to face the curtains with right.",
+  "object": "Grasp the curtain.",
+  "action": "Move backward away from the window.",
+  "direction": "Turn to the left, away from the curtains."
+ },
+ "move_guard": {
+  "real": "Move the held hand guard above the vegetable cutter with the right arm.",
+  "object": "Pick up the vegetable cutter.",
+  "action": "Place the hand guard on the plate.",
+  "direction": "Move the hand guard to the left, away from the slicer."
+ },
+ "wave": {
+  "real": "Lower the left arm while waving the right arm (three times).",
+  "object": "Take the yellow bag from the person.",
+  "action": "Clap hands.",
+  "direction": "Lower the right arm."
+ },
+ "pour_dressing": {
+  "real": "Pour the picked-up salad dressing onto the meat slice with the left arm.",
+  "object": "Pour the salad dressing onto the lettuce.",
+  "action": "Place the salad dressing bottle on the counter.",
+  "direction": "Lift the salad dressing bottle up."
+ },
+ "knead_dough": {
+  "real": "Knead the dough with both hands.",
+  "object": "Pick up an egg.",
+  "action": "Place the dough on the cutting board.",
+  "direction": "Roll the dough from left to right."
+ },
+ "twist_cap": {
+  "real": "Tighten the bottle cap of the held water bottle with both arms.",
+  "object": "Pick up the cup on the far side of the table.",
+  "action": "Place the water bottle on the table.",
+  "direction": "Move the water bottle to the left."
+ },
+ "shake_decanter": {
+  "real": "Shake the held decanter with the right arm.",
+  "object": "Pick up the wine bottle.",
+  "action": "Pour the wine from the decanter into the glass.",
+  "direction": "Move the decanter to the left, toward the bottle."
+ },
+ "scan_juice": {
+  "real": "Aim the barcode scanner at the barcode of the held orange juice with the right arm.",
+  "object": "Aim the barcode scanner at the red bag of snacks.",
+  "action": "Place the orange juice on the table.",
+  "direction": "Move the orange juice bottle to the right, toward the scanner."
+ },
+ "tie_tieback": {
+  "real": "Tie the velcro curtain tiebacks with both hands.",
+  "object": "Release the tieback.",
+  "action": "Untie the curtain tieback.",
+  "direction": "Pull the curtain to the left."
+ },
+ "press_oven": {
+  "real": "Press the oven start button with the right arm.",
+  "object": "Pick up the ketchup bottle.",
+  "action": "Open the oven door.",
+  "direction": "Push the oven back toward the wall."
+ },
+ "heldout_supermarket": {
+  "real": "Retrieve the small bottle of milk from the cold storage cabinet.",
+  "object": "Retrieve a bottle of yogurt from the lower shelf.",
+  "action": "Put the milk bottle into the shopping cart.",
+  "direction": "Push the shopping cart forward."
+ },
+ "base_forward": {
+  "real": "Move forward to approach the guest.",
+  "object": "Turn to the left, toward the shelves.",
+  "action": "Move backward away from the table.",
+  "direction": "Turn to the right."
+ },
+ "heldout_curtains": {
+  "real": "Pull the curtain to the level of the windowsill with the right arm.",
+  "object": "Release the curtain.",
+  "action": "Pull the curtain back up to open it.",
+  "direction": "Pull the curtain to the left."
+ },
+ "carry_bag": {
+  "real": "Carry the garbage bag towards the large trash bin with the right arm.",
+  "object": "Place the garbage bag on the bench.",
+  "action": "Lift the garbage bag out of the bin.",
+  "direction": "Carry the garbage bag to the left."
+ },
+ "clap": {
+  "real": "Clap hands.",
+  "object": "Move forward toward the TV.",
+  "action": "Wave one hand at the TV.",
+  "direction": "Lower both arms."
+ },
+ "cut_dough": {
+  "real": "Cut the dough into small pieces with a knife using both hands.",
+  "object": "Pick up the bowl.",
+  "action": "Place the knife on the cutting board.",
+  "direction": "Push the dough pieces to the left."
+ },
+ "stir_coffee": {
+  "real": "Stir the coffee in the cup with the spoon held in the right hand.",
+  "object": "Pick up the kettle.",
+  "action": "Place the spoon on the table.",
+  "direction": "Lift the spoon up out of the cup."
+ },
+ "untie_curtain": {
+  "real": "Cooperatively untie the curtain ties with both hands.",
+  "object": "Release the curtain tie.",
+  "action": "Tie the curtain tie tighter.",
+  "direction": "Pull the curtain to the right."
+ },
+ "heldout_toast": {
+  "real": "Lift a piece of plain toast from the basket with the left arm.",
+  "object": "Pick up the ketchup bottle.",
+  "action": "Put a slice of bread into the toaster.",
+  "direction": "Push the toaster to the right."
+ },
+ "heldout_water": {
+  "real": "Pick up the bottled water with left arm.",
+  "object": "Pick up the carton.",
+  "action": "Place a water bottle upright on the table next to the carton.",
+  "direction": "Push the carton to the right."
+ },
+ "heldout_menu": {
+  "real": "Carry the held red menu to the table where the guests are seated.",
+  "object": "Place the menu on the table.",
+  "action": "Hand the menu to the guest.",
+  "direction": "Turn to the left, away from the guest."
+ }
+}

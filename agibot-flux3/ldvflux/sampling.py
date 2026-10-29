@@ -30,9 +30,15 @@ def encode_windows(policy, frames: Tensor, k: int) -> tuple[Tensor | None, Tenso
 
 @torch.no_grad()
 def generate(policy, cond: Tensor | None, k: int, captions: list[str], *, n_future_latents: int, steps: int = 30,
-             cfg_scale: float = 4.0, shift: float = 5.0, seed: int = 0, num_loops: int | None = None) -> Tensor:
+             cfg_scale: float = 4.0, shift: float = 5.0, seed: int = 0, num_loops: int | None = None,
+             neg_captions: list[str] | None = None, neg_scale: float = 0.0) -> Tensor:
     """Euler on the shifted schedule (t = 1 noise -> 0 data) with classifier-free guidance on the caption
-    (the empty caption is the null). Returns future latents ``(B, 96, n_future_latents, h, w)`` float32."""
+    (the empty caption is the null). Returns future latents ``(B, 96, n_future_latents, h, w)`` float32.
+
+    Negative prompt (opt-in): with ``neg_captions`` and ``neg_scale`` > 0 the step adds
+    ``neg_scale * (v(caption) - v(neg_caption))``, which pushes away from what the negative caption predicts:
+    v = v_u + cfg_scale (v_c - v_u) + neg_scale (v_c - v_n). With cfg_scale = 1 the null pass is skipped and this is
+    plain CFG with the negative caption as the null at scale 1 + neg_scale."""
     pcfg = policy.config
     device = policy.device
     b = len(captions)
@@ -42,6 +48,8 @@ def generate(policy, cond: Tensor | None, k: int, captions: list[str], *, n_futu
     video = video_only.pack(cond, noise, k, pcfg.fps)
     ctx_c = [c for c, _ in policy._contexts(captions, device)]
     ctx_u = [c for c, _ in policy._contexts([""] * b, device)]
+    use_neg = neg_captions is not None and neg_scale != 0.0
+    ctx_n = [c for c, _ in policy._contexts(neg_captions, device)] if use_neg else None
     x = video["x_video"].float()
     ts = timeshift(shift, torch.linspace(1.0, 0.0, steps + 1)).tolist()
     extra = {"num_loops": num_loops} if num_loops is not None else {}
@@ -62,6 +70,8 @@ def generate(policy, cond: Tensor | None, k: int, captions: list[str], *, n_futu
         else:
             v_u = velocity(ctx_u, x, t_cur)
             v = v_u + cfg_scale * (v_c - v_u)
+        if use_neg:
+            v = v + neg_scale * (v_c - velocity(ctx_n, x, t_cur))
         x = x + (t_prev - t_cur) * v
     # tokens (B, nf*h*w, 96) -> (B, 96, nf, h, w)
     return x.reshape(b, n_future_latents, h, w, 96).permute(0, 4, 1, 2, 3).contiguous()

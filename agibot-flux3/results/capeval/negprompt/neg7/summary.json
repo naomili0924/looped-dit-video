@@ -1,0 +1,701 @@
+{
+ "per_case": {
+  "base_forward/action/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 1.0
+  },
+  "base_forward/direction/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 1.0
+  },
+  "base_forward/object/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 1.0
+  },
+  "base_turn/action/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 1.0
+  },
+  "base_turn/direction/N1": {
+   "score": 0.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 1.0
+  },
+  "base_turn/object/N1": {
+   "score": 0.3333333333333333,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 1.0
+  },
+  "carry_bag/action/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "carry_bag/direction/N1": {
+   "score": 0.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "carry_bag/object/N1": {
+   "score": 0.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "clap/action/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "clap/direction/N1": {
+   "score": 0.6666666666666666,
+   "attempted": 0.6666666666666666,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "clap/object/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "cut_dough/action/N1": {
+   "score": 0.6666666666666666,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "cut_dough/direction/N1": {
+   "score": 0.6666666666666666,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "cut_dough/object/N1": {
+   "score": 0.6666666666666666,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "heldout_curtains/action/N1": {
+   "score": 0.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "heldout_curtains/direction/N1": {
+   "score": 0.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "heldout_curtains/object/N1": {
+   "score": 0.0,
+   "attempted": 0.6666666666666666,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "heldout_menu/action/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 1.0
+  },
+  "heldout_menu/direction/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "heldout_menu/object/N1": {
+   "score": 0.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.6666666666666666
+  },
+  "heldout_supermarket/action/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.6666666666666666
+  },
+  "heldout_supermarket/direction/N1": {
+   "score": 0.0,
+   "attempted": 0.3333333333333333,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "heldout_supermarket/object/N1": {
+   "score": 0.3333333333333333,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.6666666666666666
+  },
+  "heldout_toast/action/N1": {
+   "score": 0.3333333333333333,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.3333333333333333
+  },
+  "heldout_toast/direction/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "heldout_toast/object/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "heldout_water/action/N1": {
+   "score": 0.3333333333333333,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "heldout_water/direction/N1": {
+   "score": 0.6666666666666666,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "heldout_water/object/N1": {
+   "score": 0.3333333333333333,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.6666666666666666
+  },
+  "knead_dough/action/N1": {
+   "score": 0.6666666666666666,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "knead_dough/direction/N1": {
+   "score": 0.0,
+   "attempted": 0.6666666666666666,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "knead_dough/object/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "move_guard/action/N1": {
+   "score": 0.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.6666666666666666
+  },
+  "move_guard/direction/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.6666666666666666
+  },
+  "move_guard/object/N1": {
+   "score": 0.3333333333333333,
+   "attempted": 0.6666666666666666,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.3333333333333333
+  },
+  "pour_dressing/action/N1": {
+   "score": 0.6666666666666666,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "pour_dressing/direction/N1": {
+   "score": 0.6666666666666666,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "pour_dressing/object/N1": {
+   "score": 0.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "press_oven/action/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "press_oven/direction/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "press_oven/object/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "press_ricecooker/action/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.3333333333333333
+  },
+  "press_ricecooker/direction/N1": {
+   "score": 0.3333333333333333,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "press_ricecooker/object/N1": {
+   "score": 0.6666666666666666,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "scan_juice/action/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "scan_juice/direction/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "scan_juice/object/N1": {
+   "score": 0.3333333333333333,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "scoop_tapioca/action/N1": {
+   "score": 0.3333333333333333,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.3333333333333333
+  },
+  "scoop_tapioca/direction/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.6666666666666666
+  },
+  "scoop_tapioca/object/N1": {
+   "score": 0.6666666666666666,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "shake_decanter/action/N1": {
+   "score": 0.3333333333333333,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.3333333333333333
+  },
+  "shake_decanter/direction/N1": {
+   "score": 0.6666666666666666,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "shake_decanter/object/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "stamp_form/action/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.6666666666666666
+  },
+  "stamp_form/direction/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "stamp_form/object/N1": {
+   "score": 0.6666666666666666,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.3333333333333333
+  },
+  "stir_coffee/action/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "stir_coffee/direction/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.3333333333333333
+  },
+  "stir_coffee/object/N1": {
+   "score": 0.3333333333333333,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.3333333333333333
+  },
+  "tie_tieback/action/N1": {
+   "score": 0.3333333333333333,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "tie_tieback/direction/N1": {
+   "score": 0.3333333333333333,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "tie_tieback/object/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "turn_faucet/action/N1": {
+   "score": 0.6666666666666666,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.6666666666666666
+  },
+  "turn_faucet/direction/N1": {
+   "score": 0.3333333333333333,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.3333333333333333
+  },
+  "turn_faucet/object/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "twist_cap/action/N1": {
+   "score": 0.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "twist_cap/direction/N1": {
+   "score": 0.6666666666666666,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "twist_cap/object/N1": {
+   "score": 0.6666666666666666,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "untie_curtain/action/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 1.0
+  },
+  "untie_curtain/direction/N1": {
+   "score": 0.6666666666666666,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.6666666666666666
+  },
+  "untie_curtain/object/N1": {
+   "score": 0.6666666666666666,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.6666666666666666
+  },
+  "wave/action/N1": {
+   "score": 0.0,
+   "attempted": 0.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "wave/direction/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  },
+  "wave/object/N1": {
+   "score": 0.6666666666666666,
+   "attempted": 1.0,
+   "plausible": 1.0,
+   "n": 3,
+   "cross": 0.0
+  }
+ },
+ "per_family": {
+  "locomotion/action/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0
+  },
+  "locomotion/direction/N1": {
+   "score": 0.5,
+   "attempted": 1.0,
+   "plausible": 1.0
+  },
+  "locomotion/object/N1": {
+   "score": 0.6666666666666666,
+   "attempted": 1.0,
+   "plausible": 1.0
+  },
+  "transport/action/N1": {
+   "score": 0.5,
+   "attempted": 1.0,
+   "plausible": 1.0
+  },
+  "transport/direction/N1": {
+   "score": 0.5,
+   "attempted": 1.0,
+   "plausible": 1.0
+  },
+  "transport/object/N1": {
+   "score": 0.16666666666666666,
+   "attempted": 0.8333333333333334,
+   "plausible": 1.0
+  },
+  "gesture/action/N1": {
+   "score": 0.5,
+   "attempted": 0.5,
+   "plausible": 1.0
+  },
+  "gesture/direction/N1": {
+   "score": 0.8333333333333334,
+   "attempted": 0.8333333333333334,
+   "plausible": 1.0
+  },
+  "gesture/object/N1": {
+   "score": 0.8333333333333334,
+   "attempted": 1.0,
+   "plausible": 1.0
+  },
+  "cut_shape/action/N1": {
+   "score": 0.6666666666666666,
+   "attempted": 1.0,
+   "plausible": 1.0
+  },
+  "cut_shape/direction/N1": {
+   "score": 0.3333333333333333,
+   "attempted": 0.8333333333333334,
+   "plausible": 1.0
+  },
+  "cut_shape/object/N1": {
+   "score": 0.8333333333333334,
+   "attempted": 1.0,
+   "plausible": 1.0
+  },
+  "heldout/action/N1": {
+   "score": 0.5333333333333333,
+   "attempted": 1.0,
+   "plausible": 1.0
+  },
+  "heldout/direction/N1": {
+   "score": 0.5333333333333333,
+   "attempted": 0.8666666666666667,
+   "plausible": 1.0
+  },
+  "heldout/object/N1": {
+   "score": 0.3333333333333333,
+   "attempted": 0.9333333333333333,
+   "plausible": 1.0
+  },
+  "pour/action/N1": {
+   "score": 0.5,
+   "attempted": 1.0,
+   "plausible": 1.0
+  },
+  "pour/direction/N1": {
+   "score": 0.8333333333333334,
+   "attempted": 1.0,
+   "plausible": 1.0
+  },
+  "pour/object/N1": {
+   "score": 0.3333333333333333,
+   "attempted": 1.0,
+   "plausible": 1.0
+  },
+  "press/action/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0
+  },
+  "press/direction/N1": {
+   "score": 0.6666666666666666,
+   "attempted": 1.0,
+   "plausible": 1.0
+  },
+  "press/object/N1": {
+   "score": 0.8333333333333334,
+   "attempted": 1.0,
+   "plausible": 1.0
+  },
+  "tool_use/action/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0
+  },
+  "tool_use/direction/N1": {
+   "score": 1.0,
+   "attempted": 1.0,
+   "plausible": 1.0
+  },
+  "tool_use/object/N1": {
+   "score": 0.5,
+   "attempted": 1.0,
+   "plausible": 1.0
+  },
+  "mix/action/N1": {
+   "score": 0.6666666666666666,
+   "attempted": 1.0,
+   "plausible": 1.0
+  },
+  "mix/direction/N1": {
+   "score": 0.8333333333333334,
+   "attempted": 1.0,
+   "plausible": 1.0
+  },
+  "mix/object/N1": {
+   "score": 0.6666666666666666,
+   "attempted": 1.0,
+   "plausible": 1.0
+  },
+  "tie/action/N1": {
+   "score": 0.6666666666666666,
+   "attempted": 1.0,
+   "plausible": 1.0
+  },
+  "tie/direction/N1": {
+   "score": 0.5,
+   "attempted": 1.0,
+   "plausible": 1.0
+  },
+  "tie/object/N1": {
+   "score": 0.8333333333333334,
+   "attempted": 1.0,
+   "plausible": 1.0
+  },
+  "rotate/action/N1": {
+   "score": 0.3333333333333333,
+   "attempted": 1.0,
+   "plausible": 1.0
+  },
+  "rotate/direction/N1": {
+   "score": 0.5,
+   "attempted": 1.0,
+   "plausible": 1.0
+  },
+  "rotate/object/N1": {
+   "score": 0.8333333333333334,
+   "attempted": 1.0,
+   "plausible": 1.0
+  }
+ },
+ "calibration": {
+  "gt_real_caption_yes_rate": 0.52,
+  "gt_foreign_caption_no_rate": 0.96,
+  "n": 25
+ }
+}

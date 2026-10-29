@@ -1,0 +1,3439 @@
+[
+ {
+  "case": "pour_dressing",
+  "prompt": "real",
+  "text": "Pour the picked-up salad dressing onto the meat slice with the left arm.",
+  "task": "480",
+  "verb": "pour",
+  "object": "sauce / condiment",
+  "dirs": [],
+  "level": "L1 caption",
+  "caption_windows": 131,
+  "verb_windows": 5666,
+  "verb_obj_windows": 725,
+  "verb_dir_windows": {},
+  "verb_tasks": 19,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "water",
+    1784
+   ],
+   [
+    "sauce / condiment",
+    725
+   ],
+   [
+    "red wine",
+    493
+   ],
+   [
+    "milk tea",
+    385
+   ]
+  ],
+  "verb_example": "Pour the seasoning held in the right arm onto the potato on the baking tray."
+ },
+ {
+  "case": "pour_dressing",
+  "prompt": "object",
+  "text": "Pour the salad dressing onto the lettuce.",
+  "task": "480",
+  "verb": "pour",
+  "object": "sauce / condiment",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 5666,
+  "verb_obj_windows": 725,
+  "verb_dir_windows": {},
+  "verb_tasks": 19,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "water",
+    1784
+   ],
+   [
+    "sauce / condiment",
+    725
+   ],
+   [
+    "red wine",
+    493
+   ],
+   [
+    "milk tea",
+    385
+   ]
+  ],
+  "verb_example": "Pour the seasoning held in the right arm onto the potato on the baking tray."
+ },
+ {
+  "case": "pour_dressing",
+  "prompt": "action",
+  "text": "Place the salad dressing bottle on the counter.",
+  "task": "480",
+  "verb": "place",
+  "object": "bottle",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 32000,
+  "verb_obj_windows": 381,
+  "verb_dir_windows": {},
+  "verb_tasks": 148,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "bagged snack",
+    1958
+   ],
+   [
+    "shirt / garment",
+    1542
+   ],
+   [
+    "water bottle",
+    1406
+   ],
+   [
+    "cutlery",
+    1300
+   ]
+  ],
+  "verb_example": "Place the held cucumber into the plastic bag in the shopping cart."
+ },
+ {
+  "case": "pour_dressing",
+  "prompt": "direction",
+  "text": "Lift the salad dressing bottle up.",
+  "task": "480",
+  "verb": "lift",
+  "object": "bottle",
+  "dirs": [
+   "up"
+  ],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 9168,
+  "verb_obj_windows": 1,
+  "verb_dir_windows": {
+   "up": 9168
+  },
+  "verb_tasks": 52,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "tray",
+    1448
+   ],
+   [
+    "bag / film",
+    1404
+   ],
+   [
+    "lid",
+    454
+   ],
+   [
+    "kettle",
+    432
+   ]
+  ],
+  "verb_example": "Lift the dishwasher lid with both arms."
+ },
+ {
+  "case": "scoop_tapioca",
+  "prompt": "real",
+  "text": "Scoop a spoonful of black pearl tapioca pearls from the container holding black pearl tapioca pearls with the right arm using the picked-up spoon.",
+  "task": "498",
+  "verb": "scoop",
+  "object": "tapioca pearls",
+  "dirs": [],
+  "level": "L1 caption",
+  "caption_windows": 75,
+  "verb_windows": 1830,
+  "verb_obj_windows": 181,
+  "verb_dir_windows": {},
+  "verb_tasks": 8,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "oatmeal",
+    409
+   ],
+   [
+    "bread",
+    254
+   ],
+   [
+    "grains & beans",
+    234
+   ],
+   [
+    "tapioca pearls",
+    181
+   ]
+  ],
+  "verb_example": "Scoop a spoonful of oatmeal with the held spoon in the right arm."
+ },
+ {
+  "case": "scoop_tapioca",
+  "prompt": "object",
+  "text": "Pour the tapioca pearls from the spoon into the plastic cup.",
+  "task": "498",
+  "verb": "pour",
+  "object": "tapioca pearls",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 5666,
+  "verb_obj_windows": 279,
+  "verb_dir_windows": {},
+  "verb_tasks": 19,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "water",
+    1784
+   ],
+   [
+    "sauce / condiment",
+    725
+   ],
+   [
+    "red wine",
+    493
+   ],
+   [
+    "milk tea",
+    385
+   ]
+  ],
+  "verb_example": "Pour the seasoning held in the right arm onto the potato on the baking tray."
+ },
+ {
+  "case": "scoop_tapioca",
+  "prompt": "action",
+  "text": "Place the spoon on the counter.",
+  "task": "498",
+  "verb": "place",
+  "object": "cutlery",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 32000,
+  "verb_obj_windows": 1300,
+  "verb_dir_windows": {},
+  "verb_tasks": 148,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "bagged snack",
+    1958
+   ],
+   [
+    "shirt / garment",
+    1542
+   ],
+   [
+    "water bottle",
+    1406
+   ],
+   [
+    "cutlery",
+    1300
+   ]
+  ],
+  "verb_example": "Place the held cucumber into the plastic bag in the shopping cart."
+ },
+ {
+  "case": "scoop_tapioca",
+  "prompt": "direction",
+  "text": "Lift the spoon up out of the container.",
+  "task": "498",
+  "verb": "lift",
+  "object": "cutlery",
+  "dirs": [
+   "up"
+  ],
+  "level": "L3 verb",
+  "caption_windows": 0,
+  "verb_windows": 9168,
+  "verb_obj_windows": 0,
+  "verb_dir_windows": {
+   "up": 9168
+  },
+  "verb_tasks": 52,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "tray",
+    1448
+   ],
+   [
+    "bag / film",
+    1404
+   ],
+   [
+    "lid",
+    454
+   ],
+   [
+    "kettle",
+    432
+   ]
+  ],
+  "verb_example": "Lift the dishwasher lid with both arms."
+ },
+ {
+  "case": "twist_cap",
+  "prompt": "real",
+  "text": "Tighten the bottle cap of the held water bottle with both arms.",
+  "task": "722",
+  "verb": "tighten",
+  "object": "bottle cap",
+  "dirs": [],
+  "level": "L1 caption",
+  "caption_windows": 742,
+  "verb_windows": 742,
+  "verb_obj_windows": 742,
+  "verb_dir_windows": {},
+  "verb_tasks": 1,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "bottle cap",
+    742
+   ]
+  ],
+  "verb_example": "Tighten the bottle cap of the held water bottle with both arms."
+ },
+ {
+  "case": "twist_cap",
+  "prompt": "object",
+  "text": "Pick up the cup on the far side of the table.",
+  "task": "722",
+  "verb": "pick up",
+  "object": "cup",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 24138,
+  "verb_obj_windows": 428,
+  "verb_dir_windows": {},
+  "verb_tasks": 106,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "bagged snack",
+    1989
+   ],
+   [
+    "cutlery",
+    1457
+   ],
+   [
+    "pen / marker",
+    1305
+   ],
+   [
+    "water bottle",
+    1055
+   ]
+  ],
+  "verb_example": "Pick up the iced tea from the fridge with the left arm."
+ },
+ {
+  "case": "twist_cap",
+  "prompt": "action",
+  "text": "Place the water bottle on the table.",
+  "task": "722",
+  "verb": "place",
+  "object": "water bottle",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 32000,
+  "verb_obj_windows": 1406,
+  "verb_dir_windows": {},
+  "verb_tasks": 148,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "bagged snack",
+    1958
+   ],
+   [
+    "shirt / garment",
+    1542
+   ],
+   [
+    "water bottle",
+    1406
+   ],
+   [
+    "cutlery",
+    1300
+   ]
+  ],
+  "verb_example": "Place the held cucumber into the plastic bag in the shopping cart."
+ },
+ {
+  "case": "twist_cap",
+  "prompt": "direction",
+  "text": "Move the water bottle to the left.",
+  "task": "722",
+  "verb": "move",
+  "object": "water bottle",
+  "dirs": [
+   "leftward"
+  ],
+  "level": "L3 verb",
+  "caption_windows": 0,
+  "verb_windows": 332,
+  "verb_obj_windows": 0,
+  "verb_dir_windows": {
+   "leftward": 0
+  },
+  "verb_tasks": 4,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "curtain",
+    102
+   ],
+   [
+    "small appliance",
+    79
+   ],
+   [
+    "hat",
+    50
+   ],
+   [
+    "item (generic)",
+    46
+   ]
+  ],
+  "verb_example": "Move baseball cap slightly away from the sofa."
+ },
+ {
+  "case": "turn_faucet",
+  "prompt": "real",
+  "text": "Turn off the faucet with the right arm.",
+  "task": "392",
+  "verb": "turn off",
+  "object": "faucet",
+  "dirs": [],
+  "level": "L1 caption",
+  "caption_windows": 229,
+  "verb_windows": 1497,
+  "verb_obj_windows": 955,
+  "verb_dir_windows": {},
+  "verb_tasks": 10,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "faucet",
+    955
+   ],
+   [
+    "disinfection gun",
+    208
+   ],
+   [
+    "switch / button",
+    158
+   ],
+   [
+    "printer / shredder",
+    143
+   ]
+  ],
+  "verb_example": "Turn off the faucet with the right arm."
+ },
+ {
+  "case": "turn_faucet",
+  "prompt": "object",
+  "text": "Pick up the blue soap bottle.",
+  "task": "392",
+  "verb": "pick up",
+  "object": "bottle",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 24138,
+  "verb_obj_windows": 610,
+  "verb_dir_windows": {},
+  "verb_tasks": 106,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "bagged snack",
+    1989
+   ],
+   [
+    "cutlery",
+    1457
+   ],
+   [
+    "pen / marker",
+    1305
+   ],
+   [
+    "water bottle",
+    1055
+   ]
+  ],
+  "verb_example": "Pick up the iced tea from the fridge with the left arm."
+ },
+ {
+  "case": "turn_faucet",
+  "prompt": "action",
+  "text": "Place the cup into the orange basket.",
+  "task": "392",
+  "verb": "place",
+  "object": "cup",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 32000,
+  "verb_obj_windows": 1220,
+  "verb_dir_windows": {},
+  "verb_tasks": 148,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "bagged snack",
+    1958
+   ],
+   [
+    "shirt / garment",
+    1542
+   ],
+   [
+    "water bottle",
+    1406
+   ],
+   [
+    "cutlery",
+    1300
+   ]
+  ],
+  "verb_example": "Place the held cucumber into the plastic bag in the shopping cart."
+ },
+ {
+  "case": "turn_faucet",
+  "prompt": "direction",
+  "text": "Turn on the faucet.",
+  "task": "392",
+  "verb": "turn on",
+  "object": "faucet",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 1354,
+  "verb_obj_windows": 1100,
+  "verb_dir_windows": {},
+  "verb_tasks": 8,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "faucet",
+    1100
+   ],
+   [
+    "printer / shredder",
+    254
+   ]
+  ],
+  "verb_example": "Turn on the faucet with the right arm."
+ },
+ {
+  "case": "scan_juice",
+  "prompt": "real",
+  "text": "Aim the barcode scanner at the barcode of the held orange juice with the right arm.",
+  "task": "390",
+  "verb": "aim",
+  "object": "barcode scanner",
+  "dirs": [],
+  "level": "L1 caption",
+  "caption_windows": 17,
+  "verb_windows": 849,
+  "verb_obj_windows": 719,
+  "verb_dir_windows": {},
+  "verb_tasks": 8,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "barcode scanner",
+    719
+   ],
+   [
+    "remote control",
+    49
+   ],
+   [
+    "hammer / mallet",
+    41
+   ],
+   [
+    "disinfection gun",
+    40
+   ]
+  ],
+  "verb_example": "Aim the barcode scanner at the barcode of the held round bottle yogurt with the right arm."
+ },
+ {
+  "case": "scan_juice",
+  "prompt": "object",
+  "text": "Aim the barcode scanner at the red bag of snacks.",
+  "task": "390",
+  "verb": "aim",
+  "object": "barcode scanner",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 849,
+  "verb_obj_windows": 719,
+  "verb_dir_windows": {},
+  "verb_tasks": 8,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "barcode scanner",
+    719
+   ],
+   [
+    "remote control",
+    49
+   ],
+   [
+    "hammer / mallet",
+    41
+   ],
+   [
+    "disinfection gun",
+    40
+   ]
+  ],
+  "verb_example": "Aim the barcode scanner at the barcode of the held round bottle yogurt with the right arm."
+ },
+ {
+  "case": "scan_juice",
+  "prompt": "action",
+  "text": "Place the orange juice on the table.",
+  "task": "390",
+  "verb": "place",
+  "object": "beverage (in container)",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 32000,
+  "verb_obj_windows": 610,
+  "verb_dir_windows": {},
+  "verb_tasks": 148,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "bagged snack",
+    1958
+   ],
+   [
+    "shirt / garment",
+    1542
+   ],
+   [
+    "water bottle",
+    1406
+   ],
+   [
+    "cutlery",
+    1300
+   ]
+  ],
+  "verb_example": "Place the held cucumber into the plastic bag in the shopping cart."
+ },
+ {
+  "case": "scan_juice",
+  "prompt": "direction",
+  "text": "Move the orange juice bottle to the right, toward the scanner.",
+  "task": "390",
+  "verb": "move",
+  "object": "bottle",
+  "dirs": [
+   "rightward"
+  ],
+  "level": "L3 verb",
+  "caption_windows": 0,
+  "verb_windows": 332,
+  "verb_obj_windows": 0,
+  "verb_dir_windows": {
+   "rightward": 0
+  },
+  "verb_tasks": 4,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "curtain",
+    102
+   ],
+   [
+    "small appliance",
+    79
+   ],
+   [
+    "hat",
+    50
+   ],
+   [
+    "item (generic)",
+    46
+   ]
+  ],
+  "verb_example": "Move baseball cap slightly away from the sofa."
+ },
+ {
+  "case": "stamp_form",
+  "prompt": "real",
+  "text": "Stamp the document on the table with the stamp in hand using the right arm.",
+  "task": "779",
+  "verb": "stamp",
+  "object": "paper / card",
+  "dirs": [],
+  "level": "L1 caption",
+  "caption_windows": 44,
+  "verb_windows": 94,
+  "verb_obj_windows": 94,
+  "verb_dir_windows": {},
+  "verb_tasks": 2,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "paper / card",
+    94
+   ]
+  ],
+  "verb_example": "Stamp the reimbursement form on the table with the stamp in hand with right arm."
+ },
+ {
+  "case": "stamp_form",
+  "prompt": "object",
+  "text": "Pick up the clipboard with the document.",
+  "task": "779",
+  "verb": "pick up",
+  "object": "paper / card",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 24138,
+  "verb_obj_windows": 77,
+  "verb_dir_windows": {},
+  "verb_tasks": 106,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "bagged snack",
+    1989
+   ],
+   [
+    "cutlery",
+    1457
+   ],
+   [
+    "pen / marker",
+    1305
+   ],
+   [
+    "water bottle",
+    1055
+   ]
+  ],
+  "verb_example": "Pick up the iced tea from the fridge with the left arm."
+ },
+ {
+  "case": "stamp_form",
+  "prompt": "action",
+  "text": "Place the red stamp on the table.",
+  "task": "779",
+  "verb": "place",
+  "object": "stamp",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 32000,
+  "verb_obj_windows": 129,
+  "verb_dir_windows": {},
+  "verb_tasks": 148,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "bagged snack",
+    1958
+   ],
+   [
+    "shirt / garment",
+    1542
+   ],
+   [
+    "water bottle",
+    1406
+   ],
+   [
+    "cutlery",
+    1300
+   ]
+  ],
+  "verb_example": "Place the held cucumber into the plastic bag in the shopping cart."
+ },
+ {
+  "case": "stamp_form",
+  "prompt": "direction",
+  "text": "Slide the clipboard to the left.",
+  "task": "779",
+  "verb": "slide",
+  "object": null,
+  "dirs": [
+   "leftward"
+  ],
+  "level": "L3 verb",
+  "caption_windows": 0,
+  "verb_windows": 850,
+  "verb_obj_windows": 0,
+  "verb_dir_windows": {
+   "leftward": 0
+  },
+  "verb_tasks": 6,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "paper / card",
+    446
+   ],
+   [
+    "shorts / trousers",
+    228
+   ],
+   [
+    "nameplate",
+    176
+   ]
+  ],
+  "verb_example": "Slide the scrap paper on the tabletop to the edge of the table with the right arm."
+ },
+ {
+  "case": "press_oven",
+  "prompt": "real",
+  "text": "Press the oven start button with the right arm.",
+  "task": "368",
+  "verb": "press",
+  "object": "switch / button",
+  "dirs": [],
+  "level": "L1 caption",
+  "caption_windows": 118,
+  "verb_windows": 5809,
+  "verb_obj_windows": 3266,
+  "verb_dir_windows": {},
+  "verb_tasks": 27,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "switch / button",
+    3266
+   ],
+   [
+    "latch / lock",
+    836
+   ],
+   [
+    "box / carton",
+    348
+   ],
+   [
+    "faucet",
+    307
+   ]
+  ],
+  "verb_example": "Press the dishwasher lid with the left arm."
+ },
+ {
+  "case": "press_oven",
+  "prompt": "object",
+  "text": "Pick up the ketchup bottle.",
+  "task": "368",
+  "verb": "pick up",
+  "object": "ketchup bottle",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 24138,
+  "verb_obj_windows": 212,
+  "verb_dir_windows": {},
+  "verb_tasks": 106,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "bagged snack",
+    1989
+   ],
+   [
+    "cutlery",
+    1457
+   ],
+   [
+    "pen / marker",
+    1305
+   ],
+   [
+    "water bottle",
+    1055
+   ]
+  ],
+  "verb_example": "Pick up the iced tea from the fridge with the left arm."
+ },
+ {
+  "case": "press_oven",
+  "prompt": "action",
+  "text": "Open the oven door.",
+  "task": "368",
+  "verb": "open",
+  "object": "door",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 6446,
+  "verb_obj_windows": 2867,
+  "verb_dir_windows": {},
+  "verb_tasks": 29,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "door",
+    2867
+   ],
+   [
+    "lid",
+    1742
+   ],
+   [
+    "box / carton",
+    475
+   ],
+   [
+    "appliance",
+    443
+   ]
+  ],
+  "verb_example": "Open the wardrobe with the right arm."
+ },
+ {
+  "case": "press_oven",
+  "prompt": "direction",
+  "text": "Push the oven back toward the wall.",
+  "task": "368",
+  "verb": "push",
+  "object": "appliance",
+  "dirs": [
+   "back (return)"
+  ],
+  "level": "L3 verb",
+  "caption_windows": 0,
+  "verb_windows": 1924,
+  "verb_obj_windows": 0,
+  "verb_dir_windows": {
+   "back (return)": 87
+  },
+  "verb_tasks": 12,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "box / carton",
+    575
+   ],
+   [
+    "tray",
+    483
+   ],
+   [
+    "book",
+    308
+   ],
+   [
+    "door",
+    121
+   ]
+  ],
+  "verb_example": "Push the refrigerator door with the right arm."
+ },
+ {
+  "case": "press_ricecooker",
+  "prompt": "real",
+  "text": "Press the left arm on the rice cooker.",
+  "task": "596",
+  "verb": "move arm (no object)",
+  "object": null,
+  "dirs": [],
+  "level": "L1 caption",
+  "caption_windows": 50,
+  "verb_windows": 1183,
+  "verb_obj_windows": 606,
+  "verb_dir_windows": {},
+  "verb_tasks": 18,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    null,
+    606
+   ],
+   [
+    "table / counter",
+    156
+   ],
+   [
+    "vegetable cutter",
+    137
+   ],
+   [
+    "towel / cloth",
+    116
+   ]
+  ],
+  "verb_example": "Grab the hand sanitizer on the table with the right arm."
+ },
+ {
+  "case": "press_ricecooker",
+  "prompt": "object",
+  "text": "Press the button on the front of the rice cooker.",
+  "task": "596",
+  "verb": "press",
+  "object": "switch / button",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 5809,
+  "verb_obj_windows": 3266,
+  "verb_dir_windows": {},
+  "verb_tasks": 27,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "switch / button",
+    3266
+   ],
+   [
+    "latch / lock",
+    836
+   ],
+   [
+    "box / carton",
+    348
+   ],
+   [
+    "faucet",
+    307
+   ]
+  ],
+  "verb_example": "Press the dishwasher lid with the left arm."
+ },
+ {
+  "case": "press_ricecooker",
+  "prompt": "action",
+  "text": "Open the lid of the rice cooker.",
+  "task": "596",
+  "verb": "open",
+  "object": "lid",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 6446,
+  "verb_obj_windows": 1742,
+  "verb_dir_windows": {},
+  "verb_tasks": 29,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "door",
+    2867
+   ],
+   [
+    "lid",
+    1742
+   ],
+   [
+    "box / carton",
+    475
+   ],
+   [
+    "appliance",
+    443
+   ]
+  ],
+  "verb_example": "Open the wardrobe with the right arm."
+ },
+ {
+  "case": "press_ricecooker",
+  "prompt": "direction",
+  "text": "Push the rice cooker to the left.",
+  "task": "596",
+  "verb": "push",
+  "object": "appliance",
+  "dirs": [
+   "leftward"
+  ],
+  "level": "L3 verb",
+  "caption_windows": 0,
+  "verb_windows": 1924,
+  "verb_obj_windows": 0,
+  "verb_dir_windows": {
+   "leftward": 0
+  },
+  "verb_tasks": 12,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "box / carton",
+    575
+   ],
+   [
+    "tray",
+    483
+   ],
+   [
+    "book",
+    308
+   ],
+   [
+    "door",
+    121
+   ]
+  ],
+  "verb_example": "Push the refrigerator door with the right arm."
+ },
+ {
+  "case": "base_forward",
+  "prompt": "real",
+  "text": "Move forward to approach the guest.",
+  "task": "740",
+  "verb": "approach",
+  "object": "person",
+  "dirs": [],
+  "level": "L1 caption",
+  "caption_windows": 220,
+  "verb_windows": 728,
+  "verb_obj_windows": 220,
+  "verb_dir_windows": {},
+  "verb_tasks": 12,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "person",
+    220
+   ],
+   [
+    "table / counter",
+    142
+   ],
+   [
+    "box / carton",
+    134
+   ],
+   [
+    "trash / crumbs (in container)",
+    89
+   ]
+  ],
+  "verb_example": "Move forward slightly to approach the washing machine."
+ },
+ {
+  "case": "base_forward",
+  "prompt": "object",
+  "text": "Turn to the left, toward the shelves.",
+  "task": "740",
+  "verb": "turn base",
+  "object": null,
+  "dirs": [
+   "leftward"
+  ],
+  "level": "L3 verb",
+  "caption_windows": 0,
+  "verb_windows": 1661,
+  "verb_obj_windows": 1480,
+  "verb_dir_windows": {
+   "leftward": 49
+  },
+  "verb_tasks": 13,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    null,
+    1480
+   ],
+   [
+    "box / carton",
+    137
+   ],
+   [
+    "person",
+    44
+   ]
+  ],
+  "verb_example": "Turn to the open wardrobe door."
+ },
+ {
+  "case": "base_forward",
+  "prompt": "action",
+  "text": "Move backward away from the table.",
+  "task": "740",
+  "verb": "move base",
+  "object": null,
+  "dirs": [
+   "aside / away",
+   "backward"
+  ],
+  "level": "L1 caption",
+  "caption_windows": 30,
+  "verb_windows": 1540,
+  "verb_obj_windows": 1490,
+  "verb_dir_windows": {
+   "aside / away": 461,
+   "backward": 294
+  },
+  "verb_tasks": 19,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    null,
+    1490
+   ],
+   [
+    "hanger",
+    50
+   ]
+  ],
+  "verb_example": "Advance towards the open wardrobe with the clothes hanger held in the left arm."
+ },
+ {
+  "case": "base_forward",
+  "prompt": "direction",
+  "text": "Turn to the right.",
+  "task": "740",
+  "verb": "turn base",
+  "object": null,
+  "dirs": [
+   "rightward"
+  ],
+  "level": "L3 verb",
+  "caption_windows": 0,
+  "verb_windows": 1661,
+  "verb_obj_windows": 1480,
+  "verb_dir_windows": {
+   "rightward": 53
+  },
+  "verb_tasks": 13,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    null,
+    1480
+   ],
+   [
+    "box / carton",
+    137
+   ],
+   [
+    "person",
+    44
+   ]
+  ],
+  "verb_example": "Turn to the open wardrobe door."
+ },
+ {
+  "case": "base_turn",
+  "prompt": "real",
+  "text": "Turn to face the curtains with right.",
+  "task": "591",
+  "verb": "face",
+  "object": "curtain",
+  "dirs": [],
+  "level": "L1 caption",
+  "caption_windows": 26,
+  "verb_windows": 434,
+  "verb_obj_windows": 56,
+  "verb_dir_windows": {},
+  "verb_tasks": 3,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "table / counter",
+    185
+   ],
+   [
+    "switch / button",
+    119
+   ],
+   [
+    "door",
+    74
+   ],
+   [
+    "curtain",
+    56
+   ]
+  ],
+  "verb_example": "Turn to face the curtains with left."
+ },
+ {
+  "case": "base_turn",
+  "prompt": "object",
+  "text": "Grasp the curtain.",
+  "task": "591",
+  "verb": "grasp",
+  "object": "curtain",
+  "dirs": [],
+  "level": "L3 verb",
+  "caption_windows": 0,
+  "verb_windows": 10499,
+  "verb_obj_windows": 0,
+  "verb_dir_windows": {},
+  "verb_tasks": 31,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "shirt / garment",
+    3047
+   ],
+   [
+    "shorts / trousers",
+    3046
+   ],
+   [
+    "towel / cloth",
+    2193
+   ],
+   [
+    "bag / film",
+    384
+   ]
+  ],
+  "verb_example": "Grasp the left arm with white plastic bag."
+ },
+ {
+  "case": "base_turn",
+  "prompt": "action",
+  "text": "Move backward away from the window.",
+  "task": "591",
+  "verb": "move base",
+  "object": null,
+  "dirs": [
+   "aside / away",
+   "backward"
+  ],
+  "level": "L3 verb",
+  "caption_windows": 0,
+  "verb_windows": 1540,
+  "verb_obj_windows": 1490,
+  "verb_dir_windows": {
+   "aside / away": 461,
+   "backward": 294
+  },
+  "verb_tasks": 19,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    null,
+    1490
+   ],
+   [
+    "hanger",
+    50
+   ]
+  ],
+  "verb_example": "Advance towards the open wardrobe with the clothes hanger held in the left arm."
+ },
+ {
+  "case": "base_turn",
+  "prompt": "direction",
+  "text": "Turn to the left, away from the curtains.",
+  "task": "591",
+  "verb": "turn base",
+  "object": null,
+  "dirs": [
+   "aside / away",
+   "leftward"
+  ],
+  "level": "L3 verb",
+  "caption_windows": 0,
+  "verb_windows": 1661,
+  "verb_obj_windows": 1480,
+  "verb_dir_windows": {
+   "aside / away": 0,
+   "leftward": 49
+  },
+  "verb_tasks": 13,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    null,
+    1480
+   ],
+   [
+    "box / carton",
+    137
+   ],
+   [
+    "person",
+    44
+   ]
+  ],
+  "verb_example": "Turn to the open wardrobe door."
+ },
+ {
+  "case": "carry_bag",
+  "prompt": "real",
+  "text": "Carry the garbage bag towards the large trash bin with the right arm.",
+  "task": "462",
+  "verb": "carry",
+  "object": "bag / film",
+  "dirs": [],
+  "level": "L1 caption",
+  "caption_windows": 274,
+  "verb_windows": 2695,
+  "verb_obj_windows": 277,
+  "verb_dir_windows": {},
+  "verb_tasks": 23,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "tray",
+    914
+   ],
+   [
+    "nameplate",
+    363
+   ],
+   [
+    "bag / film",
+    277
+   ],
+   [
+    "box / carton",
+    240
+   ]
+  ],
+  "verb_example": "Carry the folded clothes towards the open drawer with right arm."
+ },
+ {
+  "case": "carry_bag",
+  "prompt": "object",
+  "text": "Place the garbage bag on the bench.",
+  "task": "462",
+  "verb": "place",
+  "object": "bag / film",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 32000,
+  "verb_obj_windows": 1107,
+  "verb_dir_windows": {},
+  "verb_tasks": 148,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "bagged snack",
+    1958
+   ],
+   [
+    "shirt / garment",
+    1542
+   ],
+   [
+    "water bottle",
+    1406
+   ],
+   [
+    "cutlery",
+    1300
+   ]
+  ],
+  "verb_example": "Place the held cucumber into the plastic bag in the shopping cart."
+ },
+ {
+  "case": "carry_bag",
+  "prompt": "action",
+  "text": "Lift the garbage bag out of the bin.",
+  "task": "462",
+  "verb": "lift",
+  "object": "bag / film",
+  "dirs": [
+   "up"
+  ],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 9168,
+  "verb_obj_windows": 1404,
+  "verb_dir_windows": {
+   "up": 9168
+  },
+  "verb_tasks": 52,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "tray",
+    1448
+   ],
+   [
+    "bag / film",
+    1404
+   ],
+   [
+    "lid",
+    454
+   ],
+   [
+    "kettle",
+    432
+   ]
+  ],
+  "verb_example": "Lift the dishwasher lid with both arms."
+ },
+ {
+  "case": "carry_bag",
+  "prompt": "direction",
+  "text": "Carry the garbage bag to the left.",
+  "task": "462",
+  "verb": "carry",
+  "object": "bag / film",
+  "dirs": [
+   "leftward"
+  ],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 2695,
+  "verb_obj_windows": 277,
+  "verb_dir_windows": {
+   "leftward": 0
+  },
+  "verb_tasks": 23,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "tray",
+    914
+   ],
+   [
+    "nameplate",
+    363
+   ],
+   [
+    "bag / film",
+    277
+   ],
+   [
+    "box / carton",
+    240
+   ]
+  ],
+  "verb_example": "Carry the folded clothes towards the open drawer with right arm."
+ },
+ {
+  "case": "move_guard",
+  "prompt": "real",
+  "text": "Move the held hand guard above the vegetable cutter with the right arm.",
+  "task": "589",
+  "verb": "move",
+  "object": "vegetable cutter",
+  "dirs": [],
+  "level": "L1 caption",
+  "caption_windows": 46,
+  "verb_windows": 332,
+  "verb_obj_windows": 46,
+  "verb_dir_windows": {},
+  "verb_tasks": 4,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "curtain",
+    102
+   ],
+   [
+    "small appliance",
+    79
+   ],
+   [
+    "hat",
+    50
+   ],
+   [
+    "item (generic)",
+    46
+   ]
+  ],
+  "verb_example": "Move baseball cap slightly away from the sofa."
+ },
+ {
+  "case": "move_guard",
+  "prompt": "object",
+  "text": "Pick up the vegetable cutter.",
+  "task": "589",
+  "verb": "pick up",
+  "object": "vegetable cutter",
+  "dirs": [],
+  "level": "L3 verb",
+  "caption_windows": 0,
+  "verb_windows": 24138,
+  "verb_obj_windows": 0,
+  "verb_dir_windows": {},
+  "verb_tasks": 106,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "bagged snack",
+    1989
+   ],
+   [
+    "cutlery",
+    1457
+   ],
+   [
+    "pen / marker",
+    1305
+   ],
+   [
+    "water bottle",
+    1055
+   ]
+  ],
+  "verb_example": "Pick up the iced tea from the fridge with the left arm."
+ },
+ {
+  "case": "move_guard",
+  "prompt": "action",
+  "text": "Place the hand guard on the plate.",
+  "task": "589",
+  "verb": "move arm (no object)",
+  "object": "vegetable cutter",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 1183,
+  "verb_obj_windows": 137,
+  "verb_dir_windows": {},
+  "verb_tasks": 18,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    null,
+    606
+   ],
+   [
+    "table / counter",
+    156
+   ],
+   [
+    "vegetable cutter",
+    137
+   ],
+   [
+    "towel / cloth",
+    116
+   ]
+  ],
+  "verb_example": "Grab the hand sanitizer on the table with the right arm."
+ },
+ {
+  "case": "move_guard",
+  "prompt": "direction",
+  "text": "Move the hand guard to the left, away from the slicer.",
+  "task": "589",
+  "verb": "move arm (no object)",
+  "object": "vegetable cutter",
+  "dirs": [
+   "aside / away",
+   "leftward"
+  ],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 1183,
+  "verb_obj_windows": 137,
+  "verb_dir_windows": {
+   "aside / away": 0,
+   "leftward": 0
+  },
+  "verb_tasks": 18,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    null,
+    606
+   ],
+   [
+    "table / counter",
+    156
+   ],
+   [
+    "vegetable cutter",
+    137
+   ],
+   [
+    "towel / cloth",
+    116
+   ]
+  ],
+  "verb_example": "Grab the hand sanitizer on the table with the right arm."
+ },
+ {
+  "case": "clap",
+  "prompt": "real",
+  "text": "Clap hands.",
+  "task": "730",
+  "verb": "move arm (no object)",
+  "object": null,
+  "dirs": [],
+  "level": "L1 caption",
+  "caption_windows": 123,
+  "verb_windows": 1183,
+  "verb_obj_windows": 606,
+  "verb_dir_windows": {},
+  "verb_tasks": 18,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    null,
+    606
+   ],
+   [
+    "table / counter",
+    156
+   ],
+   [
+    "vegetable cutter",
+    137
+   ],
+   [
+    "towel / cloth",
+    116
+   ]
+  ],
+  "verb_example": "Grab the hand sanitizer on the table with the right arm."
+ },
+ {
+  "case": "clap",
+  "prompt": "object",
+  "text": "Move forward toward the TV.",
+  "task": "730",
+  "verb": "move base",
+  "object": null,
+  "dirs": [
+   "forward"
+  ],
+  "level": "L3 verb",
+  "caption_windows": 0,
+  "verb_windows": 1540,
+  "verb_obj_windows": 1490,
+  "verb_dir_windows": {
+   "forward": 510
+  },
+  "verb_tasks": 19,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    null,
+    1490
+   ],
+   [
+    "hanger",
+    50
+   ]
+  ],
+  "verb_example": "Advance towards the open wardrobe with the clothes hanger held in the left arm."
+ },
+ {
+  "case": "clap",
+  "prompt": "action",
+  "text": "Wave one hand at the TV.",
+  "task": "730",
+  "verb": "wave",
+  "object": null,
+  "dirs": [],
+  "level": "L3 verb",
+  "caption_windows": 0,
+  "verb_windows": 0,
+  "verb_obj_windows": 0,
+  "verb_dir_windows": {},
+  "verb_tasks": 0,
+  "verb_in_own_task": false,
+  "verb_top_objects": [],
+  "verb_example": null,
+  "parser_level": "L4 unseen",
+  "override": "the lexicon has no 'waving': 'Lower the left arm while waving the right arm' (121 w, task Wave goodbye); waving at a TV is new"
+ },
+ {
+  "case": "clap",
+  "prompt": "direction",
+  "text": "Lower both arms.",
+  "task": "730",
+  "verb": "lower",
+  "object": null,
+  "dirs": [
+   "down"
+  ],
+  "level": "L3 verb",
+  "caption_windows": 0,
+  "verb_windows": 124,
+  "verb_obj_windows": 0,
+  "verb_dir_windows": {
+   "down": 124
+  },
+  "verb_tasks": 2,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "cup",
+    86
+   ],
+   [
+    "table / counter",
+    38
+   ]
+  ],
+  "verb_example": "Lower the cup held in the left arm."
+ },
+ {
+  "case": "wave",
+  "prompt": "real",
+  "text": "Lower the left arm while waving the right arm (three times).",
+  "task": "731",
+  "verb": "move arm (no object)",
+  "object": null,
+  "dirs": [
+   "back-and-forth"
+  ],
+  "level": "L1 caption",
+  "caption_windows": 121,
+  "verb_windows": 1183,
+  "verb_obj_windows": 606,
+  "verb_dir_windows": {
+   "back-and-forth": 121
+  },
+  "verb_tasks": 18,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    null,
+    606
+   ],
+   [
+    "table / counter",
+    156
+   ],
+   [
+    "vegetable cutter",
+    137
+   ],
+   [
+    "towel / cloth",
+    116
+   ]
+  ],
+  "verb_example": "Grab the hand sanitizer on the table with the right arm."
+ },
+ {
+  "case": "wave",
+  "prompt": "object",
+  "text": "Take the yellow bag from the person.",
+  "task": "731",
+  "verb": "take",
+  "object": "bag / film",
+  "dirs": [],
+  "level": "L3 verb",
+  "caption_windows": 0,
+  "verb_windows": 2173,
+  "verb_obj_windows": 0,
+  "verb_dir_windows": {},
+  "verb_tasks": 15,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "fruit",
+    432
+   ],
+   [
+    null,
+    306
+   ],
+   [
+    "paper / card",
+    260
+   ],
+   [
+    "straw",
+    174
+   ]
+  ],
+  "verb_example": "Take frozen meat roll."
+ },
+ {
+  "case": "wave",
+  "prompt": "action",
+  "text": "Clap hands.",
+  "task": "731",
+  "verb": "move arm (no object)",
+  "object": null,
+  "dirs": [],
+  "level": "L1 caption",
+  "caption_windows": 123,
+  "verb_windows": 1183,
+  "verb_obj_windows": 606,
+  "verb_dir_windows": {},
+  "verb_tasks": 18,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    null,
+    606
+   ],
+   [
+    "table / counter",
+    156
+   ],
+   [
+    "vegetable cutter",
+    137
+   ],
+   [
+    "towel / cloth",
+    116
+   ]
+  ],
+  "verb_example": "Grab the hand sanitizer on the table with the right arm."
+ },
+ {
+  "case": "wave",
+  "prompt": "direction",
+  "text": "Lower the right arm.",
+  "task": "731",
+  "verb": "move arm (no object)",
+  "object": null,
+  "dirs": [],
+  "level": "L3 verb",
+  "caption_windows": 0,
+  "verb_windows": 1183,
+  "verb_obj_windows": 606,
+  "verb_dir_windows": {},
+  "verb_tasks": 18,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    null,
+    606
+   ],
+   [
+    "table / counter",
+    156
+   ],
+   [
+    "vegetable cutter",
+    137
+   ],
+   [
+    "towel / cloth",
+    116
+   ]
+  ],
+  "verb_example": "Grab the hand sanitizer on the table with the right arm."
+ },
+ {
+  "case": "cut_dough",
+  "prompt": "real",
+  "text": "Cut the dough into small pieces with a knife using both hands.",
+  "task": "751",
+  "verb": "cut",
+  "object": "dough",
+  "dirs": [],
+  "level": "L1 caption",
+  "caption_windows": 709,
+  "verb_windows": 709,
+  "verb_obj_windows": 709,
+  "verb_dir_windows": {},
+  "verb_tasks": 1,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "dough",
+    709
+   ]
+  ],
+  "verb_example": "Cut the dough into small pieces with a knife using both hands."
+ },
+ {
+  "case": "cut_dough",
+  "prompt": "object",
+  "text": "Pick up the bowl.",
+  "task": "751",
+  "verb": "pick up",
+  "object": "bowl",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 24138,
+  "verb_obj_windows": 271,
+  "verb_dir_windows": {},
+  "verb_tasks": 106,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "bagged snack",
+    1989
+   ],
+   [
+    "cutlery",
+    1457
+   ],
+   [
+    "pen / marker",
+    1305
+   ],
+   [
+    "water bottle",
+    1055
+   ]
+  ],
+  "verb_example": "Pick up the iced tea from the fridge with the left arm."
+ },
+ {
+  "case": "cut_dough",
+  "prompt": "action",
+  "text": "Place the knife on the cutting board.",
+  "task": "751",
+  "verb": "place",
+  "object": "knife",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 32000,
+  "verb_obj_windows": 59,
+  "verb_dir_windows": {},
+  "verb_tasks": 148,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "bagged snack",
+    1958
+   ],
+   [
+    "shirt / garment",
+    1542
+   ],
+   [
+    "water bottle",
+    1406
+   ],
+   [
+    "cutlery",
+    1300
+   ]
+  ],
+  "verb_example": "Place the held cucumber into the plastic bag in the shopping cart."
+ },
+ {
+  "case": "cut_dough",
+  "prompt": "direction",
+  "text": "Push the dough pieces to the left.",
+  "task": "751",
+  "verb": "push",
+  "object": "dough",
+  "dirs": [
+   "leftward"
+  ],
+  "level": "L3 verb",
+  "caption_windows": 0,
+  "verb_windows": 1924,
+  "verb_obj_windows": 0,
+  "verb_dir_windows": {
+   "leftward": 0
+  },
+  "verb_tasks": 12,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "box / carton",
+    575
+   ],
+   [
+    "tray",
+    483
+   ],
+   [
+    "book",
+    308
+   ],
+   [
+    "door",
+    121
+   ]
+  ],
+  "verb_example": "Push the refrigerator door with the right arm."
+ },
+ {
+  "case": "knead_dough",
+  "prompt": "real",
+  "text": "Knead the dough with both hands.",
+  "task": "753",
+  "verb": "knead",
+  "object": "dough",
+  "dirs": [],
+  "level": "L1 caption",
+  "caption_windows": 117,
+  "verb_windows": 117,
+  "verb_obj_windows": 117,
+  "verb_dir_windows": {},
+  "verb_tasks": 1,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "dough",
+    117
+   ]
+  ],
+  "verb_example": "Knead the dough with both hands."
+ },
+ {
+  "case": "knead_dough",
+  "prompt": "object",
+  "text": "Pick up an egg.",
+  "task": "753",
+  "verb": "pick up",
+  "object": "egg",
+  "dirs": [],
+  "level": "L3 verb",
+  "caption_windows": 0,
+  "verb_windows": 24138,
+  "verb_obj_windows": 0,
+  "verb_dir_windows": {},
+  "verb_tasks": 106,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "bagged snack",
+    1989
+   ],
+   [
+    "cutlery",
+    1457
+   ],
+   [
+    "pen / marker",
+    1305
+   ],
+   [
+    "water bottle",
+    1055
+   ]
+  ],
+  "verb_example": "Pick up the iced tea from the fridge with the left arm."
+ },
+ {
+  "case": "knead_dough",
+  "prompt": "action",
+  "text": "Place the dough on the cutting board.",
+  "task": "753",
+  "verb": "place",
+  "object": "dough",
+  "dirs": [],
+  "level": "L3 verb",
+  "caption_windows": 0,
+  "verb_windows": 32000,
+  "verb_obj_windows": 0,
+  "verb_dir_windows": {},
+  "verb_tasks": 148,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "bagged snack",
+    1958
+   ],
+   [
+    "shirt / garment",
+    1542
+   ],
+   [
+    "water bottle",
+    1406
+   ],
+   [
+    "cutlery",
+    1300
+   ]
+  ],
+  "verb_example": "Place the held cucumber into the plastic bag in the shopping cart."
+ },
+ {
+  "case": "knead_dough",
+  "prompt": "direction",
+  "text": "Roll the dough from left to right.",
+  "task": "753",
+  "verb": "roll",
+  "object": "dough",
+  "dirs": [
+   "left\u2192right",
+   "rightward"
+  ],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 451,
+  "verb_obj_windows": 451,
+  "verb_dir_windows": {
+   "left\u2192right": 288,
+   "rightward": 288
+  },
+  "verb_tasks": 1,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "dough",
+    451
+   ]
+  ],
+  "verb_example": "Roll the dough horizontally from left to right twice with both hands."
+ },
+ {
+  "case": "stir_coffee",
+  "prompt": "real",
+  "text": "Stir the coffee in the cup with the spoon held in the right hand.",
+  "task": "433",
+  "verb": "stir",
+  "object": "coffee",
+  "dirs": [],
+  "level": "L1 caption",
+  "caption_windows": 98,
+  "verb_windows": 432,
+  "verb_obj_windows": 98,
+  "verb_dir_windows": {},
+  "verb_tasks": 3,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "liquid",
+    184
+   ],
+   [
+    "oatmeal",
+    150
+   ],
+   [
+    "coffee",
+    98
+   ]
+  ],
+  "verb_example": "Stir the oatmeal in the nearby bowl with the spoon held in the right arm."
+ },
+ {
+  "case": "stir_coffee",
+  "prompt": "object",
+  "text": "Pick up the kettle.",
+  "task": "433",
+  "verb": "pick up",
+  "object": "kettle",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 24138,
+  "verb_obj_windows": 665,
+  "verb_dir_windows": {},
+  "verb_tasks": 106,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "bagged snack",
+    1989
+   ],
+   [
+    "cutlery",
+    1457
+   ],
+   [
+    "pen / marker",
+    1305
+   ],
+   [
+    "water bottle",
+    1055
+   ]
+  ],
+  "verb_example": "Pick up the iced tea from the fridge with the left arm."
+ },
+ {
+  "case": "stir_coffee",
+  "prompt": "action",
+  "text": "Place the spoon on the table.",
+  "task": "433",
+  "verb": "place",
+  "object": "cutlery",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 32000,
+  "verb_obj_windows": 1300,
+  "verb_dir_windows": {},
+  "verb_tasks": 148,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "bagged snack",
+    1958
+   ],
+   [
+    "shirt / garment",
+    1542
+   ],
+   [
+    "water bottle",
+    1406
+   ],
+   [
+    "cutlery",
+    1300
+   ]
+  ],
+  "verb_example": "Place the held cucumber into the plastic bag in the shopping cart."
+ },
+ {
+  "case": "stir_coffee",
+  "prompt": "direction",
+  "text": "Lift the spoon up out of the cup.",
+  "task": "433",
+  "verb": "lift",
+  "object": "cutlery",
+  "dirs": [
+   "up"
+  ],
+  "level": "L3 verb",
+  "caption_windows": 0,
+  "verb_windows": 9168,
+  "verb_obj_windows": 0,
+  "verb_dir_windows": {
+   "up": 9168
+  },
+  "verb_tasks": 52,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "tray",
+    1448
+   ],
+   [
+    "bag / film",
+    1404
+   ],
+   [
+    "lid",
+    454
+   ],
+   [
+    "kettle",
+    432
+   ]
+  ],
+  "verb_example": "Lift the dishwasher lid with both arms."
+ },
+ {
+  "case": "shake_decanter",
+  "prompt": "real",
+  "text": "Shake the held decanter with the right arm.",
+  "task": "710",
+  "verb": "shake",
+  "object": "decanter",
+  "dirs": [],
+  "level": "L1 caption",
+  "caption_windows": 125,
+  "verb_windows": 125,
+  "verb_obj_windows": 125,
+  "verb_dir_windows": {},
+  "verb_tasks": 1,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "decanter",
+    125
+   ]
+  ],
+  "verb_example": "Shake the held decanter with the right arm."
+ },
+ {
+  "case": "shake_decanter",
+  "prompt": "object",
+  "text": "Pick up the wine bottle.",
+  "task": "710",
+  "verb": "pick up",
+  "object": "bottle",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 24138,
+  "verb_obj_windows": 610,
+  "verb_dir_windows": {},
+  "verb_tasks": 106,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "bagged snack",
+    1989
+   ],
+   [
+    "cutlery",
+    1457
+   ],
+   [
+    "pen / marker",
+    1305
+   ],
+   [
+    "water bottle",
+    1055
+   ]
+  ],
+  "verb_example": "Pick up the iced tea from the fridge with the left arm."
+ },
+ {
+  "case": "shake_decanter",
+  "prompt": "action",
+  "text": "Pour the wine from the decanter into the glass.",
+  "task": "710",
+  "verb": "pour",
+  "object": "red wine",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 5666,
+  "verb_obj_windows": 493,
+  "verb_dir_windows": {},
+  "verb_tasks": 19,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "water",
+    1784
+   ],
+   [
+    "sauce / condiment",
+    725
+   ],
+   [
+    "red wine",
+    493
+   ],
+   [
+    "milk tea",
+    385
+   ]
+  ],
+  "verb_example": "Pour the seasoning held in the right arm onto the potato on the baking tray."
+ },
+ {
+  "case": "shake_decanter",
+  "prompt": "direction",
+  "text": "Move the decanter to the left, toward the bottle.",
+  "task": "710",
+  "verb": "move",
+  "object": "decanter",
+  "dirs": [
+   "leftward"
+  ],
+  "level": "L3 verb",
+  "caption_windows": 0,
+  "verb_windows": 332,
+  "verb_obj_windows": 0,
+  "verb_dir_windows": {
+   "leftward": 0
+  },
+  "verb_tasks": 4,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "curtain",
+    102
+   ],
+   [
+    "small appliance",
+    79
+   ],
+   [
+    "hat",
+    50
+   ],
+   [
+    "item (generic)",
+    46
+   ]
+  ],
+  "verb_example": "Move baseball cap slightly away from the sofa."
+ },
+ {
+  "case": "untie_curtain",
+  "prompt": "real",
+  "text": "Cooperatively untie the curtain ties with both hands.",
+  "task": "591",
+  "verb": "untie",
+  "object": "rope / cord",
+  "dirs": [],
+  "level": "L1 caption",
+  "caption_windows": 72,
+  "verb_windows": 72,
+  "verb_obj_windows": 72,
+  "verb_dir_windows": {},
+  "verb_tasks": 1,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "rope / cord",
+    72
+   ]
+  ],
+  "verb_example": "Cooperatively untie the curtain ties with both hands."
+ },
+ {
+  "case": "untie_curtain",
+  "prompt": "object",
+  "text": "Release the curtain tie.",
+  "task": "591",
+  "verb": "release",
+  "object": "rope / cord",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 733,
+  "verb_obj_windows": 70,
+  "verb_dir_windows": {},
+  "verb_tasks": 19,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "shirt / garment",
+    180
+   ],
+   [
+    "rope / cord",
+    70
+   ],
+   [
+    "vegetable cutter",
+    62
+   ],
+   [
+    "water (in container)",
+    53
+   ]
+  ],
+  "verb_example": "Release the right arm holding plastic hanger."
+ },
+ {
+  "case": "untie_curtain",
+  "prompt": "action",
+  "text": "Tie the curtain tie tighter.",
+  "task": "591",
+  "verb": "tie",
+  "object": "rope / cord",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 761,
+  "verb_obj_windows": 761,
+  "verb_dir_windows": {},
+  "verb_tasks": 2,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "rope / cord",
+    761
+   ]
+  ],
+  "verb_example": "Tie the velcro curtain tiebacks with both hands."
+ },
+ {
+  "case": "untie_curtain",
+  "prompt": "direction",
+  "text": "Pull the curtain to the right.",
+  "task": "591",
+  "verb": "pull",
+  "object": "curtain",
+  "dirs": [
+   "rightward"
+  ],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 1128,
+  "verb_obj_windows": 662,
+  "verb_dir_windows": {
+   "rightward": 148
+  },
+  "verb_tasks": 8,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "curtain",
+    662
+   ],
+   [
+    "shirt / garment",
+    191
+   ],
+   [
+    "towel / cloth",
+    148
+   ],
+   [
+    "latch / lock",
+    61
+   ]
+  ],
+  "verb_example": "Coordinate arms to pull striped short-sleeve to the table edge."
+ },
+ {
+  "case": "tie_tieback",
+  "prompt": "real",
+  "text": "Tie the velcro curtain tiebacks with both hands.",
+  "task": "734",
+  "verb": "tie",
+  "object": "rope / cord",
+  "dirs": [],
+  "level": "L1 caption",
+  "caption_windows": 217,
+  "verb_windows": 761,
+  "verb_obj_windows": 761,
+  "verb_dir_windows": {},
+  "verb_tasks": 2,
+  "verb_in_own_task": true,
+  "verb_top_objects": [
+   [
+    "rope / cord",
+    761
+   ]
+  ],
+  "verb_example": "Tie the velcro curtain tiebacks with both hands."
+ },
+ {
+  "case": "tie_tieback",
+  "prompt": "object",
+  "text": "Release the tieback.",
+  "task": "734",
+  "verb": "release",
+  "object": null,
+  "dirs": [],
+  "level": "L3 verb",
+  "caption_windows": 0,
+  "verb_windows": 733,
+  "verb_obj_windows": 0,
+  "verb_dir_windows": {},
+  "verb_tasks": 19,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "shirt / garment",
+    180
+   ],
+   [
+    "rope / cord",
+    70
+   ],
+   [
+    "vegetable cutter",
+    62
+   ],
+   [
+    "water (in container)",
+    53
+   ]
+  ],
+  "verb_example": "Release the right arm holding plastic hanger."
+ },
+ {
+  "case": "tie_tieback",
+  "prompt": "action",
+  "text": "Untie the curtain tieback.",
+  "task": "734",
+  "verb": "untie",
+  "object": "curtain",
+  "dirs": [],
+  "level": "L3 verb",
+  "caption_windows": 0,
+  "verb_windows": 72,
+  "verb_obj_windows": 0,
+  "verb_dir_windows": {},
+  "verb_tasks": 1,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "rope / cord",
+    72
+   ]
+  ],
+  "verb_example": "Cooperatively untie the curtain ties with both hands."
+ },
+ {
+  "case": "tie_tieback",
+  "prompt": "direction",
+  "text": "Pull the curtain to the left.",
+  "task": "734",
+  "verb": "pull",
+  "object": "curtain",
+  "dirs": [
+   "leftward"
+  ],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 1128,
+  "verb_obj_windows": 662,
+  "verb_dir_windows": {
+   "leftward": 0
+  },
+  "verb_tasks": 8,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "curtain",
+    662
+   ],
+   [
+    "shirt / garment",
+    191
+   ],
+   [
+    "towel / cloth",
+    148
+   ],
+   [
+    "latch / lock",
+    61
+   ]
+  ],
+  "verb_example": "Coordinate arms to pull striped short-sleeve to the table edge."
+ },
+ {
+  "case": "heldout_toast",
+  "prompt": "real",
+  "text": "Lift a piece of plain toast from the basket with the left arm.",
+  "task": "358",
+  "verb": "lift",
+  "object": "bread",
+  "dirs": [
+   "up"
+  ],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 9168,
+  "verb_obj_windows": 85,
+  "verb_dir_windows": {
+   "up": 9168
+  },
+  "verb_tasks": 52,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "tray",
+    1448
+   ],
+   [
+    "bag / film",
+    1404
+   ],
+   [
+    "lid",
+    454
+   ],
+   [
+    "kettle",
+    432
+   ]
+  ],
+  "verb_example": "Lift the dishwasher lid with both arms."
+ },
+ {
+  "case": "heldout_toast",
+  "prompt": "object",
+  "text": "Pick up the ketchup bottle.",
+  "task": "358",
+  "verb": "pick up",
+  "object": "ketchup bottle",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 24138,
+  "verb_obj_windows": 212,
+  "verb_dir_windows": {},
+  "verb_tasks": 106,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "bagged snack",
+    1989
+   ],
+   [
+    "cutlery",
+    1457
+   ],
+   [
+    "pen / marker",
+    1305
+   ],
+   [
+    "water bottle",
+    1055
+   ]
+  ],
+  "verb_example": "Pick up the iced tea from the fridge with the left arm."
+ },
+ {
+  "case": "heldout_toast",
+  "prompt": "action",
+  "text": "Put a slice of bread into the toaster.",
+  "task": "358",
+  "verb": "place",
+  "object": "bread",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 32000,
+  "verb_obj_windows": 875,
+  "verb_dir_windows": {},
+  "verb_tasks": 148,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "bagged snack",
+    1958
+   ],
+   [
+    "shirt / garment",
+    1542
+   ],
+   [
+    "water bottle",
+    1406
+   ],
+   [
+    "cutlery",
+    1300
+   ]
+  ],
+  "verb_example": "Place the held cucumber into the plastic bag in the shopping cart."
+ },
+ {
+  "case": "heldout_toast",
+  "prompt": "direction",
+  "text": "Push the toaster to the right.",
+  "task": "358",
+  "verb": "push",
+  "object": "appliance",
+  "dirs": [
+   "rightward"
+  ],
+  "level": "L3 verb",
+  "caption_windows": 0,
+  "verb_windows": 1924,
+  "verb_obj_windows": 0,
+  "verb_dir_windows": {
+   "rightward": 0
+  },
+  "verb_tasks": 12,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "box / carton",
+    575
+   ],
+   [
+    "tray",
+    483
+   ],
+   [
+    "book",
+    308
+   ],
+   [
+    "door",
+    121
+   ]
+  ],
+  "verb_example": "Push the refrigerator door with the right arm."
+ },
+ {
+  "case": "heldout_supermarket",
+  "prompt": "real",
+  "text": "Retrieve the small bottle of milk from the cold storage cabinet.",
+  "task": "389",
+  "verb": "retrieve",
+  "object": "bottle",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 2902,
+  "verb_obj_windows": 26,
+  "verb_dir_windows": {},
+  "verb_tasks": 15,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "care product",
+    345
+   ],
+   [
+    "vegetable",
+    321
+   ],
+   [
+    "fruit",
+    296
+   ],
+   [
+    "shirt / garment",
+    286
+   ]
+  ],
+  "verb_example": "Retrieve cucumber from the shelf."
+ },
+ {
+  "case": "heldout_supermarket",
+  "prompt": "object",
+  "text": "Retrieve a bottle of yogurt from the lower shelf.",
+  "task": "389",
+  "verb": "retrieve",
+  "object": "bottle",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 2902,
+  "verb_obj_windows": 26,
+  "verb_dir_windows": {},
+  "verb_tasks": 15,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "care product",
+    345
+   ],
+   [
+    "vegetable",
+    321
+   ],
+   [
+    "fruit",
+    296
+   ],
+   [
+    "shirt / garment",
+    286
+   ]
+  ],
+  "verb_example": "Retrieve cucumber from the shelf."
+ },
+ {
+  "case": "heldout_supermarket",
+  "prompt": "action",
+  "text": "Put the milk bottle into the shopping cart.",
+  "task": "389",
+  "verb": "place",
+  "object": "bottle",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 32000,
+  "verb_obj_windows": 381,
+  "verb_dir_windows": {},
+  "verb_tasks": 148,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "bagged snack",
+    1958
+   ],
+   [
+    "shirt / garment",
+    1542
+   ],
+   [
+    "water bottle",
+    1406
+   ],
+   [
+    "cutlery",
+    1300
+   ]
+  ],
+  "verb_example": "Place the held cucumber into the plastic bag in the shopping cart."
+ },
+ {
+  "case": "heldout_supermarket",
+  "prompt": "direction",
+  "text": "Push the shopping cart forward.",
+  "task": "389",
+  "verb": "push",
+  "object": "shelf / rack",
+  "dirs": [
+   "forward"
+  ],
+  "level": "L3 verb",
+  "caption_windows": 0,
+  "verb_windows": 1924,
+  "verb_obj_windows": 0,
+  "verb_dir_windows": {
+   "forward": 0
+  },
+  "verb_tasks": 12,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "box / carton",
+    575
+   ],
+   [
+    "tray",
+    483
+   ],
+   [
+    "book",
+    308
+   ],
+   [
+    "door",
+    121
+   ]
+  ],
+  "verb_example": "Push the refrigerator door with the right arm."
+ },
+ {
+  "case": "heldout_water",
+  "prompt": "real",
+  "text": "Pick up the bottled water with left arm.",
+  "task": "487",
+  "verb": "pick up",
+  "object": "water bottle",
+  "dirs": [],
+  "level": "L1 caption",
+  "caption_windows": 338,
+  "verb_windows": 24138,
+  "verb_obj_windows": 1055,
+  "verb_dir_windows": {},
+  "verb_tasks": 106,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "bagged snack",
+    1989
+   ],
+   [
+    "cutlery",
+    1457
+   ],
+   [
+    "pen / marker",
+    1305
+   ],
+   [
+    "water bottle",
+    1055
+   ]
+  ],
+  "verb_example": "Pick up the iced tea from the fridge with the left arm."
+ },
+ {
+  "case": "heldout_water",
+  "prompt": "object",
+  "text": "Pick up the carton.",
+  "task": "487",
+  "verb": "pick up",
+  "object": "box / carton",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 24138,
+  "verb_obj_windows": 171,
+  "verb_dir_windows": {},
+  "verb_tasks": 106,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "bagged snack",
+    1989
+   ],
+   [
+    "cutlery",
+    1457
+   ],
+   [
+    "pen / marker",
+    1305
+   ],
+   [
+    "water bottle",
+    1055
+   ]
+  ],
+  "verb_example": "Pick up the iced tea from the fridge with the left arm."
+ },
+ {
+  "case": "heldout_water",
+  "prompt": "action",
+  "text": "Place a water bottle upright on the table next to the carton.",
+  "task": "487",
+  "verb": "place",
+  "object": "water bottle",
+  "dirs": [
+   "upright"
+  ],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 32000,
+  "verb_obj_windows": 1406,
+  "verb_dir_windows": {
+   "upright": 0
+  },
+  "verb_tasks": 148,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "bagged snack",
+    1958
+   ],
+   [
+    "shirt / garment",
+    1542
+   ],
+   [
+    "water bottle",
+    1406
+   ],
+   [
+    "cutlery",
+    1300
+   ]
+  ],
+  "verb_example": "Place the held cucumber into the plastic bag in the shopping cart."
+ },
+ {
+  "case": "heldout_water",
+  "prompt": "direction",
+  "text": "Push the carton to the right.",
+  "task": "487",
+  "verb": "push",
+  "object": "box / carton",
+  "dirs": [
+   "rightward"
+  ],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 1924,
+  "verb_obj_windows": 575,
+  "verb_dir_windows": {
+   "rightward": 0
+  },
+  "verb_tasks": 12,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "box / carton",
+    575
+   ],
+   [
+    "tray",
+    483
+   ],
+   [
+    "book",
+    308
+   ],
+   [
+    "door",
+    121
+   ]
+  ],
+  "verb_example": "Push the refrigerator door with the right arm."
+ },
+ {
+  "case": "heldout_curtains",
+  "prompt": "real",
+  "text": "Pull the curtain to the level of the windowsill with the right arm.",
+  "task": "688",
+  "verb": "pull",
+  "object": "curtain",
+  "dirs": [],
+  "level": "L1 caption",
+  "caption_windows": 25,
+  "verb_windows": 1128,
+  "verb_obj_windows": 662,
+  "verb_dir_windows": {},
+  "verb_tasks": 8,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "curtain",
+    662
+   ],
+   [
+    "shirt / garment",
+    191
+   ],
+   [
+    "towel / cloth",
+    148
+   ],
+   [
+    "latch / lock",
+    61
+   ]
+  ],
+  "verb_example": "Coordinate arms to pull striped short-sleeve to the table edge."
+ },
+ {
+  "case": "heldout_curtains",
+  "prompt": "object",
+  "text": "Release the curtain.",
+  "task": "688",
+  "verb": "release",
+  "object": "curtain",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 733,
+  "verb_obj_windows": 32,
+  "verb_dir_windows": {},
+  "verb_tasks": 19,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "shirt / garment",
+    180
+   ],
+   [
+    "rope / cord",
+    70
+   ],
+   [
+    "vegetable cutter",
+    62
+   ],
+   [
+    "water (in container)",
+    53
+   ]
+  ],
+  "verb_example": "Release the right arm holding plastic hanger."
+ },
+ {
+  "case": "heldout_curtains",
+  "prompt": "action",
+  "text": "Pull the curtain back up to open it.",
+  "task": "688",
+  "verb": "open",
+  "object": "curtain",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 6446,
+  "verb_obj_windows": 84,
+  "verb_dir_windows": {},
+  "verb_tasks": 29,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "door",
+    2867
+   ],
+   [
+    "lid",
+    1742
+   ],
+   [
+    "box / carton",
+    475
+   ],
+   [
+    "appliance",
+    443
+   ]
+  ],
+  "verb_example": "Open the wardrobe with the right arm."
+ },
+ {
+  "case": "heldout_curtains",
+  "prompt": "direction",
+  "text": "Pull the curtain to the left.",
+  "task": "688",
+  "verb": "pull",
+  "object": "curtain",
+  "dirs": [
+   "leftward"
+  ],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 1128,
+  "verb_obj_windows": 662,
+  "verb_dir_windows": {
+   "leftward": 0
+  },
+  "verb_tasks": 8,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "curtain",
+    662
+   ],
+   [
+    "shirt / garment",
+    191
+   ],
+   [
+    "towel / cloth",
+    148
+   ],
+   [
+    "latch / lock",
+    61
+   ]
+  ],
+  "verb_example": "Coordinate arms to pull striped short-sleeve to the table edge."
+ },
+ {
+  "case": "heldout_menu",
+  "prompt": "real",
+  "text": "Carry the held red menu to the table where the guests are seated.",
+  "task": "739",
+  "verb": "carry",
+  "object": "paper / card",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 2695,
+  "verb_obj_windows": 233,
+  "verb_dir_windows": {},
+  "verb_tasks": 23,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "tray",
+    914
+   ],
+   [
+    "nameplate",
+    363
+   ],
+   [
+    "bag / film",
+    277
+   ],
+   [
+    "box / carton",
+    240
+   ]
+  ],
+  "verb_example": "Carry the folded clothes towards the open drawer with right arm."
+ },
+ {
+  "case": "heldout_menu",
+  "prompt": "object",
+  "text": "Place the menu on the table.",
+  "task": "739",
+  "verb": "place",
+  "object": "paper / card",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 32000,
+  "verb_obj_windows": 542,
+  "verb_dir_windows": {},
+  "verb_tasks": 148,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "bagged snack",
+    1958
+   ],
+   [
+    "shirt / garment",
+    1542
+   ],
+   [
+    "water bottle",
+    1406
+   ],
+   [
+    "cutlery",
+    1300
+   ]
+  ],
+  "verb_example": "Place the held cucumber into the plastic bag in the shopping cart."
+ },
+ {
+  "case": "heldout_menu",
+  "prompt": "action",
+  "text": "Hand the menu to the guest.",
+  "task": "739",
+  "verb": "hand over",
+  "object": "paper / card",
+  "dirs": [],
+  "level": "L2 verb+obj",
+  "caption_windows": 0,
+  "verb_windows": 672,
+  "verb_obj_windows": 80,
+  "verb_dir_windows": {},
+  "verb_tasks": 4,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    "tray",
+    234
+   ],
+   [
+    "beverage (in container)",
+    179
+   ],
+   [
+    "tea (drink) (in container)",
+    89
+   ],
+   [
+    "paper / card",
+    80
+   ]
+  ],
+  "verb_example": "Hand the held black menu to the guest."
+ },
+ {
+  "case": "heldout_menu",
+  "prompt": "direction",
+  "text": "Turn to the left, away from the guest.",
+  "task": "739",
+  "verb": "turn base",
+  "object": null,
+  "dirs": [
+   "aside / away",
+   "leftward"
+  ],
+  "level": "L3 verb",
+  "caption_windows": 0,
+  "verb_windows": 1661,
+  "verb_obj_windows": 1480,
+  "verb_dir_windows": {
+   "aside / away": 0,
+   "leftward": 49
+  },
+  "verb_tasks": 13,
+  "verb_in_own_task": false,
+  "verb_top_objects": [
+   [
+    null,
+    1480
+   ],
+   [
+    "box / carton",
+    137
+   ],
+   [
+    "person",
+    44
+   ]
+  ],
+  "verb_example": "Turn to the open wardrobe door."
+ }
+]

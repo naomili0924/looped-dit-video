@@ -1,0 +1,127 @@
+{
+ "scoop_tapioca": {
+  "gt_frames": 133,
+  "gt_s": 8.9,
+  "gt_full": true
+ },
+ "turn_faucet": {
+  "gt_frames": 133,
+  "gt_s": 8.9,
+  "gt_full": true
+ },
+ "stamp_form": {
+  "gt_frames": 133,
+  "gt_s": 8.9,
+  "gt_full": true
+ },
+ "press_ricecooker": {
+  "gt_frames": 133,
+  "gt_s": 8.9,
+  "gt_full": true
+ },
+ "pour_dressing": {
+  "gt_frames": 133,
+  "gt_s": 8.9,
+  "gt_full": true
+ },
+ "base_turn": {
+  "gt_frames": 133,
+  "gt_s": 8.9,
+  "gt_full": true
+ },
+ "twist_cap": {
+  "gt_frames": 133,
+  "gt_s": 8.9,
+  "gt_full": true
+ },
+ "move_guard": {
+  "gt_frames": 133,
+  "gt_s": 8.9,
+  "gt_full": true
+ },
+ "scan_juice": {
+  "gt_frames": 133,
+  "gt_s": 8.9,
+  "gt_full": true
+ },
+ "wave": {
+  "gt_frames": 133,
+  "gt_s": 8.9,
+  "gt_full": true
+ },
+ "press_oven": {
+  "gt_frames": 133,
+  "gt_s": 8.9,
+  "gt_full": true
+ },
+ "knead_dough": {
+  "gt_frames": 133,
+  "gt_s": 8.9,
+  "gt_full": true
+ },
+ "base_forward": {
+  "gt_frames": 133,
+  "gt_s": 8.9,
+  "gt_full": true
+ },
+ "shake_decanter": {
+  "gt_frames": 133,
+  "gt_s": 8.9,
+  "gt_full": true
+ },
+ "carry_bag": {
+  "gt_frames": 133,
+  "gt_s": 8.9,
+  "gt_full": true
+ },
+ "tie_tieback": {
+  "gt_frames": 133,
+  "gt_s": 8.9,
+  "gt_full": true
+ },
+ "clap": {
+  "gt_frames": 133,
+  "gt_s": 8.9,
+  "gt_full": true
+ },
+ "heldout_supermarket": {
+  "gt_frames": 133,
+  "gt_s": 8.9,
+  "gt_full": true
+ },
+ "cut_dough": {
+  "gt_frames": 133,
+  "gt_s": 8.9,
+  "gt_full": true
+ },
+ "heldout_curtains": {
+  "gt_frames": 131,
+  "gt_s": 8.7,
+  "gt_full": false
+ },
+ "stir_coffee": {
+  "gt_frames": 133,
+  "gt_s": 8.9,
+  "gt_full": true
+ },
+ "untie_curtain": {
+  "gt_frames": 133,
+  "gt_s": 8.9,
+  "gt_full": true
+ },
+ "heldout_toast": {
+  "gt_frames": 133,
+  "gt_s": 8.9,
+  "gt_full": true
+ },
+ "heldout_water": {
+  "gt_frames": 133,
+  "gt_s": 8.9,
+  "gt_full": true
+ },
+ "heldout_menu": {
+  "gt_frames": 133,
+  "gt_s": 8.9,
+  "gt_full": true
+ }
+}

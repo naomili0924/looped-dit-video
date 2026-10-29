@@ -1,0 +1,3182 @@
+{
+ "cfg4": {
+  "pour_dressing/direction_N1_s0": {
+   "d": [
+    60.63,
+    59.84
+   ],
+   "along": -59.84,
+   "proj": -0.702
+  },
+  "pour_dressing/direction_N1_s1": {
+   "d": [
+    21.1,
+    -8.51
+   ],
+   "along": 8.51,
+   "proj": 0.374
+  },
+  "pour_dressing/direction_N1_s2": {
+   "d": [
+    13.38,
+    -11.81
+   ],
+   "along": 11.81,
+   "proj": 0.662
+  },
+  "scoop_tapioca/direction_N1_s0": {
+   "d": [
+    29.5,
+    -16.61
+   ],
+   "along": 16.61,
+   "proj": 0.491
+  },
+  "scoop_tapioca/direction_N1_s1": {
+   "d": [
+    27.04,
+    -30.9
+   ],
+   "along": 30.9,
+   "proj": 0.753
+  },
+  "scoop_tapioca/direction_N1_s2": {
+   "d": [
+    -23.9,
+    -17.82
+   ],
+   "along": 17.82,
+   "proj": 0.598
+  },
+  "stir_coffee/direction_N1_s0": {
+   "d": [
+    68.09,
+    -53.57
+   ],
+   "along": 53.57,
+   "proj": 0.618
+  },
+  "stir_coffee/direction_N1_s1": {
+   "d": [
+    17.24,
+    -15.09
+   ],
+   "along": 15.09,
+   "proj": 0.659
+  },
+  "stir_coffee/direction_N1_s2": {
+   "d": [
+    50.44,
+    -26.73
+   ],
+   "along": 26.73,
+   "proj": 0.468
+  },
+  "twist_cap/direction_N1_s0": {
+   "d": [
+    -143.17,
+    -4.18
+   ],
+   "along": 143.17,
+   "proj": 1.0
+  },
+  "twist_cap/direction_N1_s1": {
+   "d": [
+    -48.1,
+    -45.87
+   ],
+   "along": 48.1,
+   "proj": 0.724
+  },
+  "twist_cap/direction_N1_s2": {
+   "d": [
+    -51.79,
+    -25.5
+   ],
+   "along": 51.79,
+   "proj": 0.897
+  },
+  "scan_juice/direction_N1_s0": {
+   "d": [
+    84.84,
+    15.24
+   ],
+   "along": 84.84,
+   "proj": 0.984
+  },
+  "scan_juice/direction_N1_s1": {
+   "d": [
+    75.29,
+    24.94
+   ],
+   "along": 75.29,
+   "proj": 0.949
+  },
+  "scan_juice/direction_N1_s2": {
+   "d": [
+    53.45,
+    29.79
+   ],
+   "along": 53.45,
+   "proj": 0.873
+  },
+  "stamp_form/direction_N1_s0": {
+   "d": [
+    154.43,
+    4.64
+   ],
+   "along": -154.43,
+   "proj": -1.0
+  },
+  "stamp_form/direction_N1_s1": {
+   "d": [
+    -6.16,
+    42.04
+   ],
+   "along": 6.16,
+   "proj": 0.145
+  },
+  "stamp_form/direction_N1_s2": {
+   "d": [
+    3.34,
+    46.77
+   ],
+   "along": -3.34,
+   "proj": -0.071
+  },
+  "press_ricecooker/direction_N1_s0": {
+   "d": [
+    0.59,
+    -17.4
+   ],
+   "along": -0.59,
+   "proj": -0.034
+  },
+  "press_ricecooker/direction_N1_s1": {
+   "d": [
+    2.52,
+    -16.14
+   ],
+   "along": -2.52,
+   "proj": -0.154
+  },
+  "press_ricecooker/direction_N1_s2": {
+   "d": [
+    -21.48,
+    -4.0
+   ],
+   "along": 21.48,
+   "proj": 0.983
+  },
+  "carry_bag/direction_N1_s0": {
+   "d": [
+    45.62,
+    34.59
+   ],
+   "along": -45.62,
+   "proj": -0.797
+  },
+  "carry_bag/direction_N1_s1": {
+   "d": [
+    29.45,
+    6.07
+   ],
+   "along": -29.45,
+   "proj": -0.979
+  },
+  "carry_bag/direction_N1_s2": {
+   "d": [
+    40.72,
+    45.26
+   ],
+   "along": -40.72,
+   "proj": -0.669
+  },
+  "move_guard/direction_N1_s0": {
+   "d": [
+    22.07,
+    -18.46
+   ],
+   "along": -22.07,
+   "proj": -0.767
+  },
+  "move_guard/direction_N1_s1": {
+   "d": [
+    80.23,
+    -43.21
+   ],
+   "along": -80.23,
+   "proj": -0.88
+  },
+  "move_guard/direction_N1_s2": {
+   "d": [
+    53.44,
+    -30.41
+   ],
+   "along": -53.44,
+   "proj": -0.869
+  },
+  "cut_dough/direction_N1_s0": {
+   "d": [
+    -3.34,
+    31.99
+   ],
+   "along": 3.34,
+   "proj": 0.104
+  },
+  "cut_dough/direction_N1_s1": {
+   "d": [
+    -39.0,
+    8.75
+   ],
+   "along": 39.0,
+   "proj": 0.976
+  },
+  "cut_dough/direction_N1_s2": {
+   "d": [
+    7.87,
+    34.13
+   ],
+   "along": -7.87,
+   "proj": -0.225
+  },
+  "knead_dough/direction_N1_s0": {
+   "d": [
+    -9.97,
+    -4.8
+   ],
+   "along": -9.97,
+   "proj": -0.901
+  },
+  "knead_dough/direction_N1_s1": {
+   "d": [
+    -35.97,
+    1.97
+   ],
+   "along": -35.97,
+   "proj": -0.998
+  },
+  "knead_dough/direction_N1_s2": {
+   "d": [
+    2.19,
+    2.88
+   ],
+   "along": 2.19,
+   "proj": 0.605
+  },
+  "shake_decanter/direction_N1_s0": {
+   "d": [
+    -24.78,
+    20.02
+   ],
+   "along": 24.78,
+   "proj": 0.778
+  },
+  "shake_decanter/direction_N1_s1": {
+   "d": [
+    -29.02,
+    12.32
+   ],
+   "along": 29.02,
+   "proj": 0.921
+  },
+  "shake_decanter/direction_N1_s2": {
+   "d": [
+    24.65,
+    34.6
+   ],
+   "along": -24.65,
+   "proj": -0.58
+  },
+  "untie_curtain/direction_N1_s0": {
+   "d": [
+    87.69,
+    -9.36
+   ],
+   "along": 87.69,
+   "proj": 0.994
+  },
+  "untie_curtain/direction_N1_s1": {
+   "d": [
+    60.17,
+    24.81
+   ],
+   "along": 60.17,
+   "proj": 0.924
+  },
+  "untie_curtain/direction_N1_s2": {
+   "d": [
+    74.43,
+    -6.28
+   ],
+   "along": 74.43,
+   "proj": 0.996
+  },
+  "tie_tieback/direction_N1_s0": {
+   "d": [
+    -76.45,
+    31.64
+   ],
+   "along": 76.45,
+   "proj": 0.924
+  },
+  "tie_tieback/direction_N1_s1": {
+   "d": [
+    -79.19,
+    -15.99
+   ],
+   "along": 79.19,
+   "proj": 0.98
+  },
+  "tie_tieback/direction_N1_s2": {
+   "d": [
+    -65.51,
+    5.4
+   ],
+   "along": 65.51,
+   "proj": 0.997
+  },
+  "heldout_toast/direction_N1_s0": {
+   "d": [
+    -0.81,
+    -19.12
+   ],
+   "along": -0.81,
+   "proj": -0.043
+  },
+  "heldout_toast/direction_N1_s1": {
+   "d": [
+    4.5,
+    -0.94
+   ],
+   "along": 4.5,
+   "proj": 0.979
+  },
+  "heldout_toast/direction_N1_s2": {
+   "d": [
+    -13.1,
+    6.52
+   ],
+   "along": -13.1,
+   "proj": -0.895
+  },
+  "heldout_water/direction_N1_s0": {
+   "d": [
+    -1.73,
+    25.96
+   ],
+   "along": -1.73,
+   "proj": -0.067
+  },
+  "heldout_water/direction_N1_s1": {
+   "d": [
+    -17.4,
+    -34.28
+   ],
+   "along": -17.4,
+   "proj": -0.453
+  },
+  "heldout_water/direction_N1_s2": {
+   "d": [
+    -83.99,
+    -25.3
+   ],
+   "along": -83.99,
+   "proj": -0.958
+  },
+  "heldout_curtains/direction_N1_s0": {
+   "d": [
+    31.2,
+    -6.01
+   ],
+   "along": -31.2,
+   "proj": -0.982
+  },
+  "heldout_curtains/direction_N1_s1": {
+   "d": [
+    21.0,
+    -1.6
+   ],
+   "along": -21.0,
+   "proj": -0.997
+  },
+  "heldout_curtains/direction_N1_s2": {
+   "d": [
+    53.62,
+    -15.31
+   ],
+   "along": -53.62,
+   "proj": -0.962
+  },
+  "clap/direction_N1_s0": {
+   "d": [
+    -20.39,
+    1.5
+   ],
+   "along": 1.5,
+   "proj": 0.073
+  },
+  "clap/direction_N1_s1": {
+   "d": [
+    9.94,
+    -39.41
+   ],
+   "along": -39.41,
+   "proj": -0.97
+  },
+  "clap/direction_N1_s2": {
+   "d": [
+    -12.67,
+    -33.06
+   ],
+   "along": -33.06,
+   "proj": -0.934
+  },
+  "wave/direction_N1_s0": {
+   "d": [
+    -16.43,
+    5.88
+   ],
+   "along": 5.88,
+   "proj": 0.337
+  },
+  "wave/direction_N1_s1": {
+   "d": [
+    58.55,
+    57.29
+   ],
+   "along": 57.29,
+   "proj": 0.699
+  },
+  "wave/direction_N1_s2": {
+   "d": [
+    1.26,
+    11.67
+   ],
+   "along": 11.67,
+   "proj": 0.994
+  },
+  "base_forward/direction_N1_s0": {
+   "d": [
+    32.3,
+    0.11
+   ],
+   "along": -32.3,
+   "proj": -1.0
+  },
+  "base_forward/direction_N1_s1": {
+   "d": [
+    111.93,
+    0.01
+   ],
+   "along": -111.93,
+   "proj": -1.0
+  },
+  "base_forward/direction_N1_s2": {
+   "d": [
+    60.02,
+    0.42
+   ],
+   "along": -60.02,
+   "proj": -1.0
+  },
+  "base_turn/direction_N1_s0": {
+   "d": [
+    -37.17,
+    0.19
+   ],
+   "along": -37.17,
+   "proj": -1.0
+  },
+  "base_turn/direction_N1_s1": {
+   "d": [
+    -30.0,
+    0.02
+   ],
+   "along": -30.0,
+   "proj": -1.0
+  },
+  "base_turn/direction_N1_s2": {
+   "d": [
+    -30.75,
+    0.03
+   ],
+   "along": -30.75,
+   "proj": -1.0
+  },
+  "heldout_menu/direction_N1_s0": {
+   "d": [
+    60.04,
+    0.22
+   ],
+   "along": 60.04,
+   "proj": 1.0
+  },
+  "heldout_menu/direction_N1_s1": {
+   "d": [
+    -15.7,
+    0.07
+   ],
+   "along": -15.7,
+   "proj": -1.0
+  },
+  "heldout_menu/direction_N1_s2": {
+   "d": [
+    -14.74,
+    0.02
+   ],
+   "along": -14.74,
+   "proj": -1.0
+  }
+ },
+ "neg4": {
+  "pour_dressing/direction_N1_s0": {
+   "d": [
+    25.8,
+    -37.59
+   ],
+   "along": 37.59,
+   "proj": 0.824
+  },
+  "pour_dressing/direction_N1_s1": {
+   "d": [
+    25.33,
+    -25.7
+   ],
+   "along": 25.7,
+   "proj": 0.712
+  },
+  "pour_dressing/direction_N1_s2": {
+   "d": [
+    38.19,
+    -21.27
+   ],
+   "along": 21.27,
+   "proj": 0.487
+  },
+  "scoop_tapioca/direction_N1_s0": {
+   "d": [
+    36.86,
+    -16.24
+   ],
+   "along": 16.24,
+   "proj": 0.403
+  },
+  "scoop_tapioca/direction_N1_s1": {
+   "d": [
+    20.97,
+    -33.73
+   ],
+   "along": 33.73,
+   "proj": 0.849
+  },
+  "scoop_tapioca/direction_N1_s2": {
+   "d": [
+    -34.12,
+    -18.41
+   ],
+   "along": 18.41,
+   "proj": 0.475
+  },
+  "stir_coffee/direction_N1_s0": {
+   "d": [
+    69.7,
+    -48.08
+   ],
+   "along": 48.08,
+   "proj": 0.568
+  },
+  "stir_coffee/direction_N1_s1": {
+   "d": [
+    6.81,
+    -6.88
+   ],
+   "along": 6.88,
+   "proj": 0.711
+  },
+  "stir_coffee/direction_N1_s2": {
+   "d": [
+    36.08,
+    -29.7
+   ],
+   "along": 29.7,
+   "proj": 0.635
+  },
+  "twist_cap/direction_N1_s0": {
+   "d": [
+    -207.02,
+    -20.73
+   ],
+   "along": 207.02,
+   "proj": 0.995
+  },
+  "twist_cap/direction_N1_s1": {
+   "d": [
+    -50.99,
+    -48.43
+   ],
+   "along": 50.99,
+   "proj": 0.725
+  },
+  "twist_cap/direction_N1_s2": {
+   "d": [
+    -64.37,
+    -12.49
+   ],
+   "along": 64.37,
+   "proj": 0.982
+  },
+  "scan_juice/direction_N1_s0": {
+   "d": [
+    92.39,
+    5.45
+   ],
+   "along": 92.39,
+   "proj": 0.998
+  },
+  "scan_juice/direction_N1_s1": {
+   "d": [
+    76.51,
+    24.46
+   ],
+   "along": 76.51,
+   "proj": 0.953
+  },
+  "scan_juice/direction_N1_s2": {
+   "d": [
+    66.1,
+    24.88
+   ],
+   "along": 66.1,
+   "proj": 0.936
+  },
+  "stamp_form/direction_N1_s0": {
+   "d": [
+    145.06,
+    10.98
+   ],
+   "along": -145.06,
+   "proj": -0.997
+  },
+  "stamp_form/direction_N1_s1": {
+   "d": [
+    -4.12,
+    39.38
+   ],
+   "along": 4.12,
+   "proj": 0.104
+  },
+  "stamp_form/direction_N1_s2": {
+   "d": [
+    -3.94,
+    38.85
+   ],
+   "along": 3.94,
+   "proj": 0.101
+  },
+  "press_ricecooker/direction_N1_s0": {
+   "d": [
+    -6.31,
+    -14.04
+   ],
+   "along": 6.31,
+   "proj": 0.41
+  },
+  "press_ricecooker/direction_N1_s1": {
+   "d": [
+    2.9,
+    -17.4
+   ],
+   "along": -2.9,
+   "proj": -0.164
+  },
+  "press_ricecooker/direction_N1_s2": {
+   "d": [
+    -7.46,
+    -9.85
+   ],
+   "along": 7.46,
+   "proj": 0.604
+  },
+  "carry_bag/direction_N1_s0": {
+   "d": [
+    38.62,
+    34.78
+   ],
+   "along": -38.62,
+   "proj": -0.743
+  },
+  "carry_bag/direction_N1_s1": {
+   "d": [
+    30.41,
+    14.65
+   ],
+   "along": -30.41,
+   "proj": -0.901
+  },
+  "carry_bag/direction_N1_s2": {
+   "d": [
+    42.1,
+    46.51
+   ],
+   "along": -42.1,
+   "proj": -0.671
+  },
+  "move_guard/direction_N1_s0": {
+   "d": [
+    90.76,
+    -26.66
+   ],
+   "along": -90.76,
+   "proj": -0.959
+  },
+  "move_guard/direction_N1_s1": {
+   "d": [
+    74.79,
+    -43.36
+   ],
+   "along": -74.79,
+   "proj": -0.865
+  },
+  "move_guard/direction_N1_s2": {
+   "d": [
+    51.28,
+    -47.18
+   ],
+   "along": -51.28,
+   "proj": -0.736
+  },
+  "cut_dough/direction_N1_s0": {
+   "d": [
+    -31.18,
+    48.12
+   ],
+   "along": 31.18,
+   "proj": 0.544
+  },
+  "cut_dough/direction_N1_s1": {
+   "d": [
+    -44.06,
+    8.03
+   ],
+   "along": 44.06,
+   "proj": 0.984
+  },
+  "cut_dough/direction_N1_s2": {
+   "d": [
+    6.54,
+    37.64
+   ],
+   "along": -6.54,
+   "proj": -0.171
+  },
+  "knead_dough/direction_N1_s0": {
+   "d": [
+    -15.44,
+    -7.24
+   ],
+   "along": -15.44,
+   "proj": -0.905
+  },
+  "knead_dough/direction_N1_s1": {
+   "d": [
+    -41.72,
+    -0.26
+   ],
+   "along": -41.72,
+   "proj": -1.0
+  },
+  "knead_dough/direction_N1_s2": {
+   "d": [
+    -0.99,
+    0.78
+   ],
+   "along": -0.99,
+   "proj": -0.785
+  },
+  "shake_decanter/direction_N1_s0": {
+   "d": [
+    -1.53,
+    15.59
+   ],
+   "along": 1.53,
+   "proj": 0.098
+  },
+  "shake_decanter/direction_N1_s1": {
+   "d": [
+    -27.69,
+    69.41
+   ],
+   "along": 27.69,
+   "proj": 0.371
+  },
+  "shake_decanter/direction_N1_s2": {
+   "d": [
+    69.34,
+    99.57
+   ],
+   "along": -69.34,
+   "proj": -0.571
+  },
+  "untie_curtain/direction_N1_s0": {
+   "d": [
+    117.31,
+    -16.0
+   ],
+   "along": 117.31,
+   "proj": 0.991
+  },
+  "untie_curtain/direction_N1_s1": {
+   "d": [
+    68.07,
+    4.59
+   ],
+   "along": 68.07,
+   "proj": 0.998
+  },
+  "untie_curtain/direction_N1_s2": {
+   "d": [
+    96.49,
+    6.07
+   ],
+   "along": 96.49,
+   "proj": 0.998
+  },
+  "tie_tieback/direction_N1_s0": {
+   "d": [
+    -78.44,
+    47.05
+   ],
+   "along": 78.44,
+   "proj": 0.858
+  },
+  "tie_tieback/direction_N1_s1": {
+   "d": [
+    6.5,
+    40.32
+   ],
+   "along": -6.5,
+   "proj": -0.159
+  },
+  "tie_tieback/direction_N1_s2": {
+   "d": [
+    -74.61,
+    12.66
+   ],
+   "along": 74.61,
+   "proj": 0.986
+  },
+  "heldout_toast/direction_N1_s0": {
+   "d": [
+    -64.83,
+    -25.82
+   ],
+   "along": -64.83,
+   "proj": -0.929
+  },
+  "heldout_toast/direction_N1_s1": {
+   "d": [
+    -36.54,
+    5.49
+   ],
+   "along": -36.54,
+   "proj": -0.989
+  },
+  "heldout_toast/direction_N1_s2": {
+   "d": [
+    -18.82,
+    5.98
+   ],
+   "along": -18.82,
+   "proj": -0.953
+  },
+  "heldout_water/direction_N1_s0": {
+   "d": [
+    -30.4,
+    61.71
+   ],
+   "along": -30.4,
+   "proj": -0.442
+  },
+  "heldout_water/direction_N1_s1": {
+   "d": [
+    4.89,
+    -62.46
+   ],
+   "along": 4.89,
+   "proj": 0.078
+  },
+  "heldout_water/direction_N1_s2": {
+   "d": [
+    -82.13,
+    -14.68
+   ],
+   "along": -82.13,
+   "proj": -0.984
+  },
+  "heldout_curtains/direction_N1_s0": {
+   "d": [
+    32.97,
+    -12.07
+   ],
+   "along": -32.97,
+   "proj": -0.939
+  },
+  "heldout_curtains/direction_N1_s1": {
+   "d": [
+    49.27,
+    -23.82
+   ],
+   "along": -49.27,
+   "proj": -0.9
+  },
+  "heldout_curtains/direction_N1_s2": {
+   "d": [
+    50.03,
+    -32.54
+   ],
+   "along": -50.03,
+   "proj": -0.838
+  },
+  "clap/direction_N1_s0": {
+   "d": [
+    27.21,
+    6.57
+   ],
+   "along": 6.57,
+   "proj": 0.235
+  },
+  "clap/direction_N1_s1": {
+   "d": [
+    1.61,
+    -35.01
+   ],
+   "along": -35.01,
+   "proj": -0.999
+  },
+  "clap/direction_N1_s2": {
+   "d": [
+    -5.13,
+    5.91
+   ],
+   "along": 5.91,
+   "proj": 0.755
+  },
+  "wave/direction_N1_s0": {
+   "d": [
+    -22.5,
+    1.1
+   ],
+   "along": 1.1,
+   "proj": 0.049
+  },
+  "wave/direction_N1_s1": {
+   "d": [
+    64.42,
+    56.35
+   ],
+   "along": 56.35,
+   "proj": 0.658
+  },
+  "wave/direction_N1_s2": {
+   "d": [
+    5.15,
+    39.34
+   ],
+   "along": 39.34,
+   "proj": 0.992
+  },
+  "base_forward/direction_N1_s0": {
+   "d": [
+    16.89,
+    -0.12
+   ],
+   "along": -16.89,
+   "proj": -1.0
+  },
+  "base_forward/direction_N1_s1": {
+   "d": [
+    57.51,
+    0.08
+   ],
+   "along": -57.51,
+   "proj": -1.0
+  },
+  "base_forward/direction_N1_s2": {
+   "d": [
+    -0.01,
+    0.02
+   ],
+   "along": 0.01,
+   "proj": 0.412
+  },
+  "base_turn/direction_N1_s0": {
+   "d": [
+    -25.57,
+    -0.13
+   ],
+   "along": -25.57,
+   "proj": -1.0
+  },
+  "base_turn/direction_N1_s1": {
+   "d": [
+    -19.38,
+    -1.2
+   ],
+   "along": -19.38,
+   "proj": -0.998
+  },
+  "base_turn/direction_N1_s2": {
+   "d": [
+    -16.28,
+    -0.04
+   ],
+   "along": -16.28,
+   "proj": -1.0
+  },
+  "heldout_menu/direction_N1_s0": {
+   "d": [
+    58.67,
+    0.41
+   ],
+   "along": 58.67,
+   "proj": 1.0
+  },
+  "heldout_menu/direction_N1_s1": {
+   "d": [
+    -34.07,
+    0.0
+   ],
+   "along": -34.07,
+   "proj": -1.0
+  },
+  "heldout_menu/direction_N1_s2": {
+   "d": [
+    -12.64,
+    0.03
+   ],
+   "along": -12.64,
+   "proj": -1.0
+  }
+ },
+ "neg7": {
+  "pour_dressing/direction_N1_s0": {
+   "d": [
+    24.82,
+    -30.74
+   ],
+   "along": 30.74,
+   "proj": 0.778
+  },
+  "pour_dressing/direction_N1_s1": {
+   "d": [
+    57.78,
+    -23.14
+   ],
+   "along": 23.14,
+   "proj": 0.372
+  },
+  "pour_dressing/direction_N1_s2": {
+   "d": [
+    52.23,
+    -24.35
+   ],
+   "along": 24.35,
+   "proj": 0.422
+  },
+  "scoop_tapioca/direction_N1_s0": {
+   "d": [
+    7.07,
+    -62.78
+   ],
+   "along": 62.78,
+   "proj": 0.994
+  },
+  "scoop_tapioca/direction_N1_s1": {
+   "d": [
+    12.52,
+    -56.95
+   ],
+   "along": 56.95,
+   "proj": 0.977
+  },
+  "scoop_tapioca/direction_N1_s2": {
+   "d": [
+    -18.96,
+    -13.51
+   ],
+   "along": 13.51,
+   "proj": 0.58
+  },
+  "stir_coffee/direction_N1_s0": {
+   "d": [
+    76.7,
+    -49.42
+   ],
+   "along": 49.42,
+   "proj": 0.542
+  },
+  "stir_coffee/direction_N1_s1": {
+   "d": [
+    28.31,
+    -1.0
+   ],
+   "along": 1.0,
+   "proj": 0.035
+  },
+  "stir_coffee/direction_N1_s2": {
+   "d": [
+    26.7,
+    -31.22
+   ],
+   "along": 31.22,
+   "proj": 0.76
+  },
+  "twist_cap/direction_N1_s0": {
+   "d": [
+    -155.4,
+    -11.37
+   ],
+   "along": 155.4,
+   "proj": 0.997
+  },
+  "twist_cap/direction_N1_s1": {
+   "d": [
+    -56.04,
+    -48.15
+   ],
+   "along": 56.04,
+   "proj": 0.758
+  },
+  "twist_cap/direction_N1_s2": {
+   "d": [
+    -68.98,
+    -17.02
+   ],
+   "along": 68.98,
+   "proj": 0.971
+  },
+  "scan_juice/direction_N1_s0": {
+   "d": [
+    90.95,
+    6.44
+   ],
+   "along": 90.95,
+   "proj": 0.998
+  },
+  "scan_juice/direction_N1_s1": {
+   "d": [
+    85.05,
+    21.2
+   ],
+   "along": 85.05,
+   "proj": 0.97
+  },
+  "scan_juice/direction_N1_s2": {
+   "d": [
+    97.46,
+    26.99
+   ],
+   "along": 97.46,
+   "proj": 0.964
+  },
+  "stamp_form/direction_N1_s0": {
+   "d": [
+    157.2,
+    6.07
+   ],
+   "along": -157.2,
+   "proj": -0.999
+  },
+  "stamp_form/direction_N1_s1": {
+   "d": [
+    130.95,
+    11.84
+   ],
+   "along": -130.95,
+   "proj": -0.996
+  },
+  "stamp_form/direction_N1_s2": {
+   "d": [
+    134.34,
+    -2.24
+   ],
+   "along": -134.34,
+   "proj": -1.0
+  },
+  "press_ricecooker/direction_N1_s0": {
+   "d": [
+    -17.94,
+    -8.84
+   ],
+   "along": 17.94,
+   "proj": 0.897
+  },
+  "press_ricecooker/direction_N1_s1": {
+   "d": [
+    -12.02,
+    10.24
+   ],
+   "along": 12.02,
+   "proj": 0.761
+  },
+  "press_ricecooker/direction_N1_s2": {
+   "d": [
+    -32.77,
+    -6.88
+   ],
+   "along": 32.77,
+   "proj": 0.979
+  },
+  "carry_bag/direction_N1_s0": {
+   "d": [
+    60.17,
+    46.15
+   ],
+   "along": -60.17,
+   "proj": -0.793
+  },
+  "carry_bag/direction_N1_s1": {
+   "d": [
+    56.33,
+    5.24
+   ],
+   "along": -56.33,
+   "proj": -0.996
+  },
+  "carry_bag/direction_N1_s2": {
+   "d": [
+    59.62,
+    41.32
+   ],
+   "along": -59.62,
+   "proj": -0.822
+  },
+  "move_guard/direction_N1_s0": {
+   "d": [
+    93.06,
+    -26.18
+   ],
+   "along": -93.06,
+   "proj": -0.963
+  },
+  "move_guard/direction_N1_s1": {
+   "d": [
+    81.89,
+    -50.44
+   ],
+   "along": -81.89,
+   "proj": -0.851
+  },
+  "move_guard/direction_N1_s2": {
+   "d": [
+    19.15,
+    -55.14
+   ],
+   "along": -19.15,
+   "proj": -0.328
+  },
+  "cut_dough/direction_N1_s0": {
+   "d": [
+    -31.69,
+    47.78
+   ],
+   "along": 31.69,
+   "proj": 0.553
+  },
+  "cut_dough/direction_N1_s1": {
+   "d": [
+    -33.0,
+    24.5
+   ],
+   "along": 33.0,
+   "proj": 0.803
+  },
+  "cut_dough/direction_N1_s2": {
+   "d": [
+    6.76,
+    38.28
+   ],
+   "along": -6.76,
+   "proj": -0.174
+  },
+  "knead_dough/direction_N1_s0": {
+   "d": [
+    -14.08,
+    -1.59
+   ],
+   "along": -14.08,
+   "proj": -0.994
+  },
+  "knead_dough/direction_N1_s1": {
+   "d": [
+    -45.88,
+    1.56
+   ],
+   "along": -45.88,
+   "proj": -0.999
+  },
+  "knead_dough/direction_N1_s2": {
+   "d": [
+    1.72,
+    1.82
+   ],
+   "along": 1.72,
+   "proj": 0.688
+  },
+  "shake_decanter/direction_N1_s0": {
+   "d": [
+    17.5,
+    -19.98
+   ],
+   "along": -17.5,
+   "proj": -0.659
+  },
+  "shake_decanter/direction_N1_s1": {
+   "d": [
+    15.75,
+    32.12
+   ],
+   "along": -15.75,
+   "proj": -0.44
+  },
+  "shake_decanter/direction_N1_s2": {
+   "d": [
+    -97.53,
+    53.26
+   ],
+   "along": 97.53,
+   "proj": 0.878
+  },
+  "untie_curtain/direction_N1_s0": {
+   "d": [
+    145.32,
+    -10.09
+   ],
+   "along": 145.32,
+   "proj": 0.998
+  },
+  "untie_curtain/direction_N1_s1": {
+   "d": [
+    78.89,
+    -3.11
+   ],
+   "along": 78.89,
+   "proj": 0.999
+  },
+  "untie_curtain/direction_N1_s2": {
+   "d": [
+    120.98,
+    1.77
+   ],
+   "along": 120.98,
+   "proj": 1.0
+  },
+  "tie_tieback/direction_N1_s0": {
+   "d": [
+    -89.11,
+    66.4
+   ],
+   "along": 89.11,
+   "proj": 0.802
+  },
+  "tie_tieback/direction_N1_s1": {
+   "d": [
+    -97.74,
+    30.83
+   ],
+   "along": 97.74,
+   "proj": 0.954
+  },
+  "tie_tieback/direction_N1_s2": {
+   "d": [
+    -100.75,
+    71.76
+   ],
+   "along": 100.75,
+   "proj": 0.815
+  },
+  "heldout_toast/direction_N1_s0": {
+   "d": [
+    -76.92,
+    -37.13
+   ],
+   "along": -76.92,
+   "proj": -0.901
+  },
+  "heldout_toast/direction_N1_s1": {
+   "d": [
+    -44.91,
+    25.56
+   ],
+   "along": -44.91,
+   "proj": -0.869
+  },
+  "heldout_toast/direction_N1_s2": {
+   "d": [
+    -21.56,
+    5.1
+   ],
+   "along": -21.56,
+   "proj": -0.973
+  },
+  "heldout_water/direction_N1_s0": {
+   "d": [
+    -19.27,
+    168.2
+   ],
+   "along": -19.27,
+   "proj": -0.114
+  },
+  "heldout_water/direction_N1_s1": {
+   "d": [
+    -13.44,
+    -36.6
+   ],
+   "along": -13.44,
+   "proj": -0.345
+  },
+  "heldout_water/direction_N1_s2": {
+   "d": [
+    -56.59,
+    -31.19
+   ],
+   "along": -56.59,
+   "proj": -0.876
+  },
+  "heldout_curtains/direction_N1_s0": {
+   "d": [
+    27.2,
+    -11.2
+   ],
+   "along": -27.2,
+   "proj": -0.925
+  },
+  "heldout_curtains/direction_N1_s1": {
+   "d": [
+    46.37,
+    -24.57
+   ],
+   "along": -46.37,
+   "proj": -0.884
+  },
+  "heldout_curtains/direction_N1_s2": {
+   "d": [
+    39.55,
+    -28.94
+   ],
+   "along": -39.55,
+   "proj": -0.807
+  },
+  "clap/direction_N1_s0": {
+   "d": [
+    0.06,
+    0.3
+   ],
+   "along": 0.3,
+   "proj": 0.979
+  },
+  "clap/direction_N1_s1": {
+   "d": [
+    -5.11,
+    -32.24
+   ],
+   "along": -32.24,
+   "proj": -0.988
+  },
+  "clap/direction_N1_s2": {
+   "d": [
+    0.02,
+    -8.91
+   ],
+   "along": -8.91,
+   "proj": -1.0
+  },
+  "wave/direction_N1_s0": {
+   "d": [
+    -17.23,
+    31.32
+   ],
+   "along": 31.32,
+   "proj": 0.876
+  },
+  "wave/direction_N1_s1": {
+   "d": [
+    59.76,
+    75.12
+   ],
+   "along": 75.12,
+   "proj": 0.783
+  },
+  "wave/direction_N1_s2": {
+   "d": [
+    -14.07,
+    40.22
+   ],
+   "along": 40.22,
+   "proj": 0.944
+  },
+  "base_forward/direction_N1_s0": {
+   "d": [
+    30.41,
+    -0.22
+   ],
+   "along": -30.41,
+   "proj": -1.0
+  },
+  "base_forward/direction_N1_s1": {
+   "d": [
+    114.43,
+    -0.15
+   ],
+   "along": -114.43,
+   "proj": -1.0
+  },
+  "base_forward/direction_N1_s2": {
+   "d": [
+    75.4,
+    0.31
+   ],
+   "along": -75.4,
+   "proj": -1.0
+  },
+  "base_turn/direction_N1_s0": {
+   "d": [
+    -28.69,
+    -0.23
+   ],
+   "along": -28.69,
+   "proj": -1.0
+  },
+  "base_turn/direction_N1_s1": {
+   "d": [
+    -20.29,
+    -1.74
+   ],
+   "along": -20.29,
+   "proj": -0.996
+  },
+  "base_turn/direction_N1_s2": {
+   "d": [
+    -20.6,
+    -0.13
+   ],
+   "along": -20.6,
+   "proj": -1.0
+  },
+  "heldout_menu/direction_N1_s0": {
+   "d": [
+    43.92,
+    0.26
+   ],
+   "along": 43.92,
+   "proj": 1.0
+  },
+  "heldout_menu/direction_N1_s1": {
+   "d": [
+    -28.14,
+    -0.25
+   ],
+   "along": -28.14,
+   "proj": -1.0
+  },
+  "heldout_menu/direction_N1_s2": {
+   "d": [
+    -12.22,
+    0.04
+   ],
+   "along": -12.22,
+   "proj": -1.0
+  }
+ },
+ "cfg4neg3": {
+  "pour_dressing/direction_N1_s0": {
+   "d": [
+    52.52,
+    46.24
+   ],
+   "along": -46.24,
+   "proj": -0.661
+  },
+  "pour_dressing/direction_N1_s1": {
+   "d": [
+    22.04,
+    -23.88
+   ],
+   "along": 23.88,
+   "proj": 0.735
+  },
+  "pour_dressing/direction_N1_s2": {
+   "d": [
+    10.67,
+    -10.88
+   ],
+   "along": 10.88,
+   "proj": 0.714
+  },
+  "scoop_tapioca/direction_N1_s0": {
+   "d": [
+    38.23,
+    -44.87
+   ],
+   "along": 44.87,
+   "proj": 0.761
+  },
+  "scoop_tapioca/direction_N1_s1": {
+   "d": [
+    16.29,
+    -56.05
+   ],
+   "along": 56.05,
+   "proj": 0.96
+  },
+  "scoop_tapioca/direction_N1_s2": {
+   "d": [
+    -22.78,
+    -19.78
+   ],
+   "along": 19.78,
+   "proj": 0.656
+  },
+  "stir_coffee/direction_N1_s0": {
+   "d": [
+    76.73,
+    -51.12
+   ],
+   "along": 51.12,
+   "proj": 0.554
+  },
+  "stir_coffee/direction_N1_s1": {
+   "d": [
+    12.85,
+    -13.43
+   ],
+   "along": 13.43,
+   "proj": 0.723
+  },
+  "stir_coffee/direction_N1_s2": {
+   "d": [
+    44.1,
+    -35.4
+   ],
+   "along": 35.4,
+   "proj": 0.626
+  },
+  "twist_cap/direction_N1_s0": {
+   "d": [
+    -147.79,
+    -4.85
+   ],
+   "along": 147.79,
+   "proj": 0.999
+  },
+  "twist_cap/direction_N1_s1": {
+   "d": [
+    -52.86,
+    -50.58
+   ],
+   "along": 52.86,
+   "proj": 0.722
+  },
+  "twist_cap/direction_N1_s2": {
+   "d": [
+    -67.75,
+    -20.57
+   ],
+   "along": 67.75,
+   "proj": 0.957
+  },
+  "scan_juice/direction_N1_s0": {
+   "d": [
+    86.96,
+    9.8
+   ],
+   "along": 86.96,
+   "proj": 0.994
+  },
+  "scan_juice/direction_N1_s1": {
+   "d": [
+    77.96,
+    20.91
+   ],
+   "along": 77.96,
+   "proj": 0.966
+  },
+  "scan_juice/direction_N1_s2": {
+   "d": [
+    97.24,
+    33.62
+   ],
+   "along": 97.24,
+   "proj": 0.945
+  },
+  "stamp_form/direction_N1_s0": {
+   "d": [
+    161.39,
+    6.63
+   ],
+   "along": -161.39,
+   "proj": -0.999
+  },
+  "stamp_form/direction_N1_s1": {
+   "d": [
+    129.85,
+    -4.24
+   ],
+   "along": -129.85,
+   "proj": -0.999
+  },
+  "stamp_form/direction_N1_s2": {
+   "d": [
+    76.35,
+    0.17
+   ],
+   "along": -76.35,
+   "proj": -1.0
+  },
+  "press_ricecooker/direction_N1_s0": {
+   "d": [
+    -5.37,
+    -14.3
+   ],
+   "along": 5.37,
+   "proj": 0.352
+  },
+  "press_ricecooker/direction_N1_s1": {
+   "d": [
+    -17.75,
+    -6.11
+   ],
+   "along": 17.75,
+   "proj": 0.946
+  },
+  "press_ricecooker/direction_N1_s2": {
+   "d": [
+    -10.79,
+    -12.41
+   ],
+   "along": 10.79,
+   "proj": 0.656
+  },
+  "carry_bag/direction_N1_s0": {
+   "d": [
+    50.73,
+    46.46
+   ],
+   "along": -50.73,
+   "proj": -0.737
+  },
+  "carry_bag/direction_N1_s1": {
+   "d": [
+    55.33,
+    11.16
+   ],
+   "along": -55.33,
+   "proj": -0.98
+  },
+  "carry_bag/direction_N1_s2": {
+   "d": [
+    59.38,
+    42.38
+   ],
+   "along": -59.38,
+   "proj": -0.814
+  },
+  "move_guard/direction_N1_s0": {
+   "d": [
+    85.5,
+    -35.17
+   ],
+   "along": -85.5,
+   "proj": -0.925
+  },
+  "move_guard/direction_N1_s1": {
+   "d": [
+    82.55,
+    -40.5
+   ],
+   "along": -82.55,
+   "proj": -0.898
+  },
+  "move_guard/direction_N1_s2": {
+   "d": [
+    32.87,
+    -52.06
+   ],
+   "along": -32.87,
+   "proj": -0.534
+  },
+  "cut_dough/direction_N1_s0": {
+   "d": [
+    -30.84,
+    47.78
+   ],
+   "along": 30.84,
+   "proj": 0.542
+  },
+  "cut_dough/direction_N1_s1": {
+   "d": [
+    -29.58,
+    23.26
+   ],
+   "along": 29.58,
+   "proj": 0.786
+  },
+  "cut_dough/direction_N1_s2": {
+   "d": [
+    5.83,
+    36.97
+   ],
+   "along": -5.83,
+   "proj": -0.156
+  },
+  "knead_dough/direction_N1_s0": {
+   "d": [
+    -14.37,
+    -2.0
+   ],
+   "along": -14.37,
+   "proj": -0.991
+  },
+  "knead_dough/direction_N1_s1": {
+   "d": [
+    -43.96,
+    3.61
+   ],
+   "along": -43.96,
+   "proj": -0.997
+  },
+  "knead_dough/direction_N1_s2": {
+   "d": [
+    2.62,
+    0.96
+   ],
+   "along": 2.62,
+   "proj": 0.939
+  },
+  "shake_decanter/direction_N1_s0": {
+   "d": [
+    -50.71,
+    -6.65
+   ],
+   "along": 50.71,
+   "proj": 0.992
+  },
+  "shake_decanter/direction_N1_s1": {
+   "d": [
+    -44.77,
+    32.88
+   ],
+   "along": 44.77,
+   "proj": 0.806
+  },
+  "shake_decanter/direction_N1_s2": {
+   "d": [
+    -56.49,
+    38.57
+   ],
+   "along": 56.49,
+   "proj": 0.826
+  },
+  "untie_curtain/direction_N1_s0": {
+   "d": [
+    134.38,
+    -7.37
+   ],
+   "along": 134.38,
+   "proj": 0.998
+  },
+  "untie_curtain/direction_N1_s1": {
+   "d": [
+    63.15,
+    4.95
+   ],
+   "along": 63.15,
+   "proj": 0.997
+  },
+  "untie_curtain/direction_N1_s2": {
+   "d": [
+    111.1,
+    -7.08
+   ],
+   "along": 111.1,
+   "proj": 0.998
+  },
+  "tie_tieback/direction_N1_s0": {
+   "d": [
+    -75.86,
+    69.21
+   ],
+   "along": 75.86,
+   "proj": 0.739
+  },
+  "tie_tieback/direction_N1_s1": {
+   "d": [
+    -96.46,
+    28.9
+   ],
+   "along": 96.46,
+   "proj": 0.958
+  },
+  "tie_tieback/direction_N1_s2": {
+   "d": [
+    -93.57,
+    73.29
+   ],
+   "along": 93.57,
+   "proj": 0.787
+  },
+  "heldout_toast/direction_N1_s0": {
+   "d": [
+    -62.98,
+    -36.69
+   ],
+   "along": -62.98,
+   "proj": -0.864
+  },
+  "heldout_toast/direction_N1_s1": {
+   "d": [
+    -8.45,
+    17.15
+   ],
+   "along": -8.45,
+   "proj": -0.442
+  },
+  "heldout_toast/direction_N1_s2": {
+   "d": [
+    -19.12,
+    9.39
+   ],
+   "along": -19.12,
+   "proj": -0.898
+  },
+  "heldout_water/direction_N1_s0": {
+   "d": [
+    -7.19,
+    124.73
+   ],
+   "along": -7.19,
+   "proj": -0.058
+  },
+  "heldout_water/direction_N1_s1": {
+   "d": [
+    -17.55,
+    -26.39
+   ],
+   "along": -17.55,
+   "proj": -0.554
+  },
+  "heldout_water/direction_N1_s2": {
+   "d": [
+    -54.39,
+    -29.65
+   ],
+   "along": -54.39,
+   "proj": -0.878
+  },
+  "heldout_curtains/direction_N1_s0": {
+   "d": [
+    49.38,
+    -13.86
+   ],
+   "along": -49.38,
+   "proj": -0.963
+  },
+  "heldout_curtains/direction_N1_s1": {
+   "d": [
+    39.1,
+    -11.24
+   ],
+   "along": -39.1,
+   "proj": -0.961
+  },
+  "heldout_curtains/direction_N1_s2": {
+   "d": [
+    41.48,
+    -27.87
+   ],
+   "along": -41.48,
+   "proj": -0.83
+  },
+  "clap/direction_N1_s0": {
+   "d": [
+    -2.32,
+    0.6
+   ],
+   "along": 0.6,
+   "proj": 0.251
+  },
+  "clap/direction_N1_s1": {
+   "d": [
+    -9.09,
+    -42.0
+   ],
+   "along": -42.0,
+   "proj": -0.977
+  },
+  "clap/direction_N1_s2": {
+   "d": [
+    -13.61,
+    -30.18
+   ],
+   "along": -30.18,
+   "proj": -0.912
+  },
+  "wave/direction_N1_s0": {
+   "d": [
+    -8.44,
+    38.96
+   ],
+   "along": 38.96,
+   "proj": 0.977
+  },
+  "wave/direction_N1_s1": {
+   "d": [
+    59.46,
+    74.6
+   ],
+   "along": 74.6,
+   "proj": 0.782
+  },
+  "wave/direction_N1_s2": {
+   "d": [
+    -8.96,
+    37.4
+   ],
+   "along": 37.4,
+   "proj": 0.972
+  },
+  "base_forward/direction_N1_s0": {
+   "d": [
+    35.29,
+    -0.02
+   ],
+   "along": -35.29,
+   "proj": -1.0
+  },
+  "base_forward/direction_N1_s1": {
+   "d": [
+    110.88,
+    -0.02
+   ],
+   "along": -110.88,
+   "proj": -1.0
+  },
+  "base_forward/direction_N1_s2": {
+   "d": [
+    66.44,
+    0.25
+   ],
+   "along": -66.44,
+   "proj": -1.0
+  },
+  "base_turn/direction_N1_s0": {
+   "d": [
+    -38.37,
+    -0.02
+   ],
+   "along": -38.37,
+   "proj": -1.0
+  },
+  "base_turn/direction_N1_s1": {
+   "d": [
+    -25.92,
+    -0.55
+   ],
+   "along": -25.92,
+   "proj": -1.0
+  },
+  "base_turn/direction_N1_s2": {
+   "d": [
+    -31.85,
+    0.02
+   ],
+   "along": -31.85,
+   "proj": -1.0
+  },
+  "heldout_menu/direction_N1_s0": {
+   "d": [
+    58.8,
+    0.16
+   ],
+   "along": 58.8,
+   "proj": 1.0
+  },
+  "heldout_menu/direction_N1_s1": {
+   "d": [
+    -27.83,
+    -0.03
+   ],
+   "along": -27.83,
+   "proj": -1.0
+  },
+  "heldout_menu/direction_N1_s2": {
+   "d": [
+    -14.08,
+    0.03
+   ],
+   "along": -14.08,
+   "proj": -1.0
+  }
+ },
+ "cfg7": {
+  "pour_dressing/direction_N1_s0": {
+   "d": [
+    -6.49,
+    127.72
+   ],
+   "along": -127.72,
+   "proj": -0.999
+  },
+  "pour_dressing/direction_N1_s1": {
+   "d": [
+    12.76,
+    12.81
+   ],
+   "along": -12.81,
+   "proj": -0.708
+  },
+  "pour_dressing/direction_N1_s2": {
+   "d": [
+    8.33,
+    -12.54
+   ],
+   "along": 12.54,
+   "proj": 0.833
+  },
+  "scoop_tapioca/direction_N1_s0": {
+   "d": [
+    33.84,
+    -21.1
+   ],
+   "along": 21.1,
+   "proj": 0.529
+  },
+  "scoop_tapioca/direction_N1_s1": {
+   "d": [
+    28.4,
+    -39.98
+   ],
+   "along": 39.98,
+   "proj": 0.815
+  },
+  "scoop_tapioca/direction_N1_s2": {
+   "d": [
+    -3.8,
+    -18.18
+   ],
+   "along": 18.18,
+   "proj": 0.979
+  },
+  "stir_coffee/direction_N1_s0": {
+   "d": [
+    78.61,
+    -58.03
+   ],
+   "along": 58.03,
+   "proj": 0.594
+  },
+  "stir_coffee/direction_N1_s1": {
+   "d": [
+    21.3,
+    -19.54
+   ],
+   "along": 19.54,
+   "proj": 0.676
+  },
+  "stir_coffee/direction_N1_s2": {
+   "d": [
+    44.17,
+    -26.77
+   ],
+   "along": 26.77,
+   "proj": 0.518
+  },
+  "twist_cap/direction_N1_s0": {
+   "d": [
+    -128.46,
+    -12.9
+   ],
+   "along": 128.46,
+   "proj": 0.995
+  },
+  "twist_cap/direction_N1_s1": {
+   "d": [
+    -52.89,
+    -51.52
+   ],
+   "along": 52.89,
+   "proj": 0.716
+  },
+  "twist_cap/direction_N1_s2": {
+   "d": [
+    -51.74,
+    -31.17
+   ],
+   "along": 51.74,
+   "proj": 0.857
+  },
+  "scan_juice/direction_N1_s0": {
+   "d": [
+    90.65,
+    12.73
+   ],
+   "along": 90.65,
+   "proj": 0.99
+  },
+  "scan_juice/direction_N1_s1": {
+   "d": [
+    75.5,
+    19.64
+   ],
+   "along": 75.5,
+   "proj": 0.968
+  },
+  "scan_juice/direction_N1_s2": {
+   "d": [
+    96.07,
+    35.48
+   ],
+   "along": 96.07,
+   "proj": 0.938
+  },
+  "stamp_form/direction_N1_s0": {
+   "d": [
+    160.61,
+    10.27
+   ],
+   "along": -160.61,
+   "proj": -0.998
+  },
+  "stamp_form/direction_N1_s1": {
+   "d": [
+    68.46,
+    12.48
+   ],
+   "along": -68.46,
+   "proj": -0.984
+  },
+  "stamp_form/direction_N1_s2": {
+   "d": [
+    2.21,
+    48.93
+   ],
+   "along": -2.21,
+   "proj": -0.045
+  },
+  "press_ricecooker/direction_N1_s0": {
+   "d": [
+    -7.08,
+    -18.08
+   ],
+   "along": 7.08,
+   "proj": 0.365
+  },
+  "press_ricecooker/direction_N1_s1": {
+   "d": [
+    -16.03,
+    -12.35
+   ],
+   "along": 16.03,
+   "proj": 0.792
+  },
+  "press_ricecooker/direction_N1_s2": {
+   "d": [
+    -5.73,
+    -12.72
+   ],
+   "along": 5.73,
+   "proj": 0.411
+  },
+  "carry_bag/direction_N1_s0": {
+   "d": [
+    56.62,
+    52.5
+   ],
+   "along": -56.62,
+   "proj": -0.733
+  },
+  "carry_bag/direction_N1_s1": {
+   "d": [
+    51.6,
+    10.6
+   ],
+   "along": -51.6,
+   "proj": -0.98
+  },
+  "carry_bag/direction_N1_s2": {
+   "d": [
+    55.41,
+    44.61
+   ],
+   "along": -55.41,
+   "proj": -0.779
+  },
+  "move_guard/direction_N1_s0": {
+   "d": [
+    15.57,
+    -9.82
+   ],
+   "along": -15.57,
+   "proj": -0.846
+  },
+  "move_guard/direction_N1_s1": {
+   "d": [
+    83.11,
+    -39.37
+   ],
+   "along": -83.11,
+   "proj": -0.904
+  },
+  "move_guard/direction_N1_s2": {
+   "d": [
+    49.28,
+    -44.73
+   ],
+   "along": -49.28,
+   "proj": -0.74
+  },
+  "cut_dough/direction_N1_s0": {
+   "d": [
+    -29.42,
+    45.92
+   ],
+   "along": 29.42,
+   "proj": 0.54
+  },
+  "cut_dough/direction_N1_s1": {
+   "d": [
+    -34.13,
+    17.63
+   ],
+   "along": 34.13,
+   "proj": 0.888
+  },
+  "cut_dough/direction_N1_s2": {
+   "d": [
+    6.56,
+    34.4
+   ],
+   "along": -6.56,
+   "proj": -0.187
+  },
+  "knead_dough/direction_N1_s0": {
+   "d": [
+    -15.72,
+    -8.68
+   ],
+   "along": -15.72,
+   "proj": -0.876
+  },
+  "knead_dough/direction_N1_s1": {
+   "d": [
+    -35.49,
+    6.25
+   ],
+   "along": -35.49,
+   "proj": -0.985
+  },
+  "knead_dough/direction_N1_s2": {
+   "d": [
+    3.14,
+    1.62
+   ],
+   "along": 3.14,
+   "proj": 0.888
+  },
+  "shake_decanter/direction_N1_s0": {
+   "d": [
+    -30.39,
+    25.79
+   ],
+   "along": 30.39,
+   "proj": 0.762
+  },
+  "shake_decanter/direction_N1_s1": {
+   "d": [
+    -29.19,
+    11.93
+   ],
+   "along": 29.19,
+   "proj": 0.926
+  },
+  "shake_decanter/direction_N1_s2": {
+   "d": [
+    -46.61,
+    39.8
+   ],
+   "along": 46.61,
+   "proj": 0.76
+  },
+  "untie_curtain/direction_N1_s0": {
+   "d": [
+    121.43,
+    -14.84
+   ],
+   "along": 121.43,
+   "proj": 0.993
+  },
+  "untie_curtain/direction_N1_s1": {
+   "d": [
+    51.43,
+    82.32
+   ],
+   "along": 51.43,
+   "proj": 0.53
+  },
+  "untie_curtain/direction_N1_s2": {
+   "d": [
+    99.93,
+    9.38
+   ],
+   "along": 99.93,
+   "proj": 0.996
+  },
+  "tie_tieback/direction_N1_s0": {
+   "d": [
+    -82.56,
+    25.94
+   ],
+   "along": 82.56,
+   "proj": 0.954
+  },
+  "tie_tieback/direction_N1_s1": {
+   "d": [
+    -80.8,
+    21.59
+   ],
+   "along": 80.8,
+   "proj": 0.966
+  },
+  "tie_tieback/direction_N1_s2": {
+   "d": [
+    -74.97,
+    14.83
+   ],
+   "along": 74.97,
+   "proj": 0.981
+  },
+  "heldout_toast/direction_N1_s0": {
+   "d": [
+    -12.04,
+    -10.89
+   ],
+   "along": -12.04,
+   "proj": -0.741
+  },
+  "heldout_toast/direction_N1_s1": {
+   "d": [
+    0.91,
+    8.2
+   ],
+   "along": 0.91,
+   "proj": 0.11
+  },
+  "heldout_toast/direction_N1_s2": {
+   "d": [
+    -13.75,
+    10.89
+   ],
+   "along": -13.75,
+   "proj": -0.784
+  },
+  "heldout_water/direction_N1_s0": {
+   "d": [
+    -16.68,
+    145.02
+   ],
+   "along": -16.68,
+   "proj": -0.114
+  },
+  "heldout_water/direction_N1_s1": {
+   "d": [
+    -27.54,
+    -21.08
+   ],
+   "along": -27.54,
+   "proj": -0.794
+  },
+  "heldout_water/direction_N1_s2": {
+   "d": [
+    -71.99,
+    -21.98
+   ],
+   "along": -71.99,
+   "proj": -0.956
+  },
+  "heldout_curtains/direction_N1_s0": {
+   "d": [
+    12.72,
+    5.68
+   ],
+   "along": -12.72,
+   "proj": -0.913
+  },
+  "heldout_curtains/direction_N1_s1": {
+   "d": [
+    15.17,
+    7.14
+   ],
+   "along": -15.17,
+   "proj": -0.905
+  },
+  "heldout_curtains/direction_N1_s2": {
+   "d": [
+    49.05,
+    -11.93
+   ],
+   "along": -49.05,
+   "proj": -0.972
+  },
+  "clap/direction_N1_s0": {
+   "d": [
+    -23.68,
+    -0.06
+   ],
+   "along": -0.06,
+   "proj": -0.002
+  },
+  "clap/direction_N1_s1": {
+   "d": [
+    2.8,
+    -38.99
+   ],
+   "along": -38.99,
+   "proj": -0.997
+  },
+  "clap/direction_N1_s2": {
+   "d": [
+    -27.03,
+    -52.43
+   ],
+   "along": -52.43,
+   "proj": -0.889
+  },
+  "wave/direction_N1_s0": {
+   "d": [
+    -7.86,
+    66.42
+   ],
+   "along": 66.42,
+   "proj": 0.993
+  },
+  "wave/direction_N1_s1": {
+   "d": [
+    47.81,
+    70.89
+   ],
+   "along": 70.89,
+   "proj": 0.829
+  },
+  "wave/direction_N1_s2": {
+   "d": [
+    1.28,
+    35.2
+   ],
+   "along": 35.2,
+   "proj": 0.999
+  },
+  "base_forward/direction_N1_s0": {
+   "d": [
+    39.25,
+    0.29
+   ],
+   "along": -39.25,
+   "proj": -1.0
+  },
+  "base_forward/direction_N1_s1": {
+   "d": [
+    114.76,
+    0.07
+   ],
+   "along": -114.76,
+   "proj": -1.0
+  },
+  "base_forward/direction_N1_s2": {
+   "d": [
+    71.59,
+    0.22
+   ],
+   "along": -71.59,
+   "proj": -1.0
+  },
+  "base_turn/direction_N1_s0": {
+   "d": [
+    -46.89,
+    0.21
+   ],
+   "along": -46.89,
+   "proj": -1.0
+  },
+  "base_turn/direction_N1_s1": {
+   "d": [
+    -34.74,
+    0.24
+   ],
+   "along": -34.74,
+   "proj": -1.0
+  },
+  "base_turn/direction_N1_s2": {
+   "d": [
+    -37.76,
+    0.25
+   ],
+   "along": -37.76,
+   "proj": -1.0
+  },
+  "heldout_menu/direction_N1_s0": {
+   "d": [
+    64.44,
+    0.19
+   ],
+   "along": 64.44,
+   "proj": 1.0
+  },
+  "heldout_menu/direction_N1_s1": {
+   "d": [
+    -19.27,
+    0.03
+   ],
+   "along": -19.27,
+   "proj": -1.0
+  },
+  "heldout_menu/direction_N1_s2": {
+   "d": [
+    -14.71,
+    0.02
+   ],
+   "along": -14.71,
+   "proj": -1.0
+  }
+ },
+ "cfg4@real": {
+  "pour_dressing/real_N1_s0": {
+   "d": [
+    3.83,
+    87.45
+   ],
+   "along": -87.45,
+   "proj": -0.999
+  },
+  "pour_dressing/real_N1_s1": {
+   "d": [
+    14.87,
+    30.52
+   ],
+   "along": -30.52,
+   "proj": -0.899
+  },
+  "pour_dressing/real_N1_s2": {
+   "d": [
+    22.82,
+    56.41
+   ],
+   "along": -56.41,
+   "proj": -0.927
+  },
+  "scoop_tapioca/real_N1_s0": {
+   "d": [
+    25.52,
+    -13.51
+   ],
+   "along": 13.51,
+   "proj": 0.468
+  },
+  "scoop_tapioca/real_N1_s1": {
+   "d": [
+    11.78,
+    -4.38
+   ],
+   "along": 4.38,
+   "proj": 0.349
+  },
+  "scoop_tapioca/real_N1_s2": {
+   "d": [
+    -1.76,
+    -10.99
+   ],
+   "along": 10.99,
+   "proj": 0.987
+  },
+  "stir_coffee/real_N1_s0": {
+   "d": [
+    9.59,
+    0.67
+   ],
+   "along": -0.67,
+   "proj": -0.07
+  },
+  "stir_coffee/real_N1_s1": {
+   "d": [
+    0.74,
+    -15.14
+   ],
+   "along": 15.14,
+   "proj": 0.999
+  },
+  "stir_coffee/real_N1_s2": {
+   "d": [
+    0.11,
+    -3.82
+   ],
+   "along": 3.82,
+   "proj": 1.0
+  },
+  "twist_cap/real_N1_s0": {
+   "d": [
+    -22.11,
+    -24.64
+   ],
+   "along": 22.11,
+   "proj": 0.668
+  },
+  "twist_cap/real_N1_s1": {
+   "d": [
+    -33.1,
+    10.31
+   ],
+   "along": 33.1,
+   "proj": 0.955
+  },
+  "twist_cap/real_N1_s2": {
+   "d": [
+    13.64,
+    5.25
+   ],
+   "along": -13.64,
+   "proj": -0.933
+  },
+  "scan_juice/real_N1_s0": {
+   "d": [
+    -35.05,
+    46.07
+   ],
+   "along": -35.05,
+   "proj": -0.605
+  },
+  "scan_juice/real_N1_s1": {
+   "d": [
+    -14.3,
+    -9.83
+   ],
+   "along": -14.3,
+   "proj": -0.824
+  },
+  "scan_juice/real_N1_s2": {
+   "d": [
+    -55.12,
+    40.71
+   ],
+   "along": -55.12,
+   "proj": -0.804
+  },
+  "stamp_form/real_N1_s0": {
+   "d": [
+    -24.27,
+    -6.03
+   ],
+   "along": 24.27,
+   "proj": 0.971
+  },
+  "stamp_form/real_N1_s1": {
+   "d": [
+    -9.3,
+    41.13
+   ],
+   "along": 9.3,
+   "proj": 0.221
+  },
+  "stamp_form/real_N1_s2": {
+   "d": [
+    0.82,
+    45.16
+   ],
+   "along": -0.82,
+   "proj": -0.018
+  },
+  "press_ricecooker/real_N1_s0": {
+   "d": [
+    -57.82,
+    30.1
+   ],
+   "along": 57.82,
+   "proj": 0.887
+  },
+  "press_ricecooker/real_N1_s1": {
+   "d": [
+    50.7,
+    -58.1
+   ],
+   "along": -50.7,
+   "proj": -0.657
+  },
+  "press_ricecooker/real_N1_s2": {
+   "d": [
+    -27.52,
+    -21.07
+   ],
+   "along": 27.52,
+   "proj": 0.794
+  },
+  "carry_bag/real_N1_s0": {
+   "d": [
+    -46.17,
+    21.4
+   ],
+   "along": 46.17,
+   "proj": 0.907
+  },
+  "carry_bag/real_N1_s1": {
+   "d": [
+    -0.83,
+    -36.13
+   ],
+   "along": 0.83,
+   "proj": 0.023
+  },
+  "carry_bag/real_N1_s2": {
+   "d": [
+    -34.26,
+    5.73
+   ],
+   "along": 34.26,
+   "proj": 0.986
+  },
+  "move_guard/real_N1_s0": {
+   "d": [
+    -11.47,
+    -0.1
+   ],
+   "along": 11.47,
+   "proj": 1.0
+  },
+  "move_guard/real_N1_s1": {
+   "d": [
+    -6.71,
+    -31.08
+   ],
+   "along": 6.71,
+   "proj": 0.211
+  },
+  "move_guard/real_N1_s2": {
+   "d": [
+    -65.32,
+    -52.44
+   ],
+   "along": 65.32,
+   "proj": 0.78
+  },
+  "cut_dough/real_N1_s0": {
+   "d": [
+    9.61,
+    -9.03
+   ],
+   "along": -9.61,
+   "proj": -0.729
+  },
+  "cut_dough/real_N1_s1": {
+   "d": [
+    31.44,
+    -1.48
+   ],
+   "along": -31.44,
+   "proj": -0.999
+  },
+  "cut_dough/real_N1_s2": {
+   "d": [
+    16.68,
+    17.57
+   ],
+   "along": -16.68,
+   "proj": -0.688
+  },
+  "knead_dough/real_N1_s0": {
+   "d": [
+    -13.47,
+    -10.76
+   ],
+   "along": -13.47,
+   "proj": -0.781
+  },
+  "knead_dough/real_N1_s1": {
+   "d": [
+    -22.28,
+    -4.48
+   ],
+   "along": -22.28,
+   "proj": -0.98
+  },
+  "knead_dough/real_N1_s2": {
+   "d": [
+    -0.87,
+    -2.8
+   ],
+   "along": -0.87,
+   "proj": -0.296
+  },
+  "shake_decanter/real_N1_s0": {
+   "d": [
+    -9.87,
+    -14.07
+   ],
+   "along": 9.87,
+   "proj": 0.574
+  },
+  "shake_decanter/real_N1_s1": {
+   "d": [
+    -4.48,
+    3.77
+   ],
+   "along": 4.48,
+   "proj": 0.765
+  },
+  "shake_decanter/real_N1_s2": {
+   "d": [
+    -0.09,
+    -1.41
+   ],
+   "along": 0.09,
+   "proj": 0.062
+  },
+  "untie_curtain/real_N1_s0": {
+   "d": [
+    -4.13,
+    -4.41
+   ],
+   "along": -4.13,
+   "proj": -0.684
+  },
+  "untie_curtain/real_N1_s1": {
+   "d": [
+    -6.38,
+    2.17
+   ],
+   "along": -6.38,
+   "proj": -0.947
+  },
+  "untie_curtain/real_N1_s2": {
+   "d": [
+    20.09,
+    -9.17
+   ],
+   "along": 20.09,
+   "proj": 0.91
+  },
+  "tie_tieback/real_N1_s0": {
+   "d": [
+    -27.22,
+    -3.03
+   ],
+   "along": 27.22,
+   "proj": 0.994
+  },
+  "tie_tieback/real_N1_s1": {
+   "d": [
+    -10.16,
+    -6.31
+   ],
+   "along": 10.16,
+   "proj": 0.849
+  },
+  "tie_tieback/real_N1_s2": {
+   "d": [
+    -1.6,
+    -15.5
+   ],
+   "along": 1.6,
+   "proj": 0.102
+  },
+  "heldout_toast/real_N1_s0": {
+   "d": [
+    33.83,
+    -2.48
+   ],
+   "along": 33.83,
+   "proj": 0.997
+  },
+  "heldout_toast/real_N1_s1": {
+   "d": [
+    27.72,
+    1.17
+   ],
+   "along": 27.72,
+   "proj": 0.999
+  },
+  "heldout_toast/real_N1_s2": {
+   "d": [
+    20.51,
+    -3.3
+   ],
+   "along": 20.51,
+   "proj": 0.987
+  },
+  "heldout_water/real_N1_s0": {
+   "d": [
+    66.89,
+    28.7
+   ],
+   "along": 66.89,
+   "proj": 0.919
+  },
+  "heldout_water/real_N1_s1": {
+   "d": [
+    69.53,
+    36.48
+   ],
+   "along": 69.53,
+   "proj": 0.886
+  },
+  "heldout_water/real_N1_s2": {
+   "d": [
+    59.32,
+    27.93
+   ],
+   "along": 59.32,
+   "proj": 0.905
+  },
+  "heldout_curtains/real_N1_s0": {
+   "d": [
+    11.27,
+    -15.07
+   ],
+   "along": -11.27,
+   "proj": -0.599
+  },
+  "heldout_curtains/real_N1_s1": {
+   "d": [
+    6.11,
+    6.62
+   ],
+   "along": -6.11,
+   "proj": -0.678
+  },
+  "heldout_curtains/real_N1_s2": {
+   "d": [
+    18.55,
+    -25.18
+   ],
+   "along": -18.55,
+   "proj": -0.593
+  },
+  "clap/real_N1_s0": {
+   "d": [
+    36.91,
+    0.16
+   ],
+   "along": 0.16,
+   "proj": 0.004
+  },
+  "clap/real_N1_s1": {
+   "d": [
+    13.12,
+    -66.41
+   ],
+   "along": -66.41,
+   "proj": -0.981
+  },
+  "clap/real_N1_s2": {
+   "d": [
+    -43.68,
+    -18.33
+   ],
+   "along": -18.33,
+   "proj": -0.387
+  },
+  "wave/real_N1_s0": {
+   "d": [
+    -10.79,
+    2.14
+   ],
+   "along": 2.14,
+   "proj": 0.194
+  },
+  "wave/real_N1_s1": {
+   "d": [
+    11.78,
+    17.02
+   ],
+   "along": 17.02,
+   "proj": 0.822
+  },
+  "wave/real_N1_s2": {
+   "d": [
+    -14.39,
+    -20.06
+   ],
+   "along": -20.06,
+   "proj": -0.812
+  },
+  "base_forward/real_N1_s0": {
+   "d": [
+    -0.01,
+    8.54
+   ],
+   "along": 0.01,
+   "proj": 0.001
+  },
+  "base_forward/real_N1_s1": {
+   "d": [
+    10.63,
+    7.56
+   ],
+   "along": -10.63,
+   "proj": -0.815
+  },
+  "base_forward/real_N1_s2": {
+   "d": [
+    0.0,
+    6.95
+   ],
+   "along": -0.0,
+   "proj": -0.0
+  },
+  "base_turn/real_N1_s0": {
+   "d": [
+    -0.22,
+    -0.05
+   ],
+   "along": -0.22,
+   "proj": -0.972
+  },
+  "base_turn/real_N1_s1": {
+   "d": [
+    -0.37,
+    -0.09
+   ],
+   "along": -0.37,
+   "proj": -0.971
+  },
+  "base_turn/real_N1_s2": {
+   "d": [
+    -0.21,
+    -0.1
+   ],
+   "along": -0.21,
+   "proj": -0.906
+  },
+  "heldout_menu/real_N1_s0": {
+   "d": [
+    0.29,
+    3.56
+   ],
+   "along": 0.29,
+   "proj": 0.082
+  },
+  "heldout_menu/real_N1_s1": {
+   "d": [
+    0.14,
+    4.32
+   ],
+   "along": 0.14,
+   "proj": 0.033
+  },
+  "heldout_menu/real_N1_s2": {
+   "d": [
+    0.12,
+    2.92
+   ],
+   "along": 0.12,
+   "proj": 0.041
+  }
+ }
+}

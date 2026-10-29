@@ -68,8 +68,9 @@ def write_gt(gt_out: Path, case: dict, frames: dict[int, np.ndarray], n_total: i
 
 @torch.no_grad()
 def rollout(policy, ctx: np.ndarray, prompt: str, windows: int, seed: int, steps: int, cfg: float, shift: float,
-            loops: int | None) -> np.ndarray:
-    """ctx uint8 (3, H, W) -> uint8 (1 + windows*FUTURE, H, W, 3): the context frame then the chained windows."""
+            loops: int | None, neg_prompt: str | None = None, neg_scale: float = 0.0) -> np.ndarray:
+    """ctx uint8 (3, H, W) -> uint8 (1 + windows*FUTURE, H, W, 3): the context frame then the chained windows.
+    ``neg_prompt`` / ``neg_scale``: negative-prompt guidance (ldvflux.sampling.generate), off by default."""
     from .eval_phase4 import to_uint8_video
 
     out = [ctx.transpose(1, 2, 0)[None]]
@@ -79,7 +80,8 @@ def rollout(policy, ctx: np.ndarray, prompt: str, windows: int, seed: int, steps
         frames = torch.from_numpy(np.stack([ctx] * (1 + FUTURE)))[None]
         cond, _ = sampling.encode_windows(policy, frames, 1)
         lat = sampling.generate(policy, cond, 1, [prompt], n_future_latents=n_lat, steps=steps, cfg_scale=cfg, shift=shift,
-                                seed=seed + 1000 * wi, num_loops=loops)
+                                seed=seed + 1000 * wi, num_loops=loops,
+                                neg_captions=[neg_prompt] if neg_prompt is not None else None, neg_scale=neg_scale)
         vid = to_uint8_video(sampling.decode(policy, lat)[0])  # (F, H, W, 3)
         out.append(vid)
         ctx = np.ascontiguousarray(vid[-1].transpose(2, 0, 1))
