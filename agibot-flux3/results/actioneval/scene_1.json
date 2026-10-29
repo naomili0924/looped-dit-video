@@ -1,0 +1,3636 @@
+{
+ "w671739": {
+  "objects": [
+   {
+    "name": "peanuts",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "shelf",
+    "material": "fixture"
+   },
+   {
+    "name": "chip bag",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "red snack bag",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "green snack bag",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "blue snack bag",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "black robot arm",
+    "material": "rigid"
+   },
+   {
+    "name": "metal basket",
+    "material": "rigid"
+   },
+   {
+    "name": "wooden shelf",
+    "material": "fixture"
+   },
+   {
+    "name": "plastic bag with cartoon",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "red packet",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "yellow snack packet",
+    "material": "thin_flexible"
+   }
+  ],
+  "visible": {
+   "shelf": true,
+   "peanuts": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"peanuts\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"shelf\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"chip bag\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"red snack bag\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"green snack bag\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"blue snack bag\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"black robot arm\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"metal basket\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"wooden shelf\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"plastic bag with cartoon\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"red packet\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"yellow snack packet\",\n      \"material\": \"thin_flexible\"\n    }\n  ],\n  \"visible\": {\n    \"shelf\": true,\n    \"peanuts\": true\n  }\n}"
+ },
+ "w662730": {
+  "objects": [
+   {
+    "name": "white plastic bag",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "red vitamin e lotion",
+    "material": "rigid"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   }
+  ],
+  "visible": {
+   "white plastic bag": true,
+   "duck": false,
+   "red vitamin e lotion": true,
+   "table": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"white plastic bag\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"red vitamin e lotion\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    }\n  ],\n  \"visible\": {\n    \"white plastic bag\": true,\n    \"duck\": false,\n    \"red vitamin e lotion\": true,\n    \"table\": true\n  }\n}"
+ },
+ "w694224": {
+  "objects": [
+   {
+    "name": "shorts",
+    "material": "cloth"
+   }
+  ],
+  "visible": {
+   "shorts": true
+  },
+  "raw": "{\"objects\": [{\"name\": \"shorts\", \"material\": \"cloth\"}], \"visible\": {\"shorts\": true}}"
+ },
+ "w649048": {
+  "objects": [
+   {
+    "name": "blue tray",
+    "material": "rigid"
+   },
+   {
+    "name": "white tray",
+    "material": "rigid"
+   },
+   {
+    "name": "pink soap packets",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "blue hand cream",
+    "material": "rigid"
+   },
+   {
+    "name": "green hand cream",
+    "material": "rigid"
+   },
+   {
+    "name": "yellow hand cream",
+    "material": "rigid"
+   },
+   {
+    "name": "robot arm left",
+    "material": "rigid"
+   },
+   {
+    "name": "robot arm right",
+    "material": "rigid"
+   },
+   {
+    "name": "white table",
+    "material": "fixture"
+   },
+   {
+    "name": "material frame",
+    "material": "rigid"
+   },
+   {
+    "name": "target box",
+    "material": "rigid"
+   }
+  ],
+  "visible": {
+   "blue hand cream": true,
+   "material frame": true,
+   "target box": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"blue tray\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"white tray\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"pink soap packets\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"blue hand cream\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"green hand cream\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"yellow hand cream\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"robot arm left\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"robot arm right\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"white table\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"material frame\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"target box\",\n      \"material\": \"rigid\"\n    }\n  ],\n  \"visible\": {\n    \"blue hand cream\": true,\n    \"material frame\": true,\n    \"target box\": true\n  }\n}"
+ },
+ "w650483": {
+  "objects": [
+   {
+    "name": "tea bag",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "beige teapot",
+    "material": "rigid"
+   },
+   {
+    "name": "cup",
+    "material": "rigid"
+   },
+   {
+    "name": "water",
+    "material": "liquid"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   },
+   {
+    "name": "fruit bowl",
+    "material": "rigid"
+   },
+   {
+    "name": "pastry plate",
+    "material": "rigid"
+   },
+   {
+    "name": "apple",
+    "material": "divisible"
+   },
+   {
+    "name": "orange",
+    "material": "divisible"
+   },
+   {
+    "name": "pear",
+    "material": "divisible"
+   },
+   {
+    "name": "croissant",
+    "material": "divisible"
+   },
+   {
+    "name": "plastic container",
+    "material": "rigid"
+   }
+  ],
+  "visible": {
+   "tea bag": true,
+   "beige teapot": true,
+   "cup": true,
+   "water": true,
+   "table": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"tea bag\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"beige teapot\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"cup\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"water\",\n      \"material\": \"liquid\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"fruit bowl\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"pastry plate\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"apple\",\n      \"material\": \"divisible\"\n    },\n    {\n      \"name\": \"orange\",\n      \"material\": \"divisible\"\n    },\n    {\n      \"name\": \"pear\",\n      \"material\": \"divisible\"\n    },\n    {\n      \"name\": \"croissant\",\n      \"material\": \"divisible\"\n    },\n    {\n      \"name\": \"plastic container\",\n      \"material\": \"rigid\"\n    }\n  ],\n  \"visible\": {\n    \"tea bag\": true,\n    \"beige teapot\": true,\n    \"cup\": true,\n    \"water\": true,\n    \"table\": true\n  }\n}"
+ },
+ "w690721": {
+  "objects": [
+   {
+    "name": "crab stick",
+    "material": "rigid"
+   },
+   {
+    "name": "freezer door",
+    "material": "articulated"
+   },
+   {
+    "name": "cart",
+    "material": "rigid"
+   }
+  ],
+  "visible": {
+   "crab stick": true,
+   "freezer door": true,
+   "cart": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"crab stick\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"freezer door\",\n      \"material\": \"articulated\"\n    },\n    {\n      \"name\": \"cart\",\n      \"material\": \"rigid\"\n    }\n  ],\n  \"visible\": {\n    \"crab stick\": true,\n    \"freezer door\": true,\n    \"cart\": true\n  }\n}"
+ },
+ "w708670": {
+  "objects": [
+   {
+    "name": "shirt",
+    "material": "cloth"
+   },
+   {
+    "name": "plastic hanger",
+    "material": "rigid"
+   },
+   {
+    "name": "collar",
+    "material": "cloth"
+   },
+   {
+    "name": "bed",
+    "material": "fixture"
+   },
+   {
+    "name": "bedsheet",
+    "material": "cloth"
+   },
+   {
+    "name": "robot arm",
+    "material": "rigid"
+   },
+   {
+    "name": "pink hanger",
+    "material": "rigid"
+   },
+   {
+    "name": "bed frame",
+    "material": "fixture"
+   },
+   {
+    "name": "curtain",
+    "material": "cloth"
+   },
+   {
+    "name": "pillow",
+    "material": "elastic"
+   },
+   {
+    "name": "bedding",
+    "material": "cloth"
+   },
+   {
+    "name": "table surface",
+    "material": "fixture"
+   }
+  ],
+  "visible": {
+   "collar": true,
+   "plastic hanger": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"shirt\",\n      \"material\": \"cloth\"\n    },\n    {\n      \"name\": \"plastic hanger\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"collar\",\n      \"material\": \"cloth\"\n    },\n    {\n      \"name\": \"bed\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"bedsheet\",\n      \"material\": \"cloth\"\n    },\n    {\n      \"name\": \"robot arm\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"pink hanger\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"bed frame\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"curtain\",\n      \"material\": \"cloth\"\n    },\n    {\n      \"name\": \"pillow\",\n      \"material\": \"elastic\"\n    },\n    {\n      \"name\": \"bedding\",\n      \"material\": \"cloth\"\n    },\n    {\n      \"name\": \"table surface\",\n      \"material\": \"fixture\"\n    }\n  ],\n  \"visible\": {\n    \"collar\": true,\n    \"plastic hanger\": true\n  }\n}"
+ },
+ "w740095": {
+  "objects": [
+   {
+    "name": "logistics box",
+    "material": "rigid"
+   },
+   {
+    "name": "conveyor belt",
+    "material": "fixture"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   },
+   {
+    "name": "air column film",
+    "material": "thin_flexible"
+   }
+  ],
+  "visible": {
+   "air column film": true,
+   "logistics box": true,
+   "table": true,
+   "conveyor belt": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"logistics box\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"conveyor belt\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"air column film\",\n      \"material\": \"thin_flexible\"\n    }\n  ],\n  \"visible\": {\n    \"air column film\": true,\n    \"logistics box\": true,\n    \"table\": true,\n    \"conveyor belt\": true\n  }\n}"
+ },
+ "w695528": {
+  "objects": [
+   {
+    "name": "toast",
+    "material": "divisible"
+   },
+   {
+    "name": "meat slice",
+    "material": "divisible"
+   },
+   {
+    "name": "vegetable leaf",
+    "material": "divisible"
+   },
+   {
+    "name": "plate",
+    "material": "rigid"
+   },
+   {
+    "name": "slot",
+    "material": "rigid"
+   },
+   {
+    "name": "salad dressing bottle",
+    "material": "rigid"
+   },
+   {
+    "name": "cooking table",
+    "material": "fixture"
+   },
+   {
+    "name": "salad dressing",
+    "material": "liquid"
+   }
+  ],
+  "visible": {
+   "toast": true,
+   "meat slice": true,
+   "vegetable leaf": true,
+   "plate": true,
+   "slot": true,
+   "salad dressing bottle": true,
+   "cooking table": true,
+   "salad dressing": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"toast\",\n      \"material\": \"divisible\"\n    },\n    {\n      \"name\": \"meat slice\",\n      \"material\": \"divisible\"\n    },\n    {\n      \"name\": \"vegetable leaf\",\n      \"material\": \"divisible\"\n    },\n    {\n      \"name\": \"plate\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"slot\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"salad dressing bottle\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"cooking table\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"salad dressing\",\n      \"material\": \"liquid\"\n    }\n  ],\n  \"visible\": {\n    \"toast\": true,\n    \"meat slice\": true,\n    \"vegetable leaf\": true,\n    \"plate\": true,\n    \"slot\": true,\n    \"salad dressing bottle\": true,\n    \"cooking table\": true,\n    \"salad dressing\": true\n  }\n}"
+ },
+ "w747905": {
+  "objects": [
+   {
+    "name": "brown towel",
+    "material": "cloth"
+   },
+   {
+    "name": "blue towel",
+    "material": "cloth"
+   },
+   {
+    "name": "basket",
+    "material": "rigid"
+   },
+   {
+    "name": "white drying rack",
+    "material": "rigid"
+   },
+   {
+    "name": "robot arm left",
+    "material": "rigid"
+   },
+   {
+    "name": "robot arm right",
+    "material": "rigid"
+   },
+   {
+    "name": "wall",
+    "material": "fixture"
+   },
+   {
+    "name": "black cable",
+    "material": "linear"
+   },
+   {
+    "name": "white box",
+    "material": "rigid"
+   },
+   {
+    "name": "black handle",
+    "material": "rigid"
+   }
+  ],
+  "visible": {
+   "pillowcase": false,
+   "clothes hanger": false,
+   "basket": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"brown towel\",\n      \"material\": \"cloth\"\n    },\n    {\n      \"name\": \"blue towel\",\n      \"material\": \"cloth\"\n    },\n    {\n      \"name\": \"basket\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"white drying rack\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"robot arm left\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"robot arm right\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"wall\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"black cable\",\n      \"material\": \"linear\"\n    },\n    {\n      \"name\": \"white box\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"black handle\",\n      \"material\": \"rigid\"\n    }\n  ],\n  \"visible\": {\n    \"pillowcase\": false,\n    \"clothes hanger\": false,\n    \"basket\": true\n  }\n}"
+ },
+ "w763054": {
+  "objects": [
+   {
+    "name": "plush toy",
+    "material": "elastic"
+   },
+   {
+    "name": "building blocks",
+    "material": "rigid"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   },
+   {
+    "name": "storage box",
+    "material": "rigid"
+   },
+   {
+    "name": "red pen",
+    "material": "rigid"
+   },
+   {
+    "name": "green tray",
+    "material": "rigid"
+   },
+   {
+    "name": "tablecloth",
+    "material": "cloth"
+   },
+   {
+    "name": "robot arm left",
+    "material": "rigid"
+   },
+   {
+    "name": "robot arm right",
+    "material": "rigid"
+   },
+   {
+    "name": "blue object",
+    "material": "rigid"
+   },
+   {
+    "name": "orange object",
+    "material": "rigid"
+   },
+   {
+    "name": "floor",
+    "material": "fixture"
+   }
+  ],
+  "visible": {
+   "plush toy": true,
+   "building blocks": false,
+   "table": true,
+   "storage box": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"plush toy\",\n      \"material\": \"elastic\"\n    },\n    {\n      \"name\": \"building blocks\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"storage box\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"red pen\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"green tray\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"tablecloth\",\n      \"material\": \"cloth\"\n    },\n    {\n      \"name\": \"robot arm left\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"robot arm right\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"blue object\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"orange object\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"floor\",\n      \"material\": \"fixture\"\n    }\n  ],\n  \"visible\": {\n    \"plush toy\": true,\n    \"building blocks\": false,\n    \"table\": true,\n    \"storage box\": true\n  }\n}"
+ },
+ "w733792": {
+  "objects": [
+   {
+    "name": "ketchup bottle",
+    "material": "rigid"
+   },
+   {
+    "name": "whole wheat toast",
+    "material": "divisible"
+   },
+   {
+    "name": "meat slice",
+    "material": "divisible"
+   },
+   {
+    "name": "vegetable leaves",
+    "material": "divisible"
+   },
+   {
+    "name": "lid",
+    "material": "rigid"
+   },
+   {
+    "name": "slot",
+    "material": "fixture"
+   },
+   {
+    "name": "plate",
+    "material": "rigid"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   },
+   {
+    "name": "meal tray",
+    "material": "rigid"
+   }
+  ],
+  "visible": {
+   "ketchup bottle": true,
+   "whole wheat toast": true,
+   "meat slice": true,
+   "vegetable leaves": true,
+   "lid": false,
+   "slot": true,
+   "plate": true,
+   "table": true,
+   "meal tray": false
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"ketchup bottle\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"whole wheat toast\",\n      \"material\": \"divisible\"\n    },\n    {\n      \"name\": \"meat slice\",\n      \"material\": \"divisible\"\n    },\n    {\n      \"name\": \"vegetable leaves\",\n      \"material\": \"divisible\"\n    },\n    {\n      \"name\": \"lid\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"slot\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"plate\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"meal tray\",\n      \"material\": \"rigid\"\n    }\n  ],\n  \"visible\": {\n    \"ketchup bottle\": true,\n    \"whole wheat toast\": true,\n    \"meat slice\": true,\n    \"vegetable leaves\": true,\n    \"lid\": false,\n    \"slot\": true,\n    \"plate\": true,\n    \"table\": true,\n    \"meal tray\": false\n  }\n}"
+ },
+ "w765918": {
+  "objects": [
+   {
+    "name": "purple shorts",
+    "material": "cloth"
+   },
+   {
+    "name": "blue folded cloth",
+    "material": "cloth"
+   },
+   {
+    "name": "brown pillow",
+    "material": "elastic"
+   },
+   {
+    "name": "gray bedsheet",
+    "material": "cloth"
+   },
+   {
+    "name": "white box",
+    "material": "rigid"
+   },
+   {
+    "name": "robot arm",
+    "material": "articulated"
+   },
+   {
+    "name": "bed",
+    "material": "fixture"
+   }
+  ],
+  "visible": {
+   "it": false,
+   "sheets": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"purple shorts\",\n      \"material\": \"cloth\"\n    },\n    {\n      \"name\": \"blue folded cloth\",\n      \"material\": \"cloth\"\n    },\n    {\n      \"name\": \"brown pillow\",\n      \"material\": \"elastic\"\n    },\n    {\n      \"name\": \"gray bedsheet\",\n      \"material\": \"cloth\"\n    },\n    {\n      \"name\": \"white box\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"robot arm\",\n      \"material\": \"articulated\"\n    },\n    {\n      \"name\": \"bed\",\n      \"material\": \"fixture\"\n    }\n  ],\n  \"visible\": {\n    \"it\": false,\n    \"sheets\": true\n  }\n}"
+ },
+ "w927639": {
+  "objects": [
+   {
+    "name": "tissue box",
+    "material": "rigid"
+   },
+   {
+    "name": "empty tissue bag",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "blue tissues",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   },
+   {
+    "name": "pen holder",
+    "material": "rigid"
+   },
+   {
+    "name": "blue pen",
+    "material": "rigid"
+   },
+   {
+    "name": "black pen",
+    "material": "rigid"
+   },
+   {
+    "name": "notebook",
+    "material": "rigid"
+   },
+   {
+    "name": "robot left hand",
+    "material": "rigid"
+   },
+   {
+    "name": "robot right hand",
+    "material": "rigid"
+   },
+   {
+    "name": "robot arm base",
+    "material": "rigid"
+   },
+   {
+    "name": "wall",
+    "material": "fixture"
+   }
+  ],
+  "visible": {
+   "tissue box": true,
+   "empty tissue bag": true,
+   "blue tissues": true,
+   "table": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"tissue box\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"empty tissue bag\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"blue tissues\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"pen holder\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"blue pen\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"black pen\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"notebook\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"robot left hand\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"robot right hand\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"robot arm base\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"wall\",\n      \"material\": \"fixture\"\n    }\n  ],\n  \"visible\": {\n    \"tissue box\": true,\n    \"empty tissue bag\": true,\n    \"blue tissues\": true,\n    \"table\": true\n  }\n}"
+ },
+ "w883252": {
+  "objects": [
+   {
+    "name": "curtain",
+    "material": "cloth"
+   },
+   {
+    "name": "door",
+    "material": "articulated"
+   },
+   {
+    "name": "window",
+    "material": "fixture"
+   },
+   {
+    "name": "teapot",
+    "material": "rigid"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   }
+  ],
+  "visible": {
+   "curtain": true
+  },
+  "raw": "{\"objects\": [{\"name\": \"curtain\", \"material\": \"cloth\"}, {\"name\": \"door\", \"material\": \"articulated\"}, {\"name\": \"window\", \"material\": \"fixture\"}, {\"name\": \"teapot\", \"material\": \"rigid\"}, {\"name\": \"table\", \"material\": \"fixture\"}], \"visible\": {\"curtain\": true}}"
+ },
+ "w767875": {
+  "objects": [
+   {
+    "name": "pink towel",
+    "material": "cloth"
+   },
+   {
+    "name": "toilet",
+    "material": "fixture"
+   },
+   {
+    "name": "toilet tank",
+    "material": "fixture"
+   },
+   {
+    "name": "toilet flush button",
+    "material": "articulated"
+   },
+   {
+    "name": "toilet paper roll",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "marble wall",
+    "material": "fixture"
+   },
+   {
+    "name": "floor",
+    "material": "fixture"
+   },
+   {
+    "name": "drawer",
+    "material": "articulated"
+   },
+   {
+    "name": "robot arm",
+    "material": "rigid"
+   },
+   {
+    "name": "robot gripper",
+    "material": "rigid"
+   },
+   {
+    "name": "cabinet",
+    "material": "fixture"
+   },
+   {
+    "name": "sticker on toilet tank",
+    "material": "thin_flexible"
+   }
+  ],
+  "visible": {
+   "cloth": true,
+   "toilet": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"pink towel\",\n      \"material\": \"cloth\"\n    },\n    {\n      \"name\": \"toilet\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"toilet tank\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"toilet flush button\",\n      \"material\": \"articulated\"\n    },\n    {\n      \"name\": \"toilet paper roll\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"marble wall\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"floor\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"drawer\",\n      \"material\": \"articulated\"\n    },\n    {\n      \"name\": \"robot arm\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"robot gripper\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"cabinet\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"sticker on toilet tank\",\n      \"material\": \"thin_flexible\"\n    }\n  ],\n  \"visible\": {\n    \"cloth\": true,\n    \"toilet\": true\n  }\n}"
+ },
+ "w791481": {
+  "objects": [
+   {
+    "name": "box",
+    "material": "rigid"
+   },
+   {
+    "name": "bottle",
+    "material": "rigid"
+   },
+   {
+    "name": "laundry detergent",
+    "material": "rigid"
+   },
+   {
+    "name": "conveyor belt",
+    "material": "fixture"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   }
+  ],
+  "visible": {
+   "item": false,
+   "laundry detergent": true,
+   "conveyor belt": true,
+   "box": true,
+   "bottle": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"box\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"bottle\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"laundry detergent\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"conveyor belt\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    }\n  ],\n  \"visible\": {\n    \"item\": false,\n    \"laundry detergent\": true,\n    \"conveyor belt\": true,\n    \"box\": true,\n    \"bottle\": true\n  }\n}"
+ },
+ "w844965": {
+  "objects": [
+   {
+    "name": "faucet",
+    "material": "rigid"
+   },
+   {
+    "name": "spoon/fork",
+    "material": "rigid"
+   },
+   {
+    "name": "blue plastic plate",
+    "material": "rigid"
+   },
+   {
+    "name": "sink",
+    "material": "fixture"
+   },
+   {
+    "name": "storage box",
+    "material": "rigid"
+   },
+   {
+    "name": "sponge",
+    "material": "elastic"
+   },
+   {
+    "name": "dish soap bottle",
+    "material": "elastic"
+   },
+   {
+    "name": "counter top",
+    "material": "fixture"
+   },
+   {
+    "name": "plate in storage box",
+    "material": "rigid"
+   },
+   {
+    "name": "robot arm left",
+    "material": "rigid"
+   },
+   {
+    "name": "robot arm right",
+    "material": "rigid"
+   },
+   {
+    "name": "wall",
+    "material": "fixture"
+   }
+  ],
+  "visible": {
+   "faucet": true,
+   "spoon/fork": true,
+   "blue plastic plate": true,
+   "sink": true,
+   "storage box": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"faucet\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"spoon/fork\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"blue plastic plate\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"sink\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"storage box\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"sponge\",\n      \"material\": \"elastic\"\n    },\n    {\n      \"name\": \"dish soap bottle\",\n      \"material\": \"elastic\"\n    },\n    {\n      \"name\": \"counter top\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"plate in storage box\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"robot arm left\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"robot arm right\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"wall\",\n      \"material\": \"fixture\"\n    }\n  ],\n  \"visible\": {\n    \"faucet\": true,\n    \"spoon/fork\": true,\n    \"blue plastic plate\": true,\n    \"sink\": true,\n    \"storage box\": true\n  }\n}"
+ },
+ "w835948": {
+  "objects": [
+   {
+    "name": "pink bunny backpack",
+    "material": "cloth"
+   },
+   {
+    "name": "pen",
+    "material": "rigid"
+   },
+   {
+    "name": "zipper",
+    "material": "articulated"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   },
+   {
+    "name": "small orange ball",
+    "material": "elastic"
+   },
+   {
+    "name": "black robotic arm",
+    "material": "rigid"
+   },
+   {
+    "name": "white box",
+    "material": "rigid"
+   },
+   {
+    "name": "teal tablecloth",
+    "material": "cloth"
+   },
+   {
+    "name": "office chair",
+    "material": "rigid"
+   },
+   {
+    "name": "person's hand",
+    "material": "elastic"
+   },
+   {
+    "name": "floor",
+    "material": "fixture"
+   },
+   {
+    "name": "black jacket",
+    "material": "cloth"
+   }
+  ],
+  "visible": {
+   "pink bunny backpack": true,
+   "pen": false,
+   "zipper": false,
+   "table": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"pink bunny backpack\",\n      \"material\": \"cloth\"\n    },\n    {\n      \"name\": \"pen\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"zipper\",\n      \"material\": \"articulated\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"small orange ball\",\n      \"material\": \"elastic\"\n    },\n    {\n      \"name\": \"black robotic arm\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"white box\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"teal tablecloth\",\n      \"material\": \"cloth\"\n    },\n    {\n      \"name\": \"office chair\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"person's hand\",\n      \"material\": \"elastic\"\n    },\n    {\n      \"name\": \"floor\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"black jacket\",\n      \"material\": \"cloth\"\n    }\n  ],\n  \"visible\": {\n    \"pink bunny backpack\": true,\n    \"pen\": false,\n    \"zipper\": false,\n    \"table\": true\n  }\n}"
+ },
+ "w842887": {
+  "objects": [
+   {
+    "name": "takeout box lid",
+    "material": "rigid"
+   },
+   {
+    "name": "takeout box",
+    "material": "rigid"
+   },
+   {
+    "name": "stacked takeout boxes",
+    "material": "rigid"
+   },
+   {
+    "name": "chopsticks",
+    "material": "rigid"
+   },
+   {
+    "name": "chopstick holder",
+    "material": "rigid"
+   },
+   {
+    "name": "flower vase",
+    "material": "rigid"
+   },
+   {
+    "name": "flower arrangement",
+    "material": "rigid"
+   },
+   {
+    "name": "small bottle",
+    "material": "rigid"
+   },
+   {
+    "name": "box cover",
+    "material": "rigid"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   }
+  ],
+  "visible": {
+   "box cover": true,
+   "takeout box lid": true,
+   "table": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"takeout box lid\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"takeout box\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"stacked takeout boxes\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"chopsticks\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"chopstick holder\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"flower vase\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"flower arrangement\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"small bottle\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"box cover\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    }\n  ],\n  \"visible\": {\n    \"box cover\": true,\n    \"takeout box lid\": true,\n    \"table\": true\n  }\n}"
+ },
+ "w864962": {
+  "objects": [
+   {
+    "name": "curtain",
+    "material": "cloth"
+   },
+   {
+    "name": "curtain tie",
+    "material": "elastic"
+   }
+  ],
+  "visible": {
+   "curtain": true,
+   "curtain tie": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"curtain\",\n      \"material\": \"cloth\"\n    },\n    {\n      \"name\": \"curtain tie\",\n      \"material\": \"elastic\"\n    }\n  ],\n  \"visible\": {\n    \"curtain\": true,\n    \"curtain tie\": true\n  }\n}"
+ },
+ "w837461": {
+  "objects": [
+   {
+    "name": "key",
+    "material": "rigid"
+   },
+   {
+    "name": "cabinet",
+    "material": "fixture"
+   },
+   {
+    "name": "bag",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "wall hook",
+    "material": "rigid"
+   },
+   {
+    "name": "storage box",
+    "material": "rigid"
+   },
+   {
+    "name": "bowl",
+    "material": "rigid"
+   },
+   {
+    "name": "cylindrical container",
+    "material": "rigid"
+   },
+   {
+    "name": "flower vase",
+    "material": "rigid"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   },
+   {
+    "name": "robot arm",
+    "material": "articulated"
+   },
+   {
+    "name": "decorative sticker",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "flowers",
+    "material": "divisible"
+   }
+  ],
+  "visible": {
+   "key": true,
+   "cabinet": true,
+   "bag": false,
+   "wall hook": true,
+   "storage box": false
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"key\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"cabinet\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"bag\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"wall hook\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"storage box\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"bowl\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"cylindrical container\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"flower vase\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"robot arm\",\n      \"material\": \"articulated\"\n    },\n    {\n      \"name\": \"decorative sticker\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"flowers\",\n      \"material\": \"divisible\"\n    }\n  ],\n  \"visible\": {\n    \"key\": true,\n    \"cabinet\": true,\n    \"bag\": false,\n    \"wall hook\": true,\n    \"storage box\": false\n  }\n}"
+ },
+ "w872980": {
+  "objects": [
+   {
+    "name": "watering can",
+    "material": "rigid"
+   },
+   {
+    "name": "plants",
+    "material": "rigid"
+   },
+   {
+    "name": "flowerpot",
+    "material": "rigid"
+   },
+   {
+    "name": "glove",
+    "material": "elastic"
+   },
+   {
+    "name": "floor",
+    "material": "fixture"
+   },
+   {
+    "name": "wall",
+    "material": "fixture"
+   }
+  ],
+  "visible": {
+   "plants": true,
+   "flowerpot": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"watering can\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"plants\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"flowerpot\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"glove\",\n      \"material\": \"elastic\"\n    },\n    {\n      \"name\": \"floor\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"wall\",\n      \"material\": \"fixture\"\n    }\n  ],\n  \"visible\": {\n    \"plants\": true,\n    \"flowerpot\": true\n  }\n}"
+ },
+ "w867775": {
+  "objects": [
+   {
+    "name": "spoon",
+    "material": "rigid"
+   },
+   {
+    "name": "lid",
+    "material": "rigid"
+   },
+   {
+    "name": "canned salt can",
+    "material": "rigid"
+   },
+   {
+    "name": "shelf",
+    "material": "rigid"
+   },
+   {
+    "name": "salt",
+    "material": "granular"
+   },
+   {
+    "name": "vinegar",
+    "material": "liquid"
+   },
+   {
+    "name": "pot",
+    "material": "rigid"
+   },
+   {
+    "name": "jar",
+    "material": "rigid"
+   }
+  ],
+  "visible": {
+   "spoon": true,
+   "lid": false,
+   "canned salt can": false,
+   "shelf": true,
+   "salt": false,
+   "vinegar": true,
+   "pot": true,
+   "jar": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\"name\": \"spoon\", \"material\": \"rigid\"},\n    {\"name\": \"lid\", \"material\": \"rigid\"},\n    {\"name\": \"canned salt can\", \"material\": \"rigid\"},\n    {\"name\": \"shelf\", \"material\": \"rigid\"},\n    {\"name\": \"salt\", \"material\": \"granular\"},\n    {\"name\": \"vinegar\", \"material\": \"liquid\"},\n    {\"name\": \"pot\", \"material\": \"rigid\"},\n    {\"name\": \"jar\", \"material\": \"rigid\"}\n  ],\n  \"visible\": {\n    \"spoon\": true,\n    \"lid\": false,\n    \"canned salt can\": false,\n    \"shelf\": true,\n    \"salt\": false,\n    \"vinegar\": true,\n    \"pot\": true,\n    \"jar\": true\n  }\n}"
+ },
+ "w855623": {
+  "objects": [
+   {
+    "name": "nameplate",
+    "material": "rigid"
+   },
+   {
+    "name": "door",
+    "material": "articulated"
+   }
+  ],
+  "visible": {
+   "nameplate": true,
+   "door": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"nameplate\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"door\",\n      \"material\": \"articulated\"\n    }\n  ],\n  \"visible\": {\n    \"nameplate\": true,\n    \"door\": true\n  }\n}"
+ },
+ "w858107": {
+  "objects": [
+   {
+    "name": "brown pants",
+    "material": "cloth"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   },
+   {
+    "name": "black cable",
+    "material": "linear"
+   },
+   {
+    "name": "white box",
+    "material": "rigid"
+   },
+   {
+    "name": "robot arm left",
+    "material": "articulated"
+   },
+   {
+    "name": "robot arm right",
+    "material": "articulated"
+   },
+   {
+    "name": "office chair",
+    "material": "rigid"
+   },
+   {
+    "name": "floor",
+    "material": "fixture"
+   },
+   {
+    "name": "crumbs",
+    "material": "granular"
+   },
+   {
+    "name": "black device",
+    "material": "rigid"
+   }
+  ],
+  "visible": {
+   "hem": true,
+   "waistband": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"brown pants\",\n      \"material\": \"cloth\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"black cable\",\n      \"material\": \"linear\"\n    },\n    {\n      \"name\": \"white box\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"robot arm left\",\n      \"material\": \"articulated\"\n    },\n    {\n      \"name\": \"robot arm right\",\n      \"material\": \"articulated\"\n    },\n    {\n      \"name\": \"office chair\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"floor\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"crumbs\",\n      \"material\": \"granular\"\n    },\n    {\n      \"name\": \"black device\",\n      \"material\": \"rigid\"\n    }\n  ],\n  \"visible\": {\n    \"hem\": true,\n    \"waistband\": true\n  }\n}"
+ },
+ "w918779": {
+  "objects": [
+   {
+    "name": "nameplate",
+    "material": "rigid"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   },
+   {
+    "name": "padded notepad",
+    "material": "elastic"
+   }
+  ],
+  "visible": {
+   "nameplate": true,
+   "table": true,
+   "padded notepad": false
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"nameplate\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"padded notepad\",\n      \"material\": \"elastic\"\n    }\n  ],\n  \"visible\": {\n    \"nameplate\": true,\n    \"table\": true,\n    \"padded notepad\": false\n  }\n}"
+ },
+ "w879292": {
+  "objects": [
+   {
+    "name": "remote control",
+    "material": "rigid"
+   },
+   {
+    "name": "glass bottle",
+    "material": "rigid"
+   },
+   {
+    "name": "TV",
+    "material": "rigid"
+   },
+   {
+    "name": "TV stand",
+    "material": "fixture"
+   },
+   {
+    "name": "coffee table",
+    "material": "fixture"
+   },
+   {
+    "name": "curtain",
+    "material": "cloth"
+   },
+   {
+    "name": "plant",
+    "material": "rigid"
+   },
+   {
+    "name": "side table",
+    "material": "fixture"
+   },
+   {
+    "name": "wall socket",
+    "material": "rigid"
+   },
+   {
+    "name": "TV screen",
+    "material": "rigid"
+   },
+   {
+    "name": "drawer",
+    "material": "articulated"
+   },
+   {
+    "name": "floor",
+    "material": "fixture"
+   }
+  ],
+  "visible": {
+   "remote control": true,
+   "glass bottle": true,
+   "TV": true,
+   "TV stand": true,
+   "coffee table": true,
+   "curtain": true,
+   "plant": true,
+   "side table": true,
+   "wall socket": true,
+   "TV screen": true,
+   "drawer": false,
+   "floor": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\"name\": \"remote control\", \"material\": \"rigid\"},\n    {\"name\": \"glass bottle\", \"material\": \"rigid\"},\n    {\"name\": \"TV\", \"material\": \"rigid\"},\n    {\"name\": \"TV stand\", \"material\": \"fixture\"},\n    {\"name\": \"coffee table\", \"material\": \"fixture\"},\n    {\"name\": \"curtain\", \"material\": \"cloth\"},\n    {\"name\": \"plant\", \"material\": \"rigid\"},\n    {\"name\": \"side table\", \"material\": \"fixture\"},\n    {\"name\": \"wall socket\", \"material\": \"rigid\"},\n    {\"name\": \"TV screen\", \"material\": \"rigid\"},\n    {\"name\": \"drawer\", \"material\": \"articulated\"},\n    {\"name\": \"floor\", \"material\": \"fixture\"}\n  ],\n  \"visible\": {\n    \"remote control\": true,\n    \"glass bottle\": true,\n    \"TV\": true,\n    \"TV stand\": true,\n    \"coffee table\": true,\n    \"curtain\": true,\n    \"plant\": true,\n    \"side table\": true,\n    \"wall socket\": true,\n    \"TV screen\": true,\n    \"drawer\": false,\n    \"floor\": true\n  }\n}"
+ },
+ "w887466": {
+  "objects": [
+   {
+    "name": "curtain",
+    "material": "cloth"
+   },
+   {
+    "name": "velcro curtain tiebacks",
+    "material": "thin_flexible"
+   }
+  ],
+  "visible": {
+   "velcro curtain tiebacks": true
+  },
+  "raw": "{\"objects\": [{\"name\": \"curtain\", \"material\": \"cloth\"}, {\"name\": \"velcro curtain tiebacks\", \"material\": \"thin_flexible\"}], \"visible\": {\"velcro curtain tiebacks\": true}}"
+ },
+ "w897222": {
+  "objects": [
+   {
+    "name": "black menu",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "glass",
+    "material": "rigid"
+   },
+   {
+    "name": "jar",
+    "material": "rigid"
+   },
+   {
+    "name": "plant",
+    "material": "rigid"
+   },
+   {
+    "name": "stool",
+    "material": "rigid"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   },
+   {
+    "name": "person",
+    "material": "rigid"
+   },
+   {
+    "name": "sweatshirt",
+    "material": "cloth"
+   },
+   {
+    "name": "pants",
+    "material": "cloth"
+   },
+   {
+    "name": "shoes",
+    "material": "rigid"
+   },
+   {
+    "name": "book",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "pen",
+    "material": "rigid"
+   }
+  ],
+  "visible": {
+   "black menu": true
+  },
+  "raw": "{\"objects\": [{\"name\": \"black menu\", \"material\": \"thin_flexible\"}, {\"name\": \"glass\", \"material\": \"rigid\"}, {\"name\": \"jar\", \"material\": \"rigid\"}, {\"name\": \"plant\", \"material\": \"rigid\"}, {\"name\": \"stool\", \"material\": \"rigid\"}, {\"name\": \"table\", \"material\": \"fixture\"}, {\"name\": \"person\", \"material\": \"rigid\"}, {\"name\": \"sweatshirt\", \"material\": \"cloth\"}, {\"name\": \"pants\", \"material\": \"cloth\"}, {\"name\": \"shoes\", \"material\": \"rigid\"}, {\"name\": \"book\", \"material\": \"thin_flexible\"}, {\"name\": \"pen\", \"material\": \"rigid\"}], \"visible\": {\"black menu\": true}}"
+ },
+ "w911750": {
+  "objects": [
+   {
+    "name": "spoon",
+    "material": "rigid"
+   },
+   {
+    "name": "lid",
+    "material": "rigid"
+   },
+   {
+    "name": "sugar",
+    "material": "granular"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   },
+   {
+    "name": "milk",
+    "material": "liquid"
+   },
+   {
+    "name": "whisk",
+    "material": "rigid"
+   },
+   {
+    "name": "bowl",
+    "material": "rigid"
+   },
+   {
+    "name": "jar",
+    "material": "rigid"
+   }
+  ],
+  "visible": {
+   "spoon": false,
+   "lid": false,
+   "sugar": true,
+   "table": true,
+   "milk": true,
+   "whisk": true,
+   "bowl": true,
+   "jar": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\"name\": \"spoon\", \"material\": \"rigid\"},\n    {\"name\": \"lid\", \"material\": \"rigid\"},\n    {\"name\": \"sugar\", \"material\": \"granular\"},\n    {\"name\": \"table\", \"material\": \"fixture\"},\n    {\"name\": \"milk\", \"material\": \"liquid\"},\n    {\"name\": \"whisk\", \"material\": \"rigid\"},\n    {\"name\": \"bowl\", \"material\": \"rigid\"},\n    {\"name\": \"jar\", \"material\": \"rigid\"}\n  ],\n  \"visible\": {\n    \"spoon\": false,\n    \"lid\": false,\n    \"sugar\": true,\n    \"table\": true,\n    \"milk\": true,\n    \"whisk\": true,\n    \"bowl\": true,\n    \"jar\": true\n  }\n}"
+ },
+ "w914638": {
+  "objects": [
+   {
+    "name": "milk tea cup",
+    "material": "rigid"
+   },
+   {
+    "name": "fast food container",
+    "material": "rigid"
+   },
+   {
+    "name": "used napkin",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "residual container",
+    "material": "rigid"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   },
+   {
+    "name": "cart",
+    "material": "rigid"
+   },
+   {
+    "name": "tissue box",
+    "material": "rigid"
+   },
+   {
+    "name": "vase",
+    "material": "rigid"
+   },
+   {
+    "name": "flower",
+    "material": "linear"
+   },
+   {
+    "name": "blue tray",
+    "material": "rigid"
+   },
+   {
+    "name": "robot arm",
+    "material": "rigid"
+   },
+   {
+    "name": "chair",
+    "material": "rigid"
+   }
+  ],
+  "visible": {
+   "cloth": false,
+   "milk tea cup": true,
+   "table": true,
+   "fast food container": true,
+   "used napkin": true,
+   "residual container": true,
+   "cart": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"milk tea cup\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"fast food container\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"used napkin\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"residual container\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"cart\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"tissue box\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"vase\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"flower\",\n      \"material\": \"linear\"\n    },\n    {\n      \"name\": \"blue tray\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"robot arm\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"chair\",\n      \"material\": \"rigid\"\n    }\n  ],\n  \"visible\": {\n    \"cloth\": false,\n    \"milk tea cup\": true,\n    \"table\": true,\n    \"fast food container\": true,\n    \"used napkin\": true,\n    \"residual container\": true,\n    \"cart\": true\n  }\n}"
+ },
+ "w681896": {
+  "objects": [
+   {
+    "name": "toaster",
+    "material": "rigid"
+   },
+   {
+    "name": "basket",
+    "material": "rigid"
+   },
+   {
+    "name": "slot",
+    "material": "rigid"
+   },
+   {
+    "name": "start button",
+    "material": "articulated"
+   },
+   {
+    "name": "bread",
+    "material": "divisible"
+   },
+   {
+    "name": "milk carton",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "glass",
+    "material": "rigid"
+   },
+   {
+    "name": "wall outlet",
+    "material": "rigid"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   },
+   {
+    "name": "robot arm",
+    "material": "articulated"
+   },
+   {
+    "name": "box",
+    "material": "rigid"
+   },
+   {
+    "name": "towel",
+    "material": "cloth"
+   }
+  ],
+  "visible": {
+   "toaster": true,
+   "basket": true,
+   "slot": true,
+   "start button": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"toaster\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"basket\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"slot\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"start button\",\n      \"material\": \"articulated\"\n    },\n    {\n      \"name\": \"bread\",\n      \"material\": \"divisible\"\n    },\n    {\n      \"name\": \"milk carton\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"glass\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"wall outlet\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"robot arm\",\n      \"material\": \"articulated\"\n    },\n    {\n      \"name\": \"box\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"towel\",\n      \"material\": \"cloth\"\n    }\n  ],\n  \"visible\": {\n    \"toaster\": true,\n    \"basket\": true,\n    \"slot\": true,\n    \"start button\": true\n  }\n}"
+ },
+ "w683247": {
+  "objects": [
+   {
+    "name": "green toaster",
+    "material": "rigid"
+   },
+   {
+    "name": "ketchup bottle",
+    "material": "rigid"
+   },
+   {
+    "name": "plate with sandwich",
+    "material": "divisible"
+   },
+   {
+    "name": "open cardboard box",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "white countertop",
+    "material": "fixture"
+   },
+   {
+    "name": "wall tiles",
+    "material": "fixture"
+   },
+   {
+    "name": "power outlet",
+    "material": "articulated"
+   },
+   {
+    "name": "robot arm left",
+    "material": "rigid"
+   },
+   {
+    "name": "robot arm right",
+    "material": "rigid"
+   },
+   {
+    "name": "toaster slot",
+    "material": "rigid"
+   },
+   {
+    "name": "toaster lever",
+    "material": "articulated"
+   },
+   {
+    "name": "paper towel roll",
+    "material": "thin_flexible"
+   }
+  ],
+  "visible": {
+   "whole wheat toast": false,
+   "basket": false,
+   "slot": true,
+   "start button": false
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"green toaster\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"ketchup bottle\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"plate with sandwich\",\n      \"material\": \"divisible\"\n    },\n    {\n      \"name\": \"open cardboard box\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"white countertop\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"wall tiles\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"power outlet\",\n      \"material\": \"articulated\"\n    },\n    {\n      \"name\": \"robot arm left\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"robot arm right\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"toaster slot\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"toaster lever\",\n      \"material\": \"articulated\"\n    },\n    {\n      \"name\": \"paper towel roll\",\n      \"material\": \"thin_flexible\"\n    }\n  ],\n  \"visible\": {\n    \"whole wheat toast\": false,\n    \"basket\": false,\n    \"slot\": true,\n    \"start button\": false\n  }\n}"
+ },
+ "w687074": {
+  "objects": [
+   {
+    "name": "plain toast",
+    "material": "divisible"
+   },
+   {
+    "name": "basket",
+    "material": "rigid"
+   },
+   {
+    "name": "slot",
+    "material": "rigid"
+   },
+   {
+    "name": "start button",
+    "material": "articulated"
+   },
+   {
+    "name": "toaster",
+    "material": "rigid"
+   },
+   {
+    "name": "white mug",
+    "material": "rigid"
+   },
+   {
+    "name": "bottle with green cap",
+    "material": "rigid"
+   },
+   {
+    "name": "bottle with white cap",
+    "material": "rigid"
+   },
+   {
+    "name": "table top",
+    "material": "fixture"
+   },
+   {
+    "name": "wall tiles",
+    "material": "fixture"
+   },
+   {
+    "name": "power outlet",
+    "material": "fixture"
+   },
+   {
+    "name": "robot arm",
+    "material": "rigid"
+   }
+  ],
+  "visible": {
+   "plain toast": true,
+   "basket": true,
+   "slot": true,
+   "start button": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"plain toast\",\n      \"material\": \"divisible\"\n    },\n    {\n      \"name\": \"basket\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"slot\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"start button\",\n      \"material\": \"articulated\"\n    },\n    {\n      \"name\": \"toaster\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"white mug\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"bottle with green cap\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"bottle with white cap\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"table top\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"wall tiles\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"power outlet\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"robot arm\",\n      \"material\": \"rigid\"\n    }\n  ],\n  \"visible\": {\n    \"plain toast\": true,\n    \"basket\": true,\n    \"slot\": true,\n    \"start button\": true\n  }\n}"
+ },
+ "w655356": {
+  "objects": [
+   {
+    "name": "bottle",
+    "material": "rigid"
+   },
+   {
+    "name": "fruit cup",
+    "material": "rigid"
+   },
+   {
+    "name": "yogurt cup",
+    "material": "rigid"
+   },
+   {
+    "name": "carton box",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "plastic bag",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "shelf",
+    "material": "fixture"
+   },
+   {
+    "name": "cart",
+    "material": "rigid"
+   },
+   {
+    "name": "robot arm",
+    "material": "rigid"
+   },
+   {
+    "name": "bottle cap",
+    "material": "rigid"
+   },
+   {
+    "name": "paper label",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "metal grate",
+    "material": "rigid"
+   },
+   {
+    "name": "cabinet door",
+    "material": "articulated"
+   }
+  ],
+  "visible": {
+   "fruit": true,
+   "bottle": true,
+   "cabinet": false,
+   "cart": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"bottle\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"fruit cup\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"yogurt cup\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"carton box\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"plastic bag\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"shelf\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"cart\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"robot arm\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"bottle cap\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"paper label\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"metal grate\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"cabinet door\",\n      \"material\": \"articulated\"\n    }\n  ],\n  \"visible\": {\n    \"fruit\": true,\n    \"bottle\": true,\n    \"cabinet\": false,\n    \"cart\": true\n  }\n}"
+ },
+ "w655470": {
+  "objects": [
+   {
+    "name": "bottle",
+    "material": "rigid"
+   },
+   {
+    "name": "fruit",
+    "material": "divisible"
+   },
+   {
+    "name": "cart",
+    "material": "rigid"
+   },
+   {
+    "name": "shelf",
+    "material": "fixture"
+   },
+   {
+    "name": "box",
+    "material": "rigid"
+   },
+   {
+    "name": "plastic bag",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "cup",
+    "material": "rigid"
+   },
+   {
+    "name": "cabinet",
+    "material": "rigid"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   },
+   {
+    "name": "bowl",
+    "material": "rigid"
+   },
+   {
+    "name": "robot arm",
+    "material": "rigid"
+   },
+   {
+    "name": "grater",
+    "material": "rigid"
+   }
+  ],
+  "visible": {
+   "fruit": true,
+   "bottle": true,
+   "cabinet": true,
+   "cart": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"bottle\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"fruit\",\n      \"material\": \"divisible\"\n    },\n    {\n      \"name\": \"cart\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"shelf\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"box\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"plastic bag\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"cup\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"cabinet\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"bowl\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"robot arm\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"grater\",\n      \"material\": \"rigid\"\n    }\n  ],\n  \"visible\": {\n    \"fruit\": true,\n    \"bottle\": true,\n    \"cabinet\": true,\n    \"cart\": true\n  }\n}"
+ },
+ "w671474": {
+  "objects": [
+   {
+    "name": "bottle of milk",
+    "material": "rigid"
+   },
+   {
+    "name": "bottle of juice",
+    "material": "rigid"
+   },
+   {
+    "name": "yogurt cup",
+    "material": "rigid"
+   },
+   {
+    "name": "carton of milk",
+    "material": "rigid"
+   },
+   {
+    "name": "pack of drinks",
+    "material": "rigid"
+   },
+   {
+    "name": "plastic bag",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "box of snacks",
+    "material": "rigid"
+   },
+   {
+    "name": "bottle of sauce",
+    "material": "rigid"
+   },
+   {
+    "name": "shelf",
+    "material": "fixture"
+   },
+   {
+    "name": "shopping cart",
+    "material": "rigid"
+   },
+   {
+    "name": "red handle of cart",
+    "material": "rigid"
+   },
+   {
+    "name": "bottle of water",
+    "material": "rigid"
+   }
+  ],
+  "visible": {
+   "coffee": false,
+   "bowl": false,
+   "cabinet": false,
+   "cart": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"bottle of milk\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"bottle of juice\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"yogurt cup\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"carton of milk\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"pack of drinks\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"plastic bag\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"box of snacks\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"bottle of sauce\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"shelf\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"shopping cart\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"red handle of cart\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"bottle of water\",\n      \"material\": \"rigid\"\n    }\n  ],\n  \"visible\": {\n    \"coffee\": false,\n    \"bowl\": false,\n    \"cabinet\": false,\n    \"cart\": true\n  }\n}"
+ },
+ "w716578": {
+  "objects": [
+   {
+    "name": "bottled water",
+    "material": "rigid"
+   },
+   {
+    "name": "cardboard box",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   },
+   {
+    "name": "laptop",
+    "material": "rigid"
+   },
+   {
+    "name": "black circular object",
+    "material": "rigid"
+   },
+   {
+    "name": "robot arm left",
+    "material": "rigid"
+   },
+   {
+    "name": "robot arm right",
+    "material": "rigid"
+   },
+   {
+    "name": "white wall",
+    "material": "fixture"
+   },
+   {
+    "name": "gray box on right",
+    "material": "rigid"
+   },
+   {
+    "name": "black stand",
+    "material": "rigid"
+   }
+  ],
+  "visible": {
+   "bottled water": true,
+   "table": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"bottled water\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"cardboard box\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"laptop\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"black circular object\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"robot arm left\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"robot arm right\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"white wall\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"gray box on right\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"black stand\",\n      \"material\": \"rigid\"\n    }\n  ],\n  \"visible\": {\n    \"bottled water\": true,\n    \"table\": true\n  }\n}"
+ },
+ "w720041": {
+  "objects": [
+   {
+    "name": "bottled water",
+    "material": "rigid"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   }
+  ],
+  "visible": {
+   "bottled water": true,
+   "table": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"bottled water\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    }\n  ],\n  \"visible\": {\n    \"bottled water\": true,\n    \"table\": true\n  }\n}"
+ },
+ "w722242": {
+  "objects": [
+   {
+    "name": "bottled water",
+    "material": "rigid"
+   },
+   {
+    "name": "cardboard box",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   },
+   {
+    "name": "laptop",
+    "material": "rigid"
+   },
+   {
+    "name": "mouse",
+    "material": "rigid"
+   },
+   {
+    "name": "black speaker",
+    "material": "rigid"
+   },
+   {
+    "name": "notebook",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "sticky notes",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "robot arm",
+    "material": "rigid"
+   },
+   {
+    "name": "white wall",
+    "material": "fixture"
+   },
+   {
+    "name": "person's hands",
+    "material": "elastic"
+   },
+   {
+    "name": "cable",
+    "material": "linear"
+   }
+  ],
+  "visible": {
+   "bottled water": true,
+   "table": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"bottled water\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"cardboard box\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"laptop\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"mouse\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"black speaker\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"notebook\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"sticky notes\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"robot arm\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"white wall\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"person's hands\",\n      \"material\": \"elastic\"\n    },\n    {\n      \"name\": \"cable\",\n      \"material\": \"linear\"\n    }\n  ],\n  \"visible\": {\n    \"bottled water\": true,\n    \"table\": true\n  }\n}"
+ },
+ "w862351": {
+  "objects": [
+   {
+    "name": "pull cord",
+    "material": "linear"
+   },
+   {
+    "name": "curtain",
+    "material": "cloth"
+   },
+   {
+    "name": "windowsill",
+    "material": "fixture"
+   }
+  ],
+  "visible": {
+   "pull cord": true,
+   "curtain": true,
+   "windowsill": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"pull cord\",\n      \"material\": \"linear\"\n    },\n    {\n      \"name\": \"curtain\",\n      \"material\": \"cloth\"\n    },\n    {\n      \"name\": \"windowsill\",\n      \"material\": \"fixture\"\n    }\n  ],\n  \"visible\": {\n    \"pull cord\": true,\n    \"curtain\": true,\n    \"windowsill\": true\n  }\n}"
+ },
+ "w868643": {
+  "objects": [
+   {
+    "name": "pull cord",
+    "material": "linear"
+   },
+   {
+    "name": "curtain",
+    "material": "cloth"
+   },
+   {
+    "name": "windowsill",
+    "material": "fixture"
+   }
+  ],
+  "visible": {
+   "pull cord": true,
+   "curtain": true,
+   "windowsill": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"pull cord\",\n      \"material\": \"linear\"\n    },\n    {\n      \"name\": \"curtain\",\n      \"material\": \"cloth\"\n    },\n    {\n      \"name\": \"windowsill\",\n      \"material\": \"fixture\"\n    }\n  ],\n  \"visible\": {\n    \"pull cord\": true,\n    \"curtain\": true,\n    \"windowsill\": true\n  }\n}"
+ },
+ "w890579": {
+  "objects": [
+   {
+    "name": "pull cord",
+    "material": "linear"
+   },
+   {
+    "name": "curtain",
+    "material": "cloth"
+   },
+   {
+    "name": "windowsill",
+    "material": "fixture"
+   }
+  ],
+  "visible": {
+   "pull cord": true,
+   "curtain": true,
+   "windowsill": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"pull cord\",\n      \"material\": \"linear\"\n    },\n    {\n      \"name\": \"curtain\",\n      \"material\": \"cloth\"\n    },\n    {\n      \"name\": \"windowsill\",\n      \"material\": \"fixture\"\n    }\n  ],\n  \"visible\": {\n    \"pull cord\": true,\n    \"curtain\": true,\n    \"windowsill\": true\n  }\n}"
+ },
+ "w885710": {
+  "objects": [
+   {
+    "name": "brown menu",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   }
+  ],
+  "visible": {
+   "brown menu": true,
+   "table": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"brown menu\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    }\n  ],\n  \"visible\": {\n    \"brown menu\": true,\n    \"table\": true\n  }\n}"
+ },
+ "w887816": {
+  "objects": [
+   {
+    "name": "black menu",
+    "material": "rigid"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   },
+   {
+    "name": "white plate",
+    "material": "rigid"
+   },
+   {
+    "name": "glass pitcher",
+    "material": "rigid"
+   },
+   {
+    "name": "glass cup",
+    "material": "rigid"
+   },
+   {
+    "name": "flower vase",
+    "material": "rigid"
+   },
+   {
+    "name": "flower arrangement",
+    "material": "rigid"
+   },
+   {
+    "name": "tablecloth",
+    "material": "cloth"
+   },
+   {
+    "name": "wooden counter",
+    "material": "fixture"
+   },
+   {
+    "name": "black vase",
+    "material": "rigid"
+   },
+   {
+    "name": "yellow flowers",
+    "material": "rigid"
+   },
+   {
+    "name": "framed picture",
+    "material": "rigid"
+   }
+  ],
+  "visible": {
+   "black menu": true,
+   "table": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"black menu\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"white plate\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"glass pitcher\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"glass cup\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"flower vase\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"flower arrangement\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"tablecloth\",\n      \"material\": \"cloth\"\n    },\n    {\n      \"name\": \"wooden counter\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"black vase\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"yellow flowers\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"framed picture\",\n      \"material\": \"rigid\"\n    }\n  ],\n  \"visible\": {\n    \"black menu\": true,\n    \"table\": true\n  }\n}"
+ },
+ "w889280": {
+  "objects": [
+   {
+    "name": "bottle",
+    "material": "rigid"
+   },
+   {
+    "name": "tablecloth",
+    "material": "cloth"
+   },
+   {
+    "name": "chair",
+    "material": "rigid"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   },
+   {
+    "name": "vase",
+    "material": "rigid"
+   },
+   {
+    "name": "flower",
+    "material": "rigid"
+   },
+   {
+    "name": "menu",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "paper bag",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "desk",
+    "material": "fixture"
+   },
+   {
+    "name": "frame",
+    "material": "rigid"
+   },
+   {
+    "name": "floor",
+    "material": "fixture"
+   },
+   {
+    "name": "shelf",
+    "material": "fixture"
+   }
+  ],
+  "visible": {
+   "menu": false,
+   "table": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"bottle\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"tablecloth\",\n      \"material\": \"cloth\"\n    },\n    {\n      \"name\": \"chair\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"vase\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"flower\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"menu\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"paper bag\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"desk\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"frame\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"floor\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"shelf\",\n      \"material\": \"fixture\"\n    }\n  ],\n  \"visible\": {\n    \"menu\": false,\n    \"table\": true\n  }\n}"
+ },
+ "w662333": {
+  "objects": [
+   {
+    "name": "white plastic bag",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "red vitamin e lotion",
+    "material": "rigid"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   }
+  ],
+  "visible": {
+   "white plastic bag": true,
+   "duck": false,
+   "red vitamin e lotion": true,
+   "table": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"white plastic bag\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"red vitamin e lotion\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    }\n  ],\n  \"visible\": {\n    \"white plastic bag\": true,\n    \"duck\": false,\n    \"red vitamin e lotion\": true,\n    \"table\": true\n  }\n}"
+ },
+ "w711918": {
+  "objects": [
+   {
+    "name": "chopsticks",
+    "material": "rigid"
+   },
+   {
+    "name": "bowl",
+    "material": "rigid"
+   },
+   {
+    "name": "plate",
+    "material": "rigid"
+   },
+   {
+    "name": "dishwasher",
+    "material": "fixture"
+   },
+   {
+    "name": "dishwasher lid",
+    "material": "articulated"
+   },
+   {
+    "name": "button",
+    "material": "articulated"
+   },
+   {
+    "name": "faucet",
+    "material": "articulated"
+   },
+   {
+    "name": "dish soap bottle",
+    "material": "elastic"
+   },
+   {
+    "name": "sink",
+    "material": "fixture"
+   },
+   {
+    "name": "counter",
+    "material": "fixture"
+   },
+   {
+    "name": "window",
+    "material": "fixture"
+   },
+   {
+    "name": "yellow packet",
+    "material": "thin_flexible"
+   }
+  ],
+  "visible": {
+   "chopsticks": true,
+   "dishwasher lid": false,
+   "bowl": true,
+   "plate": true,
+   "dishwasher": false,
+   "button": false
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"chopsticks\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"bowl\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"plate\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"dishwasher\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"dishwasher lid\",\n      \"material\": \"articulated\"\n    },\n    {\n      \"name\": \"button\",\n      \"material\": \"articulated\"\n    },\n    {\n      \"name\": \"faucet\",\n      \"material\": \"articulated\"\n    },\n    {\n      \"name\": \"dish soap bottle\",\n      \"material\": \"elastic\"\n    },\n    {\n      \"name\": \"sink\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"counter\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"window\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"yellow packet\",\n      \"material\": \"thin_flexible\"\n    }\n  ],\n  \"visible\": {\n    \"chopsticks\": true,\n    \"dishwasher lid\": false,\n    \"bowl\": true,\n    \"plate\": true,\n    \"dishwasher\": false,\n    \"button\": false\n  }\n}"
+ },
+ "w781846": {
+  "objects": [
+   {
+    "name": "drawer",
+    "material": "articulated"
+   },
+   {
+    "name": "clothes",
+    "material": "cloth"
+   },
+   {
+    "name": "towel",
+    "material": "cloth"
+   },
+   {
+    "name": "table top",
+    "material": "fixture"
+   }
+  ],
+  "visible": {
+   "drawer": true,
+   "clothes": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"drawer\",\n      \"material\": \"articulated\"\n    },\n    {\n      \"name\": \"clothes\",\n      \"material\": \"cloth\"\n    },\n    {\n      \"name\": \"towel\",\n      \"material\": \"cloth\"\n    },\n    {\n      \"name\": \"table top\",\n      \"material\": \"fixture\"\n    }\n  ],\n  \"visible\": {\n    \"drawer\": true,\n    \"clothes\": true\n  }\n}"
+ },
+ "w722442": {
+  "objects": [
+   {
+    "name": "orange bottle",
+    "material": "rigid"
+   },
+   {
+    "name": "yellow box",
+    "material": "rigid"
+   },
+   {
+    "name": "clear plastic container",
+    "material": "rigid"
+   },
+   {
+    "name": "blue bottle",
+    "material": "rigid"
+   },
+   {
+    "name": "red bottle",
+    "material": "rigid"
+   },
+   {
+    "name": "cardboard box",
+    "material": "rigid"
+   },
+   {
+    "name": "chip bag",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "blue tray",
+    "material": "rigid"
+   },
+   {
+    "name": "white table",
+    "material": "fixture"
+   },
+   {
+    "name": "black robot arm",
+    "material": "rigid"
+   },
+   {
+    "name": "black chair",
+    "material": "rigid"
+   },
+   {
+    "name": "floor",
+    "material": "fixture"
+   }
+  ],
+  "visible": {
+   "instant coffee": false,
+   "bottle": true,
+   "box": true,
+   "material frame": false
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"orange bottle\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"yellow box\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"clear plastic container\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"blue bottle\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"red bottle\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"cardboard box\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"chip bag\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"blue tray\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"white table\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"black robot arm\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"black chair\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"floor\",\n      \"material\": \"fixture\"\n    }\n  ],\n  \"visible\": {\n    \"instant coffee\": false,\n    \"bottle\": true,\n    \"box\": true,\n    \"material frame\": false\n  }\n}"
+ },
+ "w669710": {
+  "objects": [
+   {
+    "name": "oven door",
+    "material": "articulated"
+   },
+   {
+    "name": "oven",
+    "material": "rigid"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   },
+   {
+    "name": "seasoning bottle",
+    "material": "rigid"
+   },
+   {
+    "name": "dish",
+    "material": "rigid"
+   },
+   {
+    "name": "oven start button",
+    "material": "articulated"
+   },
+   {
+    "name": "seasoning",
+    "material": "liquid"
+   },
+   {
+    "name": "baking tray",
+    "material": "rigid"
+   },
+   {
+    "name": "oil brush",
+    "material": "elastic"
+   },
+   {
+    "name": "steak",
+    "material": "divisible"
+   }
+  ],
+  "visible": {
+   "baking tray": false,
+   "oil brush": false,
+   "oven door": true,
+   "seasoning bottle": true,
+   "dish": true,
+   "oven start button": true,
+   "seasoning": true,
+   "steak": false,
+   "table": true,
+   "oven": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\"name\": \"oven door\", \"material\": \"articulated\"},\n    {\"name\": \"oven\", \"material\": \"rigid\"},\n    {\"name\": \"table\", \"material\": \"fixture\"},\n    {\"name\": \"seasoning bottle\", \"material\": \"rigid\"},\n    {\"name\": \"dish\", \"material\": \"rigid\"},\n    {\"name\": \"oven start button\", \"material\": \"articulated\"},\n    {\"name\": \"seasoning\", \"material\": \"liquid\"},\n    {\"name\": \"baking tray\", \"material\": \"rigid\"},\n    {\"name\": \"oil brush\", \"material\": \"elastic\"},\n    {\"name\": \"steak\", \"material\": \"divisible\"}\n  ],\n  \"visible\": {\n    \"baking tray\": false,\n    \"oil brush\": false,\n    \"oven door\": true,\n    \"seasoning bottle\": true,\n    \"dish\": true,\n    \"oven start button\": true,\n    \"seasoning\": true,\n    \"steak\": false,\n    \"table\": true,\n    \"oven\": true\n  }\n}"
+ },
+ "w650693": {
+  "objects": [
+   {
+    "name": "tea bag",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "beige teapot",
+    "material": "rigid"
+   },
+   {
+    "name": "cup",
+    "material": "rigid"
+   },
+   {
+    "name": "water",
+    "material": "liquid"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   },
+   {
+    "name": "fruit bowl",
+    "material": "rigid"
+   },
+   {
+    "name": "pastry plate",
+    "material": "rigid"
+   },
+   {
+    "name": "apple",
+    "material": "divisible"
+   },
+   {
+    "name": "orange",
+    "material": "divisible"
+   },
+   {
+    "name": "pear",
+    "material": "divisible"
+   },
+   {
+    "name": "croissant",
+    "material": "divisible"
+   },
+   {
+    "name": "muffin",
+    "material": "divisible"
+   }
+  ],
+  "visible": {
+   "tea bag": true,
+   "beige teapot": true,
+   "cup": true,
+   "water": true,
+   "table": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"tea bag\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"beige teapot\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"cup\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"water\",\n      \"material\": \"liquid\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"fruit bowl\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"pastry plate\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"apple\",\n      \"material\": \"divisible\"\n    },\n    {\n      \"name\": \"orange\",\n      \"material\": \"divisible\"\n    },\n    {\n      \"name\": \"pear\",\n      \"material\": \"divisible\"\n    },\n    {\n      \"name\": \"croissant\",\n      \"material\": \"divisible\"\n    },\n    {\n      \"name\": \"muffin\",\n      \"material\": \"divisible\"\n    }\n  ],\n  \"visible\": {\n    \"tea bag\": true,\n    \"beige teapot\": true,\n    \"cup\": true,\n    \"water\": true,\n    \"table\": true\n  }\n}"
+ },
+ "w677363": {
+  "objects": [
+   {
+    "name": "onion",
+    "material": "divisible"
+   },
+   {
+    "name": "shelf",
+    "material": "fixture"
+   },
+   {
+    "name": "plastic bag",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "banana",
+    "material": "divisible"
+   },
+   {
+    "name": "apple",
+    "material": "divisible"
+   },
+   {
+    "name": "tomato",
+    "material": "divisible"
+   },
+   {
+    "name": "orange",
+    "material": "divisible"
+   },
+   {
+    "name": "pepper",
+    "material": "divisible"
+   },
+   {
+    "name": "grape",
+    "material": "divisible"
+   },
+   {
+    "name": "cart",
+    "material": "rigid"
+   },
+   {
+    "name": "drawer",
+    "material": "articulated"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   }
+  ],
+  "visible": {
+   "onion": true,
+   "shelf": true,
+   "plastic bag": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\"name\": \"onion\", \"material\": \"divisible\"},\n    {\"name\": \"shelf\", \"material\": \"fixture\"},\n    {\"name\": \"plastic bag\", \"material\": \"thin_flexible\"},\n    {\"name\": \"banana\", \"material\": \"divisible\"},\n    {\"name\": \"apple\", \"material\": \"divisible\"},\n    {\"name\": \"tomato\", \"material\": \"divisible\"},\n    {\"name\": \"orange\", \"material\": \"divisible\"},\n    {\"name\": \"pepper\", \"material\": \"divisible\"},\n    {\"name\": \"grape\", \"material\": \"divisible\"},\n    {\"name\": \"cart\", \"material\": \"rigid\"},\n    {\"name\": \"drawer\", \"material\": \"articulated\"},\n    {\"name\": \"table\", \"material\": \"fixture\"}\n  ],\n  \"visible\": {\n    \"onion\": true,\n    \"shelf\": true,\n    \"plastic bag\": true\n  }\n}"
+ },
+ "w649256": {
+  "objects": [
+   {
+    "name": "orange juice",
+    "material": "rigid"
+   },
+   {
+    "name": "yellow bottle",
+    "material": "rigid"
+   },
+   {
+    "name": "red bag",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "barcode scanner",
+    "material": "rigid"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   },
+   {
+    "name": "dried bean curd sticks",
+    "material": "rigid"
+   },
+   {
+    "name": "liquid",
+    "material": "liquid"
+   }
+  ],
+  "visible": {
+   "barcode scanner": true,
+   "counter": true,
+   "dried bean curd sticks": true,
+   "liquid": true,
+   "orange juice": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"orange juice\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"yellow bottle\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"red bag\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"barcode scanner\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"dried bean curd sticks\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"liquid\",\n      \"material\": \"liquid\"\n    }\n  ],\n  \"visible\": {\n    \"barcode scanner\": true,\n    \"counter\": true,\n    \"dried bean curd sticks\": true,\n    \"liquid\": true,\n    \"orange juice\": true\n  }\n}"
+ },
+ "w709203": {
+  "objects": [
+   {
+    "name": "collar",
+    "material": "cloth"
+   },
+   {
+    "name": "plastic hanger",
+    "material": "rigid"
+   }
+  ],
+  "visible": {
+   "collar": true,
+   "plastic hanger": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"collar\",\n      \"material\": \"cloth\"\n    },\n    {\n      \"name\": \"plastic hanger\",\n      \"material\": \"rigid\"\n    }\n  ],\n  \"visible\": {\n    \"collar\": true,\n    \"plastic hanger\": true\n  }\n}"
+ },
+ "w691662": {
+  "objects": [
+   {
+    "name": "pencil",
+    "material": "rigid"
+   },
+   {
+    "name": "desk",
+    "material": "fixture"
+   },
+   {
+    "name": "pen holder",
+    "material": "rigid"
+   },
+   {
+    "name": "red book",
+    "material": "rigid"
+   },
+   {
+    "name": "white notebook",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "yellow bottle",
+    "material": "rigid"
+   },
+   {
+    "name": "pink pen",
+    "material": "rigid"
+   },
+   {
+    "name": "window",
+    "material": "fixture"
+   },
+   {
+    "name": "black pen",
+    "material": "rigid"
+   },
+   {
+    "name": "pink eraser",
+    "material": "elastic"
+   },
+   {
+    "name": "white box",
+    "material": "rigid"
+   },
+   {
+    "name": "paper stack",
+    "material": "thin_flexible"
+   }
+  ],
+  "visible": {
+   "pencil": true,
+   "desk": true,
+   "pen holder": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\"name\": \"pencil\", \"material\": \"rigid\"},\n    {\"name\": \"desk\", \"material\": \"fixture\"},\n    {\"name\": \"pen holder\", \"material\": \"rigid\"},\n    {\"name\": \"red book\", \"material\": \"rigid\"},\n    {\"name\": \"white notebook\", \"material\": \"thin_flexible\"},\n    {\"name\": \"yellow bottle\", \"material\": \"rigid\"},\n    {\"name\": \"pink pen\", \"material\": \"rigid\"},\n    {\"name\": \"window\", \"material\": \"fixture\"},\n    {\"name\": \"black pen\", \"material\": \"rigid\"},\n    {\"name\": \"pink eraser\", \"material\": \"elastic\"},\n    {\"name\": \"white box\", \"material\": \"rigid\"},\n    {\"name\": \"paper stack\", \"material\": \"thin_flexible\"}\n  ],\n  \"visible\": {\n    \"pencil\": true,\n    \"desk\": true,\n    \"pen holder\": true\n  }\n}"
+ },
+ "w719880": {
+  "objects": [
+   {
+    "name": "light-colored wooden tray",
+    "material": "rigid"
+   },
+   {
+    "name": "tabletop",
+    "material": "fixture"
+   },
+   {
+    "name": "bell",
+    "material": "rigid"
+   },
+   {
+    "name": "white bowl with food",
+    "material": "rigid"
+   },
+   {
+    "name": "small white dish with sauce",
+    "material": "rigid"
+   },
+   {
+    "name": "metal container with corn",
+    "material": "rigid"
+   },
+   {
+    "name": "metal container with green beans",
+    "material": "rigid"
+   },
+   {
+    "name": "metal container with meat",
+    "material": "rigid"
+   },
+   {
+    "name": "metal container with mixed vegetables",
+    "material": "rigid"
+   },
+   {
+    "name": "metal container with mushrooms",
+    "material": "rigid"
+   },
+   {
+    "name": "metal container with green peppers",
+    "material": "rigid"
+   },
+   {
+    "name": "metal container with onions",
+    "material": "rigid"
+   }
+  ],
+  "visible": {
+   "light-colored wooden tray": true,
+   "tabletop": true,
+   "bell": false
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"light-colored wooden tray\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"tabletop\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"bell\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"white bowl with food\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"small white dish with sauce\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"metal container with corn\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"metal container with green beans\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"metal container with meat\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"metal container with mixed vegetables\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"metal container with mushrooms\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"metal container with green peppers\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"metal container with onions\",\n      \"material\": \"rigid\"\n    }\n  ],\n  \"visible\": {\n    \"light-colored wooden tray\": true,\n    \"tabletop\": true,\n    \"bell\": false\n  }\n}"
+ },
+ "w711282": {
+  "objects": [
+   {
+    "name": "hanger",
+    "material": "rigid"
+   },
+   {
+    "name": "shorts",
+    "material": "cloth"
+   },
+   {
+    "name": "basket",
+    "material": "rigid"
+   }
+  ],
+  "visible": {
+   "hanger": true,
+   "shorts": true,
+   "basket": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"hanger\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"shorts\",\n      \"material\": \"cloth\"\n    },\n    {\n      \"name\": \"basket\",\n      \"material\": \"rigid\"\n    }\n  ],\n  \"visible\": {\n    \"hanger\": true,\n    \"shorts\": true,\n    \"basket\": true\n  }\n}"
+ },
+ "w769509": {
+  "objects": [
+   {
+    "name": "white plum blossom",
+    "material": "linear"
+   },
+   {
+    "name": "golden vase",
+    "material": "rigid"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   }
+  ],
+  "visible": {
+   "white plum blossom": true,
+   "golden vase": true,
+   "table": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"white plum blossom\",\n      \"material\": \"linear\"\n    },\n    {\n      \"name\": \"golden vase\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    }\n  ],\n  \"visible\": {\n    \"white plum blossom\": true,\n    \"golden vase\": true,\n    \"table\": true\n  }\n}"
+ },
+ "w741161": {
+  "objects": [
+   {
+    "name": "jar",
+    "material": "rigid"
+   },
+   {
+    "name": "blue tray",
+    "material": "rigid"
+   },
+   {
+    "name": "white tray",
+    "material": "rigid"
+   },
+   {
+    "name": "green box",
+    "material": "rigid"
+   },
+   {
+    "name": "green bags",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   },
+   {
+    "name": "robot arm",
+    "material": "rigid"
+   },
+   {
+    "name": "black jacket",
+    "material": "cloth"
+   },
+   {
+    "name": "rolling chair",
+    "material": "rigid"
+   },
+   {
+    "name": "white robot base",
+    "material": "rigid"
+   },
+   {
+    "name": "floor",
+    "material": "fixture"
+   },
+   {
+    "name": "cable",
+    "material": "linear"
+   }
+  ],
+  "visible": {
+   "masks": false,
+   "powder": false,
+   "material frame": false,
+   "target box": false
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"jar\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"blue tray\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"white tray\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"green box\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"green bags\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"robot arm\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"black jacket\",\n      \"material\": \"cloth\"\n    },\n    {\n      \"name\": \"rolling chair\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"white robot base\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"floor\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"cable\",\n      \"material\": \"linear\"\n    }\n  ],\n  \"visible\": {\n    \"masks\": false,\n    \"powder\": false,\n    \"material frame\": false,\n    \"target box\": false\n  }\n}"
+ },
+ "w767188": {
+  "objects": [
+   {
+    "name": "bag",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "desktop",
+    "material": "fixture"
+   },
+   {
+    "name": "bottled chewing gum",
+    "material": "rigid"
+   },
+   {
+    "name": "bottle",
+    "material": "rigid"
+   },
+   {
+    "name": "tissue",
+    "material": "thin_flexible"
+   }
+  ],
+  "visible": {
+   "bag": true,
+   "desktop": true,
+   "bottled chewing gum": true,
+   "bottle": true,
+   "tissue": false
+  },
+  "raw": "{\n  \"objects\": [\n    {\"name\": \"bag\", \"material\": \"thin_flexible\"},\n    {\"name\": \"desktop\", \"material\": \"fixture\"},\n    {\"name\": \"bottled chewing gum\", \"material\": \"rigid\"},\n    {\"name\": \"bottle\", \"material\": \"rigid\"},\n    {\"name\": \"tissue\", \"material\": \"thin_flexible\"}\n  ],\n  \"visible\": {\n    \"bag\": true,\n    \"desktop\": true,\n    \"bottled chewing gum\": true,\n    \"bottle\": true,\n    \"tissue\": false\n  }\n}"
+ },
+ "w755039": {
+  "objects": [
+   {
+    "name": "pink towel",
+    "material": "cloth"
+   },
+   {
+    "name": "carton box",
+    "material": "rigid"
+   },
+   {
+    "name": "plastic cup",
+    "material": "rigid"
+   },
+   {
+    "name": "table surface",
+    "material": "fixture"
+   },
+   {
+    "name": "sink",
+    "material": "fixture"
+   },
+   {
+    "name": "robot arm left",
+    "material": "rigid"
+   },
+   {
+    "name": "robot arm right",
+    "material": "rigid"
+   },
+   {
+    "name": "measuring cup",
+    "material": "rigid"
+   }
+  ],
+  "visible": {
+   "cloth": true,
+   "surface": true,
+   "sink": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"pink towel\",\n      \"material\": \"cloth\"\n    },\n    {\n      \"name\": \"carton box\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"plastic cup\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"table surface\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"sink\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"robot arm left\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"robot arm right\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"measuring cup\",\n      \"material\": \"rigid\"\n    }\n  ],\n  \"visible\": {\n    \"cloth\": true,\n    \"surface\": true,\n    \"sink\": true\n  }\n}"
+ },
+ "w780019": {
+  "objects": [
+   {
+    "name": "orange microwave",
+    "material": "rigid"
+   },
+   {
+    "name": "desktop",
+    "material": "fixture"
+   },
+   {
+    "name": "plate",
+    "material": "rigid"
+   },
+   {
+    "name": "tray",
+    "material": "rigid"
+   },
+   {
+    "name": "door",
+    "material": "articulated"
+   },
+   {
+    "name": "start button",
+    "material": "articulated"
+   }
+  ],
+  "visible": {
+   "orange microwave": true,
+   "desktop": true,
+   "plate": true,
+   "tray": true,
+   "door": true,
+   "start button": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"orange microwave\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"desktop\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"plate\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"tray\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"door\",\n      \"material\": \"articulated\"\n    },\n    {\n      \"name\": \"start button\",\n      \"material\": \"articulated\"\n    }\n  ],\n  \"visible\": {\n    \"orange microwave\": true,\n    \"desktop\": true,\n    \"plate\": true,\n    \"tray\": true,\n    \"door\": true,\n    \"start button\": true\n  }\n}"
+ },
+ "w800231": {
+  "objects": [
+   {
+    "name": "table",
+    "material": "fixture"
+   }
+  ],
+  "visible": {
+   "permanent magnet ingot": false,
+   "table": true
+  },
+  "raw": "{\"objects\": [{\"name\": \"table\", \"material\": \"fixture\"}], \"visible\": {\"permanent magnet ingot\": false, \"table\": true}}"
+ },
+ "w852784": {
+  "objects": [
+   {
+    "name": "remote control",
+    "material": "rigid"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   },
+   {
+    "name": "fruit basket",
+    "material": "rigid"
+   },
+   {
+    "name": "bottle",
+    "material": "rigid"
+   },
+   {
+    "name": "orange",
+    "material": "divisible"
+   },
+   {
+    "name": "apple",
+    "material": "divisible"
+   },
+   {
+    "name": "mango",
+    "material": "divisible"
+   },
+   {
+    "name": "tv",
+    "material": "fixture"
+   },
+   {
+    "name": "tv stand",
+    "material": "fixture"
+   },
+   {
+    "name": "vase",
+    "material": "rigid"
+   },
+   {
+    "name": "plant",
+    "material": "divisible"
+   },
+   {
+    "name": "drawer",
+    "material": "articulated"
+   }
+  ],
+  "visible": {
+   "remote control": true,
+   "table": true,
+   "switch button": false,
+   "tv": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"remote control\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"fruit basket\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"bottle\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"orange\",\n      \"material\": \"divisible\"\n    },\n    {\n      \"name\": \"apple\",\n      \"material\": \"divisible\"\n    },\n    {\n      \"name\": \"mango\",\n      \"material\": \"divisible\"\n    },\n    {\n      \"name\": \"tv\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"tv stand\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"vase\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"plant\",\n      \"material\": \"divisible\"\n    },\n    {\n      \"name\": \"drawer\",\n      \"material\": \"articulated\"\n    }\n  ],\n  \"visible\": {\n    \"remote control\": true,\n    \"table\": true,\n    \"switch button\": false,\n    \"tv\": true\n  }\n}"
+ },
+ "w826194": {
+  "objects": [
+   {
+    "name": "cloth",
+    "material": "cloth"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   },
+   {
+    "name": "switch button",
+    "material": "articulated"
+   },
+   {
+    "name": "disinfection gun",
+    "material": "rigid"
+   },
+   {
+    "name": "tea",
+    "material": "liquid"
+   },
+   {
+    "name": "stains",
+    "material": "granular"
+   }
+  ],
+  "visible": {
+   "cloth": true,
+   "table": true,
+   "switch button": false,
+   "disinfection gun": true,
+   "tea": false,
+   "stains": false
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"cloth\",\n      \"material\": \"cloth\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"switch button\",\n      \"material\": \"articulated\"\n    },\n    {\n      \"name\": \"disinfection gun\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"tea\",\n      \"material\": \"liquid\"\n    },\n    {\n      \"name\": \"stains\",\n      \"material\": \"granular\"\n    }\n  ],\n  \"visible\": {\n    \"cloth\": true,\n    \"table\": true,\n    \"switch button\": false,\n    \"disinfection gun\": true,\n    \"tea\": false,\n    \"stains\": false\n  }\n}"
+ },
+ "w807952": {
+  "objects": [
+   {
+    "name": "red tray",
+    "material": "rigid"
+   },
+   {
+    "name": "blue toy",
+    "material": "rigid"
+   },
+   {
+    "name": "yellow book",
+    "material": "rigid"
+   },
+   {
+    "name": "white box",
+    "material": "rigid"
+   },
+   {
+    "name": "orange plush toy",
+    "material": "elastic"
+   },
+   {
+    "name": "white packet",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "frame with picture",
+    "material": "rigid"
+   },
+   {
+    "name": "black robot arm",
+    "material": "rigid"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   },
+   {
+    "name": "wall",
+    "material": "fixture"
+   },
+   {
+    "name": "window frame",
+    "material": "rigid"
+   },
+   {
+    "name": "curtain",
+    "material": "cloth"
+   }
+  ],
+  "visible": {
+   "toy": true,
+   "tank": false,
+   "table": true,
+   "storage box": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"red tray\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"blue toy\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"yellow book\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"white box\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"orange plush toy\",\n      \"material\": \"elastic\"\n    },\n    {\n      \"name\": \"white packet\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"frame with picture\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"black robot arm\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"wall\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"window frame\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"curtain\",\n      \"material\": \"cloth\"\n    }\n  ],\n  \"visible\": {\n    \"toy\": true,\n    \"tank\": false,\n    \"table\": true,\n    \"storage box\": true\n  }\n}"
+ },
+ "w831494": {
+  "objects": [
+   {
+    "name": "conveyor belt",
+    "material": "fixture"
+   },
+   {
+    "name": "foam tray",
+    "material": "rigid"
+   },
+   {
+    "name": "metal ingot",
+    "material": "rigid"
+   },
+   {
+    "name": "robot arm",
+    "material": "articulated"
+   },
+   {
+    "name": "gripper",
+    "material": "articulated"
+   },
+   {
+    "name": "white base",
+    "material": "rigid"
+   },
+   {
+    "name": "green surface",
+    "material": "fixture"
+   },
+   {
+    "name": "metal frame",
+    "material": "rigid"
+   },
+   {
+    "name": "foam insert",
+    "material": "rigid"
+   },
+   {
+    "name": "black gripper",
+    "material": "articulated"
+   },
+   {
+    "name": "work area",
+    "material": "fixture"
+   },
+   {
+    "name": "permanent magnet ingot",
+    "material": "rigid"
+   }
+  ],
+  "visible": {
+   "permanent magnet ingot": true,
+   "conveyor belt": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"conveyor belt\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"foam tray\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"metal ingot\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"robot arm\",\n      \"material\": \"articulated\"\n    },\n    {\n      \"name\": \"gripper\",\n      \"material\": \"articulated\"\n    },\n    {\n      \"name\": \"white base\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"green surface\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"metal frame\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"foam insert\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"black gripper\",\n      \"material\": \"articulated\"\n    },\n    {\n      \"name\": \"work area\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"permanent magnet ingot\",\n      \"material\": \"rigid\"\n    }\n  ],\n  \"visible\": {\n    \"permanent magnet ingot\": true,\n    \"conveyor belt\": true\n  }\n}"
+ },
+ "w827454": {
+  "objects": [
+   {
+    "name": "hand guard",
+    "material": "rigid"
+   },
+   {
+    "name": "vegetable scraper",
+    "material": "rigid"
+   },
+   {
+    "name": "green radish",
+    "material": "divisible"
+   },
+   {
+    "name": "armrest",
+    "material": "rigid"
+   },
+   {
+    "name": "handrail",
+    "material": "rigid"
+   },
+   {
+    "name": "lid",
+    "material": "rigid"
+   },
+   {
+    "name": "plate",
+    "material": "rigid"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   }
+  ],
+  "visible": {
+   "hand guard": true,
+   "vegetable scraper": true,
+   "green radish": true,
+   "armrest": false,
+   "handrail": false,
+   "lid": true,
+   "plate": true,
+   "table": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\"name\": \"hand guard\", \"material\": \"rigid\"},\n    {\"name\": \"vegetable scraper\", \"material\": \"rigid\"},\n    {\"name\": \"green radish\", \"material\": \"divisible\"},\n    {\"name\": \"armrest\", \"material\": \"rigid\"},\n    {\"name\": \"handrail\", \"material\": \"rigid\"},\n    {\"name\": \"lid\", \"material\": \"rigid\"},\n    {\"name\": \"plate\", \"material\": \"rigid\"},\n    {\"name\": \"table\", \"material\": \"fixture\"}\n  ],\n  \"visible\": {\n    \"hand guard\": true,\n    \"vegetable scraper\": true,\n    \"green radish\": true,\n    \"armrest\": false,\n    \"handrail\": false,\n    \"lid\": true,\n    \"plate\": true,\n    \"table\": true\n  }\n}"
+ },
+ "w864636": {
+  "objects": [
+   {
+    "name": "curtain",
+    "material": "cloth"
+   },
+   {
+    "name": "curtain tie",
+    "material": "elastic"
+   }
+  ],
+  "visible": {
+   "curtain": true,
+   "curtain tie": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"curtain\",\n      \"material\": \"cloth\"\n    },\n    {\n      \"name\": \"curtain tie\",\n      \"material\": \"elastic\"\n    }\n  ],\n  \"visible\": {\n    \"curtain\": true,\n    \"curtain tie\": true\n  }\n}"
+ },
+ "w837452": {
+  "objects": [
+   {
+    "name": "purple shorts",
+    "material": "cloth"
+   },
+   {
+    "name": "pink cloth",
+    "material": "cloth"
+   },
+   {
+    "name": "gray cloth",
+    "material": "cloth"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   }
+  ],
+  "visible": {
+   "pant-leg": true
+  },
+  "raw": "{\"objects\": [{\"name\": \"purple shorts\", \"material\": \"cloth\"}, {\"name\": \"pink cloth\", \"material\": \"cloth\"}, {\"name\": \"gray cloth\", \"material\": \"cloth\"}, {\"name\": \"table\", \"material\": \"fixture\"}], \"visible\": {\"pant-leg\": true}}"
+ },
+ "w831198": {
+  "objects": [
+   {
+    "name": "cola",
+    "material": "rigid"
+   },
+   {
+    "name": "iced tea",
+    "material": "rigid"
+   },
+   {
+    "name": "gray felt bag",
+    "material": "cloth"
+   },
+   {
+    "name": "red cup",
+    "material": "rigid"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   },
+   {
+    "name": "shopping basket",
+    "material": "rigid"
+   },
+   {
+    "name": "yellow bottle",
+    "material": "rigid"
+   },
+   {
+    "name": "snack cup",
+    "material": "rigid"
+   },
+   {
+    "name": "robot arm",
+    "material": "articulated"
+   },
+   {
+    "name": "red chips bag",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "black robot hand",
+    "material": "rigid"
+   },
+   {
+    "name": "gray box",
+    "material": "rigid"
+   }
+  ],
+  "visible": {
+   "barcode scanner": false,
+   "red potato chips": true,
+   "iced tea": true,
+   "cola": true,
+   "gray felt bag": true,
+   "item": true,
+   "cashier counter": false
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"cola\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"iced tea\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"gray felt bag\",\n      \"material\": \"cloth\"\n    },\n    {\n      \"name\": \"red cup\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"shopping basket\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"yellow bottle\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"snack cup\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"robot arm\",\n      \"material\": \"articulated\"\n    },\n    {\n      \"name\": \"red chips bag\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"black robot hand\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"gray box\",\n      \"material\": \"rigid\"\n    }\n  ],\n  \"visible\": {\n    \"barcode scanner\": false,\n    \"red potato chips\": true,\n    \"iced tea\": true,\n    \"cola\": true,\n    \"gray felt bag\": true,\n    \"item\": true,\n    \"cashier counter\": false\n  }\n}"
+ },
+ "w893105": {
+  "objects": [
+   {
+    "name": "spoon",
+    "material": "rigid"
+   },
+   {
+    "name": "canned sugar",
+    "material": "rigid"
+   },
+   {
+    "name": "lid",
+    "material": "rigid"
+   },
+   {
+    "name": "shelf",
+    "material": "rigid"
+   },
+   {
+    "name": "vinegar",
+    "material": "rigid"
+   },
+   {
+    "name": "pot",
+    "material": "rigid"
+   },
+   {
+    "name": "msg",
+    "material": "rigid"
+   },
+   {
+    "name": "jar",
+    "material": "rigid"
+   }
+  ],
+  "visible": {
+   "spoon": false,
+   "canned sugar": false,
+   "lid": false,
+   "shelf": true,
+   "vinegar": true,
+   "pot": true,
+   "msg": true,
+   "jar": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\"name\": \"spoon\", \"material\": \"rigid\"},\n    {\"name\": \"canned sugar\", \"material\": \"rigid\"},\n    {\"name\": \"lid\", \"material\": \"rigid\"},\n    {\"name\": \"shelf\", \"material\": \"rigid\"},\n    {\"name\": \"vinegar\", \"material\": \"rigid\"},\n    {\"name\": \"pot\", \"material\": \"rigid\"},\n    {\"name\": \"msg\", \"material\": \"rigid\"},\n    {\"name\": \"jar\", \"material\": \"rigid\"}\n  ],\n  \"visible\": {\n    \"spoon\": false,\n    \"canned sugar\": false,\n    \"lid\": false,\n    \"shelf\": true,\n    \"vinegar\": true,\n    \"pot\": true,\n    \"msg\": true,\n    \"jar\": true\n  }\n}"
+ },
+ "w851032": {
+  "objects": [
+   {
+    "name": "pant-leg",
+    "material": "cloth"
+   }
+  ],
+  "visible": {
+   "pant-leg": true
+  },
+  "raw": "{\"objects\": [{\"name\": \"pant-leg\", \"material\": \"cloth\"}], \"visible\": {\"pant-leg\": true}}"
+ },
+ "w912594": {
+  "objects": [
+   {
+    "name": "milk tea cup",
+    "material": "rigid"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   },
+   {
+    "name": "plastic wrap",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "robot hand left",
+    "material": "rigid"
+   },
+   {
+    "name": "robot hand right",
+    "material": "rigid"
+   },
+   {
+    "name": "black cable",
+    "material": "linear"
+   }
+  ],
+  "visible": {
+   "straw": false,
+   "milk tea cup": true,
+   "table": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"milk tea cup\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"plastic wrap\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"robot hand left\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"robot hand right\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"black cable\",\n      \"material\": \"linear\"\n    }\n  ],\n  \"visible\": {\n    \"straw\": false,\n    \"milk tea cup\": true,\n    \"table\": true\n  }\n}"
+ },
+ "w902729": {
+  "objects": [
+   {
+    "name": "decanter",
+    "material": "rigid"
+   },
+   {
+    "name": "red wine bottle",
+    "material": "rigid"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   },
+   {
+    "name": "wine glass",
+    "material": "rigid"
+   },
+   {
+    "name": "plate",
+    "material": "rigid"
+   },
+   {
+    "name": "knife",
+    "material": "rigid"
+   },
+   {
+    "name": "fork",
+    "material": "rigid"
+   },
+   {
+    "name": "vase",
+    "material": "rigid"
+   },
+   {
+    "name": "flower",
+    "material": "divisible"
+   },
+   {
+    "name": "tablecloth",
+    "material": "cloth"
+   },
+   {
+    "name": "chair",
+    "material": "rigid"
+   },
+   {
+    "name": "stool",
+    "material": "rigid"
+   }
+  ],
+  "visible": {
+   "decanter": true,
+   "red wine": false,
+   "table": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\"name\": \"decanter\", \"material\": \"rigid\"},\n    {\"name\": \"red wine bottle\", \"material\": \"rigid\"},\n    {\"name\": \"table\", \"material\": \"fixture\"},\n    {\"name\": \"wine glass\", \"material\": \"rigid\"},\n    {\"name\": \"plate\", \"material\": \"rigid\"},\n    {\"name\": \"knife\", \"material\": \"rigid\"},\n    {\"name\": \"fork\", \"material\": \"rigid\"},\n    {\"name\": \"vase\", \"material\": \"rigid\"},\n    {\"name\": \"flower\", \"material\": \"divisible\"},\n    {\"name\": \"tablecloth\", \"material\": \"cloth\"},\n    {\"name\": \"chair\", \"material\": \"rigid\"},\n    {\"name\": \"stool\", \"material\": \"rigid\"}\n  ],\n  \"visible\": {\n    \"decanter\": true,\n    \"red wine\": false,\n    \"table\": true,\n    \"red wine\": false\n  }\n}"
+ },
+ "w872581": {
+  "objects": [
+   {
+    "name": "bottled water",
+    "material": "rigid"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   },
+   {
+    "name": "box",
+    "material": "rigid"
+   },
+   {
+    "name": "jar with lid",
+    "material": "rigid"
+   },
+   {
+    "name": "yellow candy container",
+    "material": "rigid"
+   },
+   {
+    "name": "paper sign",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "robot arm",
+    "material": "rigid"
+   },
+   {
+    "name": "black box on table",
+    "material": "rigid"
+   },
+   {
+    "name": "white wall",
+    "material": "fixture"
+   },
+   {
+    "name": "floor",
+    "material": "fixture"
+   },
+   {
+    "name": "metal frame",
+    "material": "rigid"
+   },
+   {
+    "name": "plastic bottle cap",
+    "material": "rigid"
+   }
+  ],
+  "visible": {
+   "bottled water": true,
+   "table": true,
+   "box": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"bottled water\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"box\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"jar with lid\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"yellow candy container\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"paper sign\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"robot arm\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"black box on table\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"white wall\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"floor\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"metal frame\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"plastic bottle cap\",\n      \"material\": \"rigid\"\n    }\n  ],\n  \"visible\": {\n    \"bottled water\": true,\n    \"table\": true,\n    \"box\": true\n  }\n}"
+ },
+ "w878381": {
+  "objects": [
+   {
+    "name": "red ribbon",
+    "material": "linear"
+   },
+   {
+    "name": "black robotic arm",
+    "material": "rigid"
+   },
+   {
+    "name": "wooden shelf",
+    "material": "fixture"
+   },
+   {
+    "name": "black signboard",
+    "material": "rigid"
+   },
+   {
+    "name": "pink jacket",
+    "material": "cloth"
+   },
+   {
+    "name": "office chair",
+    "material": "rigid"
+   },
+   {
+    "name": "gray floor",
+    "material": "fixture"
+   },
+   {
+    "name": "black mat",
+    "material": "fixture"
+   },
+   {
+    "name": "red banner",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "plastic bag",
+    "material": "thin_flexible"
+   },
+   {
+    "name": "metal stand",
+    "material": "rigid"
+   },
+   {
+    "name": "white box",
+    "material": "rigid"
+   }
+  ],
+  "visible": {
+   "mallet": false,
+   "gong": false
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"red ribbon\",\n      \"material\": \"linear\"\n    },\n    {\n      \"name\": \"black robotic arm\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"wooden shelf\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"black signboard\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"pink jacket\",\n      \"material\": \"cloth\"\n    },\n    {\n      \"name\": \"office chair\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"gray floor\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"black mat\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"red banner\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"plastic bag\",\n      \"material\": \"thin_flexible\"\n    },\n    {\n      \"name\": \"metal stand\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"white box\",\n      \"material\": \"rigid\"\n    }\n  ],\n  \"visible\": {\n    \"mallet\": false,\n    \"gong\": false\n  }\n}"
+ },
+ "w886664": {
+  "objects": [
+   {
+    "name": "curtain",
+    "material": "cloth"
+   },
+   {
+    "name": "velcro curtain tiebacks",
+    "material": "rigid"
+   }
+  ],
+  "visible": {
+   "velcro curtain tiebacks": true
+  },
+  "raw": "{\"objects\": [{\"name\": \"curtain\", \"material\": \"cloth\"}, {\"name\": \"velcro curtain tiebacks\", \"material\": \"rigid\"}], \"visible\": {\"velcro curtain tiebacks\": true}}"
+ },
+ "w916649": {
+  "objects": [
+   {
+    "name": "peeler",
+    "material": "rigid"
+   },
+   {
+    "name": "organic carrot",
+    "material": "divisible"
+   },
+   {
+    "name": "cutting board",
+    "material": "rigid"
+   },
+   {
+    "name": "storage basket",
+    "material": "rigid"
+   },
+   {
+    "name": "bottle",
+    "material": "rigid"
+   },
+   {
+    "name": "wall outlet",
+    "material": "rigid"
+   },
+   {
+    "name": "cable",
+    "material": "linear"
+   },
+   {
+    "name": "robot arm",
+    "material": "rigid"
+   },
+   {
+    "name": "counter top",
+    "material": "fixture"
+   },
+   {
+    "name": "sink",
+    "material": "fixture"
+   },
+   {
+    "name": "marble backsplash",
+    "material": "fixture"
+   },
+   {
+    "name": "robot gripper",
+    "material": "rigid"
+   }
+  ],
+  "visible": {
+   "peeler": true,
+   "organic carrot": true,
+   "cutting board": true,
+   "storage basket": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"peeler\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"organic carrot\",\n      \"material\": \"divisible\"\n    },\n    {\n      \"name\": \"cutting board\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"storage basket\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"bottle\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"wall outlet\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"cable\",\n      \"material\": \"linear\"\n    },\n    {\n      \"name\": \"robot arm\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"counter top\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"sink\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"marble backsplash\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"robot gripper\",\n      \"material\": \"rigid\"\n    }\n  ],\n  \"visible\": {\n    \"peeler\": true,\n    \"organic carrot\": true,\n    \"cutting board\": true,\n    \"storage basket\": true\n  }\n}"
+ },
+ "w918444": {
+  "objects": [
+   {
+    "name": "tray",
+    "material": "rigid"
+   },
+   {
+    "name": "feed basket",
+    "material": "rigid"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   }
+  ],
+  "visible": {
+   "tray": true,
+   "feed basket": true,
+   "table": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"tray\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"feed basket\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    }\n  ],\n  \"visible\": {\n    \"tray\": true,\n    \"feed basket\": true,\n    \"table\": true\n  }\n}"
+ },
+ "w905002": {
+  "objects": [
+   {
+    "name": "bowl",
+    "material": "rigid"
+   },
+   {
+    "name": "jar",
+    "material": "rigid"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   },
+   {
+    "name": "milk",
+    "material": "liquid"
+   },
+   {
+    "name": "sugar",
+    "material": "granular"
+   },
+   {
+    "name": "lid",
+    "material": "rigid"
+   },
+   {
+    "name": "spoon",
+    "material": "rigid"
+   },
+   {
+    "name": "whisk",
+    "material": "rigid"
+   }
+  ],
+  "visible": {
+   "spoon": false,
+   "lid": false,
+   "sugar": false,
+   "table": true,
+   "milk": false,
+   "whisk": false,
+   "bowl": true,
+   "jar": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\"name\": \"bowl\", \"material\": \"rigid\"},\n    {\"name\": \"jar\", \"material\": \"rigid\"},\n    {\"name\": \"table\", \"material\": \"fixture\"},\n    {\"name\": \"milk\", \"material\": \"liquid\"},\n    {\"name\": \"sugar\", \"material\": \"granular\"},\n    {\"name\": \"lid\", \"material\": \"rigid\"},\n    {\"name\": \"spoon\", \"material\": \"rigid\"},\n    {\"name\": \"whisk\", \"material\": \"rigid\"}\n  ],\n  \"visible\": {\n    \"spoon\": false,\n    \"lid\": false,\n    \"sugar\": false,\n    \"table\": true,\n    \"milk\": false,\n    \"whisk\": false,\n    \"bowl\": true,\n    \"jar\": true\n  }\n}"
+ },
+ "w895373": {
+  "objects": [
+   {
+    "name": "yellow chrysanthemum tea",
+    "material": "rigid"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   }
+  ],
+  "visible": {
+   "yellow chrysanthemum tea": true,
+   "table": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"yellow chrysanthemum tea\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    }\n  ],\n  \"visible\": {\n    \"yellow chrysanthemum tea\": true,\n    \"table\": true\n  }\n}"
+ },
+ "w908587": {
+  "objects": [
+   {
+    "name": "rope",
+    "material": "linear"
+   },
+   {
+    "name": "table",
+    "material": "fixture"
+   },
+   {
+    "name": "box",
+    "material": "rigid"
+   },
+   {
+    "name": "bottle",
+    "material": "rigid"
+   },
+   {
+    "name": "robot arm",
+    "material": "articulated"
+   },
+   {
+    "name": "white cube",
+    "material": "rigid"
+   }
+  ],
+  "visible": {
+   "rope": true,
+   "table": true
+  },
+  "raw": "{\n  \"objects\": [\n    {\n      \"name\": \"rope\",\n      \"material\": \"linear\"\n    },\n    {\n      \"name\": \"table\",\n      \"material\": \"fixture\"\n    },\n    {\n      \"name\": \"box\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"bottle\",\n      \"material\": \"rigid\"\n    },\n    {\n      \"name\": \"robot arm\",\n      \"material\": \"articulated\"\n    },\n    {\n      \"name\": \"white cube\",\n      \"material\": \"rigid\"\n    }\n  ],\n  \"visible\": {\n    \"rope\": true,\n    \"table\": true\n  }\n}"
+ }
+}

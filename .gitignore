@@ -11,3 +11,5 @@ wandb/
 
 # the evaluation pages ship their strip videos
 !docs/**/*.mp4
+agibot-flux3/results/actioneval/logs/
+agibot-flux3/results/actioneval/candidates.json

@@ -1,0 +1,316 @@
+<title>Action Transfer Probe</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: lab-report column. Answer per group first, then the exposure ladder, the action index table, and one card per
+   start window with its 6-prompt x 3-seed video grid and the prompts aligned to the grid rows. */
+:root {
+  --bg: #f2f3f5;
+  --panel: #ffffff;
+  --ink: #161a22;
+  --ink-2: #4a5263;
+  --ink-3: #7a8294;
+  --rule: #d8dce4;
+  --accent: #3550c8;
+  --accent-soft: #e2e7fa;
+  --yes: #2d7a3e; --yes-bg: #dbefdf;
+  --part: #946500; --part-bg: #f5e7c4;
+  --no: #b2392d; --no-bg: #f7dcd8;
+  --g-control: #5d6577; --g-seen: #3550c8; --g-dir: #0b7c7c; --g-unseen: #a3467f;
+  --f-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #12141a; --panel: #1b1e26; --ink: #e6e9f0; --ink-2: #aab1c0; --ink-3: #7c8496; --rule: #2d323e;
+    --accent: #8ea0f2; --accent-soft: #232b4a;
+    --yes: #7fcb8c; --yes-bg: #1b3322; --part: #e3b64e; --part-bg: #3a2f14; --no: #f08b7f; --no-bg: #3e1f1b;
+    --g-control: #a4abba; --g-seen: #8ea0f2; --g-dir: #5ec8c4; --g-unseen: #e08cc0;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #12141a; --panel: #1b1e26; --ink: #e6e9f0; --ink-2: #aab1c0; --ink-3: #7c8496; --rule: #2d323e;
+  --accent: #8ea0f2; --accent-soft: #232b4a;
+  --yes: #7fcb8c; --yes-bg: #1b3322; --part: #e3b64e; --part-bg: #3a2f14; --no: #f08b7f; --no-bg: #3e1f1b;
+  --g-control: #a4abba; --g-seen: #8ea0f2; --g-dir: #5ec8c4; --g-unseen: #e08cc0;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.55 var(--f-display); }
+.wrap { max-width: 1240px; margin: 0 auto; padding-block: 40px 80px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex; flex-direction: column; gap: 44px; }
+h1, h2, h3 { margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(32px, 5vw, 50px); font-stretch: 72%; font-weight: 800; line-height: 1.02; letter-spacing: -0.01em; }
+h2 { font-size: 23px; font-stretch: 82%; font-weight: 700; }
+h3 { font-size: 16px; font-weight: 700; }
+p { margin: 0; max-width: 72ch; }
+.muted { color: var(--ink-2); }
+.mono { font-family: var(--f-mono); font-size: 12.5px; }
+.eyebrow { font: 500 12px/1.2 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+header, section { display: flex; flex-direction: column; gap: 16px; }
+.setup { display: flex; flex-wrap: wrap; gap: 6px 18px; color: var(--ink-2); }
+.setup b { color: var(--ink); font-weight: 500; }
+.bar-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.chip { font: 500 13px/1 var(--f-display); padding: 7px 12px; border-radius: 99px; border: 1px solid var(--rule); background: var(--panel); color: var(--ink-2); cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.chip:disabled { opacity: .45; cursor: not-allowed; }
+.chip:focus-visible, button:focus-visible, input:focus-visible, tr.row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* group answer tiles */
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: 12px; }
+.tile { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; border-top: 3px solid var(--gc); }
+.tile .k { font: 500 11.5px/1.3 var(--f-mono); letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); }
+.tile .v { font: 700 34px/1 var(--f-display); font-stretch: 78%; font-variant-numeric: tabular-nums; }
+.tile .s { font-size: 13px; color: var(--ink-2); }
+.tile.calib { --gc: var(--ink-3); border-top-style: dashed; }
+.meter { height: 6px; background: var(--rule); border-radius: 3px; position: relative; overflow: hidden; }
+.meter i { position: absolute; top: 0; bottom: 0; background: var(--gc); }
+.meter b { position: absolute; top: 0; bottom: 0; background: color-mix(in srgb, var(--gc) 35%, transparent); }
+.notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 14px 30px; color: var(--ink-2); font-size: 14.5px; }
+.notes h3 { color: var(--ink); margin-bottom: 4px; font-size: 15px; }
+.notes:empty { display: none; }
+/* tables */
+.tablewrap { overflow-x: auto; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; }
+.tablewrap.tall { max-height: 640px; overflow-y: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+th, td { padding: 7px 10px; text-align: left; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+th { font: 500 11px/1.2 var(--f-mono); letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); position: sticky; top: 0; background: var(--panel); z-index: 1; }
+th button { all: unset; cursor: pointer; }
+td.r { text-align: right; font-variant-numeric: tabular-nums; }
+td .sbar { display: inline-block; width: 90px; height: 8px; background: var(--rule); border-radius: 2px; vertical-align: middle; margin-right: 8px; position: relative; overflow: hidden; }
+td .sbar i { position: absolute; inset: 0 auto 0 0; background: var(--gc, var(--accent)); }
+.gdot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--gc); margin-right: 7px; vertical-align: 1px; }
+.flag { color: var(--part); font-weight: 700; }
+input[type=search] { font: inherit; font-size: 14px; padding: 7px 10px; border: 1px solid var(--rule); border-radius: 5px; background: var(--panel); color: var(--ink); width: min(100%, 260px); }
+/* histogram */
+.hist { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; align-items: end; height: 150px; max-width: 560px; }
+.hist div { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 4px; height: 100%; font: 500 12px var(--f-mono); color: var(--ink-2); }
+.hist i { width: 100%; background: var(--accent); border-radius: 3px 3px 0 0; min-height: 2px; }
+/* window cards */
+.cards { display: flex; flex-direction: column; gap: 22px; }
+.card { background: var(--panel); border: 1px solid var(--rule); border-radius: 8px; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+.card-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 20px; align-items: flex-start; }
+.card-head .meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 6px; }
+.badge { font: 500 11px/1 var(--f-mono); padding: 4px 7px; border-radius: 3px; border: 1px solid var(--rule); color: var(--ink-2); white-space: nowrap; }
+.badge.held { color: var(--part); border-color: currentColor; }
+button.play { font: 600 13px/1 var(--f-display); padding: 9px 14px; border-radius: 5px; border: 1px solid var(--accent); background: var(--accent); color: var(--panel); cursor: pointer; }
+button.play.on { background: transparent; color: var(--accent); }
+.body { display: grid; grid-template-columns: minmax(0, 42fr) minmax(0, 58fr); gap: 16px; align-items: stretch; }
+.gridbox { position: relative; aspect-ratio: 672 / 1008; max-width: 100%; background: var(--rule); border-radius: 4px; overflow: hidden; }
+.gridbox video { width: 100%; height: 100%; display: block; object-fit: fill; }
+.gridbox .tag { position: absolute; font: 600 10.5px/1 var(--f-mono); padding: 3px 5px; border-radius: 3px; }
+.gridbox .rowtag { background: rgb(0 0 0 / .62); color: #fff; }
+.gridbox .vtag.yes { background: var(--yes); color: #fff; }
+.gridbox .vtag.partial { background: #c48a12; color: #fff; }
+.gridbox .vtag.no { background: rgb(0 0 0 / .55); color: #ffb4aa; }
+.seedhead { display: grid; grid-template-columns: repeat(3, 1fr); font: 500 11px var(--f-mono); color: var(--ink-3); text-align: center; margin-bottom: 4px; }
+.rows { display: grid; grid-template-rows: repeat(6, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--rule); }
+.prow { border-bottom: 1px solid var(--rule); padding: 6px 2px; display: flex; flex-direction: column; justify-content: center; gap: 3px; min-height: 0; }
+.prow .top { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: baseline; }
+.pk { font: 600 11px/1 var(--f-mono); padding: 3px 5px; border-radius: 3px; background: color-mix(in srgb, var(--gc) 16%, transparent); color: var(--gc); }
+.ptext { font-size: 14px; font-weight: 500; }
+.plab { font: 400 11.5px/1.3 var(--f-mono); color: var(--ink-3); }
+.vd { display: inline-flex; gap: 3px; vertical-align: middle; }
+.dot { width: 14px; height: 14px; border-radius: 50%; display: inline-grid; place-items: center; font: 700 9px/1 var(--f-mono); }
+.dot.yes { background: var(--yes); color: var(--panel); }
+.dot.partial { background: var(--part-bg); color: var(--part); box-shadow: inset 0 0 0 2px var(--part); }
+.dot.no { color: var(--no); box-shadow: inset 0 0 0 1.5px var(--no); }
+.dot.na { background: var(--rule); }
+.gtcol { display: flex; gap: 14px; align-items: flex-start; flex-wrap: wrap; }
+.gtcol video { width: min(100%, 300px); aspect-ratio: 4 / 3; border-radius: 4px; background: var(--rule); display: block; }
+details.why { font-size: 13px; color: var(--ink-2); }
+details.why summary { cursor: pointer; color: var(--ink); font-weight: 600; }
+details.why ul { margin: 8px 0 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
+.more { align-self: center; }
+@media (max-width: 760px) { .body { grid-template-columns: 1fr; } .rows { grid-template-rows: none; } }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">AgiBot World Beta · looped DiT · action eval</div>
+    <h1>Action Transfer Probe</h1>
+    <p class="muted" id="lede"></p>
+    <div class="setup mono">
+      <span>checkpoint <b>random_depth_n1-8_long · EMA step 9500</b></span>
+      <span>context <b>k = 1 frame</b></span>
+      <span>rollout <b>4 × 33 frames = 8.9 s @ 15 fps</b></span>
+      <span>sampler <b>30 steps · cfg 4 · shift 5</b></span>
+      <span>seeds <b>0 · 1 · 2</b> per prompt</span>
+      <span>judge <b>Qwen3-VL-32B-Instruct, 16 frames</b></span>
+    </div>
+  </header>
+
+  <section aria-labelledby="h-answer">
+    <h2 id="h-answer">Does the model do what it is asked? <span class="muted" id="answer-depth"></span></h2>
+    <div class="bar-row" id="depthbar" role="group" aria-label="Loop depth"></div>
+    <div class="tiles" id="tiles"></div>
+    <p class="muted" style="font-size:13.5px">Score = judge verdict (completed yes 1, partial ½, no 0), averaged over the 3 seeds of a probe, then over probes; the band is the 95 % bootstrap interval over probes. Probes the real footage already passes are left out of these tiles (they cannot tell following the prompt from doing the usual action); the action table keeps them, marked ◆.</p>
+    <div class="notes"><!--__FINDINGS__--></div>
+  </section>
+
+  <section aria-labelledby="h-level">
+    <h2 id="h-level">By how far training was from the prompt</h2>
+    <p class="muted">The Caption Atlas exposure ladder, computed by parsing each probe's prompt against the 159,983 training captions.</p>
+    <div class="tablewrap"><table id="leveltable"></table></div>
+  </section>
+
+  <section aria-labelledby="h-actions">
+    <h2 id="h-actions">The action index</h2>
+    <p class="muted" id="actions-lede"></p>
+    <div class="bar-row"><div class="bar-row" id="groupfilter" role="group" aria-label="Group"></div><input type="search" id="actsearch" placeholder="Filter actions, e.g. squeeze" aria-label="Filter actions"></div>
+    <div class="tablewrap tall"><table id="acttable"></table></div>
+  </section>
+
+  <section aria-labelledby="h-six">
+    <h2 id="h-six">Six actions from one start</h2>
+    <p class="muted">Per start window: how many of its 6 prompts (own caption + 5 probes) the model completes on at least 2 of 3 seeds.</p>
+    <div class="hist" id="hist" aria-label="Windows by prompts completed"></div>
+  </section>
+
+  <section aria-labelledby="h-windows">
+    <h2 id="h-windows">Start windows <span class="muted" id="win-depth"></span></h2>
+    <p class="muted">Each grid plays the 6 prompts (rows) × seeds 0, 1, 2 (columns) from the same real start frame. Tags on the tiles are the judge's verdict on that clip. Right: the prompt of each row, its group and exposure level, and what the judge says the real footage does for that prompt.</p>
+    <div class="bar-row"><div class="bar-row" id="winfilter" role="group" aria-label="Show windows"></div><input type="search" id="winsearch" placeholder="Filter, e.g. supermarket, fold" aria-label="Filter windows"></div>
+    <div class="cards" id="cards"></div>
+    <button class="chip more" id="more">Show more windows</button>
+  </section>
+
+  <section aria-labelledby="h-method">
+    <h2 id="h-method">How it was built</h2>
+    <div class="notes">
+      <div><h3>Actions</h3><p id="m-actions"></p></div>
+      <div><h3>Start windows</h3><p>Never-trained episodes of the val, test and test_unseen splits (test_unseen = the 5 held-out tasks), at the first labelled segment: the robot in its start pose, nothing grasped. Scene objects come from the episode's captions plus what Qwen3-VL-32B lists in the start frame.</p></div>
+      <div><h3>Probes</h3><p>Every action's template filled with every compatible scene object, re-parsed to check that it is new in the intended way, kept if the VLM finds it feasible in the start frame, then picked so each action has the same number of probes (3) in different tasks, and each window gets 5 probes with distinct verbs plus its own caption.</p></div>
+      <div><h3>Scoring</h3><p>Only the VLM judge: completed / attempted / plausible from 16 frames, real start frame first, arm ignored. No pixel metrics: the real footage shows one action and the probes ask for others. The real footage is judged against all 6 prompts to measure the judge (its own caption) and to flag probes the real action already satisfies.</p></div>
+    </div>
+  </section>
+</div>
+
+<script>
+const DATA = /*__DATA__*/null;
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"})[c]);
+const GC = {control: "var(--g-control)", seen_new_object: "var(--g-seen)", seen_dir_new_obj: "var(--g-dir)", unseen_action: "var(--g-unseen)"};
+const GROUPS = ["seen_new_object", "seen_dir_new_obj", "unseen_action", "control"];
+const f2 = v => v == null ? "–" : v.toFixed(2);
+const pct = v => v == null ? "–" : Math.round(v * 100) + " %";
+let depth = DATA.depths[0];
+const C = DATA.counts;
+
+$("#lede").textContent = `Every action AgiBot World Beta has, tested the same number of times: ${C.seen} trained verbs on objects they were never trained with, ${C.dirEntries} trained verb + direction pairs on new objects, and ${C.unseen} verbs no training caption contains (marked, expected to fail). ${C.windows} never-trained start windows from ${C.tasks} tasks each get 6 prompts: the episode's own caption and 5 probes, ${C.probes} probes in all, 3 noise seeds each.`;
+$("#actions-lede").textContent = `${C.actions} actions, 3 probes each (a few have 2 or 4 because of window constraints). Training windows: how often the verb (or verb + direction) occurs in the training captions. ◆ = at least one probe of the action is also passed by the real footage.`;
+$("#m-actions").textContent = `The Caption Atlas verb primitives (100, in 18 families) parsed on the training captions and the full release; the release has no verb training lacks, so the ${C.unseen} unseen verbs are ones no training caption contains in any form (raw-word check). ${C.seen} verbs are probed on new objects; the rest are not self-contained instructions (use, coordinate, release, …) or are probed with a direction (base moves).`;
+
+function renderDepthbar() {
+  $("#depthbar").innerHTML = DATA.depths.map(d => `<button class="chip" aria-pressed="${d === depth}" data-d="${d}">N = ${d.slice(1)}</button>`).join("");
+  $("#depthbar").onclick = e => { const b = e.target.closest("button"); if (b) { depth = b.dataset.d; renderAll(); } };
+}
+
+function renderTiles() {
+  $("#answer-depth").textContent = `· N = ${depth.slice(1)}`;
+  const tiles = GROUPS.map(g => {
+    const r = (DATA.groupClean[g] || {})[depth];
+    if (!r) return "";
+    const lo = r.ci[0] ?? r.score, hi = r.ci[1] ?? r.score;
+    return `<div class="tile" style="--gc:${GC[g]}"><div class="k">${esc(DATA.groupLabel[g])}</div><div class="v">${f2(r.score)}</div>
+      <div class="meter"><b style="left:${lo * 100}%;width:${(hi - lo) * 100}%"></b><i style="left:calc(${r.score * 100}% - 1px);width:3px"></i></div>
+      <div class="s">[${f2(lo)}, ${f2(hi)}] · ${r.probes} probes · ${r.clips} clips<br>judged done ${pct(r.success)} of clips · attempted ${pct(r.attempted)} · seeds agree ${pct(r.seeds_agree)}</div></div>`;
+  });
+  const cal = DATA.calib, own = cal.control;
+  const probeYes = GROUPS.filter(g => g !== "control" && cal[g]).map(g => `${esc(DATA.groupLabel[g]).toLowerCase()} ${pct(cal[g].gt_yes_rate)}`).join(", ");
+  tiles.push(`<div class="tile calib"><div class="k">Judge on the real footage</div><div class="v">${own ? pct(own.gt_yes_rate) : "–"}</div>
+    <div class="s">of start windows: the real robot's action passes its own caption (the judge's recall). Probes the real footage also passes: ${probeYes}.</div></div>`);
+  $("#tiles").innerHTML = tiles.join("");
+}
+
+function renderLevels() {
+  const ds = DATA.depths;
+  let h = `<thead><tr><th>Level</th><th>Probes</th>${ds.map(d => `<th>N = ${d.slice(1)}</th>`).join("")}</tr></thead><tbody>`;
+  for (const [k, r] of Object.entries(DATA.level)) {
+    const n = (Object.values(r).find(v => v) || {}).probes || 0;
+    h += `<tr><td>${esc(k)}</td><td class="r">${n}</td>${ds.map(d => r[d] ? `<td class="r"><span class="sbar"><i style="width:${r[d].score * 100}%"></i></span>${f2(r[d].score)}</td>` : "<td>–</td>").join("")}</tr>`;
+  }
+  $("#leveltable").innerHTML = h + "</tbody>";
+}
+
+let actGroup = "all", actSort = ["score", 1];
+function renderActions() {
+  const groups = ["all", ...GROUPS.filter(g => g !== "control")];
+  $("#groupfilter").innerHTML = groups.map(g => `<button class="chip" aria-pressed="${g === actGroup}" data-g="${g}">${g === "all" ? "All" : esc(DATA.groupLabel[g])}</button>`).join("");
+  const q = $("#actsearch").value.trim().toLowerCase();
+  let rows = DATA.actions.filter(a => (actGroup === "all" || a.group === actGroup) && (!q || a.entry.includes(q) || (a.family || "").includes(q)));
+  const val = a => { const r = a.byDepth[depth]; return {action: a.entry, family: a.family || "", train: a.trainWindows, score: r ? r.score : -1, success: r ? r.success : -1, agree: r ? r.seeds_agree : -1}[actSort[0]]; };
+  rows.sort((a, b) => { const x = val(a), y = val(b); return (x < y ? -1 : x > y ? 1 : 0) * (actSort[1] ? -1 : 1); });
+  const col = (k, l) => `<th><button data-k="${k}">${l}${actSort[0] === k ? (actSort[1] ? " ↓" : " ↑") : ""}</button></th>`;
+  let h = `<thead><tr>${col("action", "Action")}${col("family", "Family")}<th>Group</th>${col("train", "Training windows")}<th>Probes</th>${col("score", "Score")}${col("success", "Done")}${col("agree", "Seeds agree")}</tr></thead><tbody>`;
+  for (const a of rows) {
+    const r = a.byDepth[depth];
+    h += `<tr style="--gc:${GC[a.group]}"><td><span class="gdot"></span>${esc(a.entry)}${a.flag ? ' <span class="flag" title="a probe the real footage also passes">◆</span>' : ""}</td><td>${esc(a.family)}</td>
+      <td class="muted">${esc(DATA.groupLabel[a.group])}</td><td class="r">${a.group === "unseen_action" ? "0" : a.trainWindows.toLocaleString()}</td>
+      <td class="r">${r ? r.probes : "–"}</td><td class="r">${r ? `<span class="sbar"><i style="width:${r.score * 100}%"></i></span>${f2(r.score)}` : "–"}</td>
+      <td class="r">${r ? pct(r.success) : "–"}</td><td class="r">${r ? pct(r.seeds_agree) : "–"}</td></tr>`;
+  }
+  $("#acttable").innerHTML = h + "</tbody>";
+}
+$("#groupfilter").onclick = e => { const b = e.target.closest("button"); if (b) { actGroup = b.dataset.g; renderActions(); } };
+$("#acttable").onclick = e => { const b = e.target.closest("button"); if (b) { actSort = [b.dataset.k, actSort[0] === b.dataset.k ? 1 - actSort[1] : 1]; renderActions(); } };
+$("#actsearch").oninput = renderActions;
+
+function renderHist() {
+  const w = DATA.windowsDone[depth];
+  if (!w) { $("#hist").innerHTML = ""; return; }
+  const max = Math.max(...Object.values(w.hist));
+  $("#hist").innerHTML = [0, 1, 2, 3, 4, 5, 6].map(k => { const n = w.hist[k] || 0; return `<div><span>${n}</span><i style="height:${n / max * 100}%"></i><span>${k} of 6</span></div>`; }).join("");
+}
+
+const cls = v => v && v.c ? (v.c === "yes" ? "yes" : v.c === "partial" ? "partial" : "no") : "na";
+const sym = {yes: "✓", partial: "½", no: "✕", na: ""};
+let winFilter = "all", shown = 12;
+function winMatches(w) {
+  const q = $("#winsearch").value.trim().toLowerCase();
+  if (q && !(w.task.toLowerCase().includes(q) || w.rows.some(r => r.prompt.toLowerCase().includes(q) || r.entry.includes(q)))) return false;
+  if (winFilter === "held") return w.split === "test_unseen";
+  if (winFilter === "unseen") return w.rows.some(r => r.group === "unseen_action" && (r.clips[depth] || []).some(v => v && v.c === "yes"));
+  return true;
+}
+function renderCards() {
+  $("#win-depth").textContent = `· N = ${depth.slice(1)}`;
+  $("#winfilter").innerHTML = [["all", "All"], ["held", "Held-out tasks"], ["unseen", "An unseen action judged done"]].map(([k, l]) => `<button class="chip" aria-pressed="${k === winFilter}" data-k="${k}">${l}</button>`).join("");
+  const list = DATA.windows.filter(winMatches);
+  $("#cards").innerHTML = list.slice(0, shown).map(w => {
+    const grid = w.grids[depth];
+    const tags = w.rows.map((r, i) => `<span class="tag rowtag" style="left:1%;top:calc(${i * 100 / 6}% + 4px)">${r.p}</span>` +
+      (r.clips[depth] || []).map((v, s) => `<span class="tag vtag ${cls(v)}" style="left:calc(${(s + 1) * 100 / 3}% - 26px);top:calc(${i * 100 / 6}% + 4px)">${sym[cls(v)]}</span>`).join("")).join("");
+    const rows = w.rows.map(r => `<div class="prow" style="--gc:${GC[r.group]}"><div class="top"><span class="pk">${r.p}</span><span class="ptext">${esc(r.prompt)}</span></div>
+      <div class="plab">${esc(DATA.groupLabel[r.group])}${r.group !== "control" ? " · " + esc(r.entry) : ""} · ${esc(r.level.split(" ")[0])} · seeds <span class="vd">${(r.clips[depth] || []).map(v => `<span class="dot ${cls(v)}">${sym[cls(v)]}</span>`).join("")}</span> · real footage <span class="dot ${cls(r.gt)}">${sym[cls(r.gt)]}</span></div></div>`).join("");
+    const reasons = w.rows.map(r => `<li><b>${r.p}</b> ${(r.clips[depth] || []).map((v, s) => v ? `s${s}: ${esc(v.r)}` : "").filter(Boolean).join(" · ")}</li>`).join("");
+    return `<article class="card" id="${w.id}"><div class="card-head"><div><h3>${esc(w.task)}</h3><div class="meta">
+      <span class="badge ${w.split === "test_unseen" ? "held" : ""}">${w.split === "test_unseen" ? "held-out task" : esc(w.split)}</span>
+      <span class="badge">episode ${esc(w.episode)}</span>${w.scene.slice(0, 8).map(s => `<span class="badge">${esc(s)}</span>`).join("")}</div></div>
+      <button class="play" data-w="${w.id}">Play</button></div>
+      <div class="body"><div><div class="seedhead"><span>seed 0</span><span>seed 1</span><span>seed 2</span></div>
+        <div class="gridbox">${grid ? `<video muted loop playsinline preload="metadata" src="${grid}"></video>` : ""}${tags}</div></div>
+        <div class="rows">${rows}</div></div>
+      <div class="gtcol">${w.gtVideo ? `<video muted loop playsinline preload="none" poster="${w.poster}" src="${w.gtVideo}"></video>` : ""}
+        <p class="muted" style="font-size:13px;max-width:52ch">Real footage from the same start, captioned p0. The ✓ / ✕ beside each prompt is the judge's verdict on this footage for that prompt.</p></div>
+      <details class="why"><summary>Judge's reasons</summary><ul>${reasons}</ul></details></article>`;
+  }).join("");
+  $("#more").hidden = list.length <= shown;
+}
+$("#winfilter").onclick = e => { const b = e.target.closest("button"); if (b) { winFilter = b.dataset.k; shown = 12; renderCards(); } };
+$("#winsearch").oninput = () => { shown = 12; renderCards(); };
+$("#more").onclick = () => { shown += 12; renderCards(); };
+$("#cards").onclick = e => {
+  const b = e.target.closest("button.play"); if (!b) return;
+  const vids = [...b.closest(".card").querySelectorAll("video")];
+  const on = !b.classList.contains("on");
+  vids.forEach(v => { v.currentTime = 0; on ? v.play().catch(() => {}) : v.pause(); });
+  b.classList.toggle("on", on); b.textContent = on ? "Pause" : "Play";
+};
+
+function renderAll() { renderDepthbar(); renderTiles(); renderLevels(); renderActions(); renderHist(); renderCards(); }
+renderAll();
+</script>
