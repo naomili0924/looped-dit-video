@@ -13,3 +13,4 @@ wandb/
 !docs/**/*.mp4
 agibot-flux3/results/actioneval/logs/
 agibot-flux3/results/actioneval/candidates.json
+agibot-flux3/results/actioneval/*/.lock

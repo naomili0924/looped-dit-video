@@ -91,3 +91,13 @@ the summary are.
 ## Results
 
 (filled in by the run)
+
+Status 2026-10-30: N = 1 rollouts done (1,500 clips = 500 prompts x seeds 0/1/2, + 84 real-footage clips), judge not
+started; N = 2/4/8 not started. Clips live only on the eval instance (`results/actioneval/rlong9500/clips`, not in git),
+so on a fresh instance the N = 1 rollouts re-run (~3 h on 2 H100s). Resume, from `agibot-flux3/`:
+
+    STEPS="rollout judge report" SEEDS="0 1 2" DEPTHS="1 2 4 8" setsid nohup scripts/actioneval/run.sh \
+        >> results/actioneval/logs/run.log 2>&1 < /dev/null &
+
+Every step skips finished work. `run.sh` holds a lock on the run dir, so starting it again while a previous driver or
+its workers are alive just waits for them.

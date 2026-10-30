@@ -26,6 +26,11 @@ NGPU=${NGPU:-2}
 export HF_TOKEN=${HF_TOKEN:-$(cat /workspace/.hf_home/token 2>/dev/null || true)}
 export PYTHONPATH=$root
 mkdir -p "$LOG" "$RUN"
+# One driver per run dir: the lock fd is inherited by every rollout / judge process, so a second run.sh (a resume)
+# waits here until the previous one *and its orphaned workers* have exited. (A pgrep-based waiter can match its own
+# shell's command line and wait forever.)
+exec 9> "$RUN/.lock"
+flock -n 9 || { echo "waiting for the previous driver on $RUN to finish" >&2; flock 9; }
 py=flux-action/.venv/bin/python
 has() { [[ " $STEPS " == *" $1 "* ]]; }
 
